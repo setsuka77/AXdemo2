@@ -11,16 +11,16 @@
 <body>
 
 	<div class="login-container">
-        <form class="login-form" id="loginForm">
-            <h2>ログイン</h2>
+        <form class="login-form" id="loginForm" th:action="@{/login}" th:method="post">
+            <h2>Analix社内管理システム</h2>
             <div class="input-group">
                 <label for="userId">ユーザID</label>
-                <input type="text" id="userId" name="userId" placeholder="ユーザIDを入力">
+                <input type="text" id="userId" name="userId">
                 <span class="error-message" id="userIdError">ユーザIDを入力してください。</span>
             </div>
             <div class="input-group">
                 <label for="password">パスワード</label>
-                <input type="password" id="password" name="password" placeholder="パスワードを入力">
+                <input type="password" id="password" name="password">
                 <span class="error-message" id="passwordError">パスワードを入力してください。</span>
             </div>
             <button type="submit">ログイン</button>
