@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>勤怠登録画面</title>
+	<style>
+		.container{
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<div>
+	<td>ユーザー名:<th:></th:>
+	<td>ユーザーID:<th:></td>
+	</div>
+	
+	<div class="container">
+		<table>
+			<thead>
+				<tr>
+					<th>日付</th>
+					<th>曜日</th>
+					<th>勤務状況</th>
+					<th>出勤時間</th>
+					<th>退勤時間</th>
+					<th>備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="record : ${attendanceRecord}">
+					<td th:text="${record.date}"></td>
+					<td th:text="${record.dayOfweek}"></td>
+					<td th:text="${record.status}"></td>
+					<td th:text="${record.startTime}"></td>
+					<td th:text="${record.endTime}"></td>
+					<td th:text="${record.remarks}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
