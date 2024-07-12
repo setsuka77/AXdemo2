@@ -1,13 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8"/>
-<title>Insert title here</title>
+	<meta charset="UTF-8" />
+	<title>ログイン | Analix社内管理システム</title>
+	<link rel="stylesheet" href="styles.css">
+
 </head>
+
 <body>
-	
-	ログイン
-	
+
+	<div class="login-container">
+        <form class="login-form" id="loginForm">
+            <h2>ログイン</h2>
+            <div class="input-group">
+                <label for="userId">ユーザID</label>
+                <input type="text" id="userId" name="userId" placeholder="ユーザIDを入力">
+                <span class="error-message" id="userIdError">ユーザIDを入力してください。</span>
+            </div>
+            <div class="input-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" placeholder="パスワードを入力">
+                <span class="error-message" id="passwordError">パスワードを入力してください。</span>
+            </div>
+            <button type="submit">ログイン</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+
+            let valid = true;
+
+            if (!userId) {
+                document.getElementById('userIdError').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('userIdError').style.display = 'none';
+            }
+
+            if (!password) {
+                document.getElementById('passwordError').style.display = 'block';
+                valid = false;
+            } else {
+                document.getElementById('passwordError').style.display = 'none';
+            }
+
+            if (valid) {
+                // フォームの送信ロジックをここに記述
+                console.log('フォームが送信されました');
+            }
+        });
+    </script>
 
 </body>
+
 </html>
