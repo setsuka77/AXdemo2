@@ -12,13 +12,13 @@ public class Attendance {
 	/** ユーザーID */
 	private Integer userId;
 	/** 勤務状況 */
-	private 
+	private Integer status;
 	/**日付 */
 	private Date date;
 	/** 勤務開始時刻 */
-	private time startTime;
+	private String startTime;
 	/** 勤務開始時刻 */
-	private time endTime;
+	private String endTime;
 	/** 備考 */
 	private String remarks;
 }

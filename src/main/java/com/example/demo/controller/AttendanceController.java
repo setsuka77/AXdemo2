@@ -15,7 +15,7 @@ public class AttendanceController {
 	 */
 
 	@RequestMapping("/attendance")
-	public String login() {
+	public String attendance() {
 		return "attendance/record";
 	}
 }

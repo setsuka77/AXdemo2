@@ -1,45 +1,125 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8"/>
-	<title>勤怠登録画面</title>
-	<style>
-		.container{
-			text-align: center;
-		}
-	</style>
+    <meta charset="UTF-8">
+    <title>勤怠管理表</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .error {
+            color: red;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
-	<div>
-	<td>ユーザー名:<th:text = "${username}"></td>
-	<td>ユーザーID:<th:text = "${userId}"></td>
-	<td>ステータス:<th:text = "${}">
-	</div>
-	
-	<div class="container">
-		<table>
-			<thead>
-				<tr>
-					<th>日付</th>
-					<th>曜日</th>
-					<th>勤務状況</th>
-					<th>出勤時間</th>
-					<th>退勤時間</th>
-					<th>備考</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="record : ${attendanceRecord}">
-					<td th:text="${record.date}"></td>
-					<td th:text="${record.dayOfweek}"></td>
-					<td th:text="${record.status}"></td>
-					<td th:text="${record.startTime}"></td>
-					<td th:text="${record.endTime}"></td>
-					<td th:text="${record.remarks}"></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <div class="container">
+        <h2>勤怠管理表</h2>
+        <p>ユーザ名: <span th:text="${userName}"></span></p>
+        <p>ユーザ ID: <span th:text="${userId}"></span></p>
+
+        <form th:if="${userRole == 'employee' || userRole == 'unit_manager'}" th:action="@{/attendance}" method="get">
+            <label for="year">表示年月:</label>
+            <input type="number" id="year" name="year" min="1900" max="2100" placeholder="yyyy" required>年
+            <input type="number" id="month" name="month" min="1" max="12" placeholder="mm" required>月
+            <button type="submit">表示</button>
+            <button type="button" onclick="submitApproval()" th:if="${attendanceRecords != null}">承認申請</button>
+            <button type="button" onclick="submitRegistration()" th:if="${attendanceRecords != null}">登録</button>
+        </form>
+
+        <div th:if="${errorMessage}" class="error" th:text="${errorMessage}"></div>
+        
+        <table th:if="${attendanceRecords != null}">
+            <thead>
+                <tr>
+                    <th>日付</th>
+                    <th>曜日</th>
+                    <th>勤怠状況</th>
+                    <th>出勤時間</th>
+                    <th>退勤時間</th>
+                    <th>備考</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="record : ${attendanceRecords}">
+                    <td th:text="${record.date}">2024-07-12</td>
+                    <td th:text="${record.dayOfWeek}">金曜日</td>
+                    <td><input type="text" th:value="${record.status}" th:readonly="${statusReadonly}"></td>
+                    <td><input type="time" th:value="${record.startTime}" th:readonly="${timeReadonly}"></td>
+                    <td><input type="time" th:value="${record.endTime}" th:readonly="${timeReadonly}"></td>
+                    <td><input type="text" th:value="${record.notes}" th:readonly="${notesReadonly}"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div th:if="${userRole == 'manager'}">
+            <div th:if="${approvals != null}">
+                <h3>承認申請者一覧</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>承認申請者</th>
+                            <th>申請対象年月</th>
+                            <th>申請日</th>
+                            <th>アクション</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="approval : ${approvals}">
+                            <td th:text="${approval.requester}">社員名</td>
+                            <td th:text="${approval.targetMonth}">2024-07</td>
+                            <td th:text="${approval.requestDate}">2024-07-15</td>
+                            <td>
+                                <button type="button" onclick="approveRequest(${approval.id})">承認</button>
+                                <button type="button" onclick="rejectRequest(${approval.id})">却下</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function submitApproval() {
+            // 承認申請ボタンの動作を実装
+        }
+
+        function submitRegistration() {
+            // 登録ボタンの動作を実装
+        }
+
+        function approveRequest(id) {
+            // 承認ボタンの動作を実装
+        }
+
+        function rejectRequest(id) {
+            // 却下ボタンの動作を実装
+        }
+    </script>
 </body>
 </html>
