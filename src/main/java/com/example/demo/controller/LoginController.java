@@ -19,25 +19,32 @@ public class LoginController {
 		return "login/index";
 	}
 
+//	// ログイン成功時の勤怠管理画面への遷移
+//
+//	@PostMapping
+//	String postLogin() {
+//		return "redirect:/attendance/record";
+//	}
+
 	/*
 	 * ログイン画面『ログイン』ボタン押下
 	 *
 	 */
 
-	@PostMapping("/login")
-    public ModelAndView login(
-        @RequestParam("userId") String userId,
-        @RequestParam("password") String password) {
-
-        // ログインロジックをここに記述
-        // 仮にログインが成功した場合
-        if ("validUserId".equals(userId) && "validPassword".equals(password)) {
-            return new ModelAndView("redirect:/attendance/attendance.html");
-        } else {
-            ModelAndView modelAndView = new ModelAndView("login/index");
-            modelAndView.addObject("error", "Invalid credentials");
-            return modelAndView;
-        }
-    }
+	// @PostMapping("/login")
+//    public ModelAndView login(
+//        @RequestParam("userId") String userId,
+//        @RequestParam("password") String password) {
+//
+//        // ログインロジックをここに記述
+//        // 仮にログインが成功した場合
+//        if ("validUserId".equals(userId) && "validPassword".equals(password)) {
+//            return new ModelAndView("redirect:/attendance/record.html");
+//        } else {
+//            ModelAndView modelAndView = new ModelAndView("login/index");
+//            modelAndView.addObject("error", "Invalid credentials");
+//            return modelAndView;
+//        }
+//    }
 
 }
