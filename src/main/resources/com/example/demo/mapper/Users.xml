@@ -4,9 +4,19 @@
 <mapper namespace="com.example.demo.mapper.Users">
     <!-- SQLクエリやマッピングをここに追加 -->
     
-   <!--  <select id="findByUserIdAndPassword" resultType="com.example.demo.entity.Users">
+    <select id="findByUserIdAndPassword" resultType="com.example.demo.entity.Users">
         SELECT * FROM users
         WHERE id = #{id} AND password = #{password}
-    </select> -->
+    </select>
+    
+    <select id="findByUserName" resultType="com.example.demo.entity.Users">
+        SELECT * FROM users
+        WHERE name = #{name}
+    </select>
+    
+    <insert id="insertUser" parameterType="com.example.demo.entity.Users">
+        INSERT INTO users (password, name, role, department_id, start_date)
+        VALUES (#{password}, #{name}, #{role}, #{departmentId}, #{startDate})
+    </insert>
     
 </mapper>
