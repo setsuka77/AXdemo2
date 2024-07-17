@@ -31,6 +31,7 @@ public interface AttendanceMapper {
 	 * 勤怠登録情報登録
 	 * @return 登録結果
 	 */
+	//登録できたらtrue、失敗したらfalseが入る
 	Boolean insert(Attendance attendance);
 	
 	/*
