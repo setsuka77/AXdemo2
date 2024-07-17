@@ -23,5 +23,6 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-co
     <!-- マッパーの指定 -->
     <mappers>
         <mapper resource="com/example/demo/mapper/Users.xml"/>
+        <mapper resource="com/example/demo/mapper/Attendance.xml"/>
     </mappers>
 </configuration>
