@@ -1,88 +1,101 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
- 
+
 <head>
-	<meta charset="UTF-8">
-	<title>勤怠管理登録画面</title>
+    <meta charset="UTF-8">
+    <title>勤怠管理登録画面</title>
 </head>
- 
+
 <body>
-	<table>
-		<tr>
-			<td>ユーザー名:</td>
-			<td th:text="${username}"></td>
-			<td>ユーザーID:</td>
-			<td th:text="${userId}"></td>
-			<td>ステータス:</td>
-			<td th:text="${status}"></td>
-		</tr>
-	</table>
- 
-	<div class="row">
-		<div class="bs-component col-sm-12">
-			<form th:action="@{/attendance/show}" method="post">
-				<div class="form-group">
-					表示年月:
-					<div class="input-group">
-						<select id="year" name="year" required class="form-control">
-							<option value="" disabled selected>年を選択</option>
-							<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
-						</select>
-						<span class="input-group-text">年</span>
- 
-						<select id="month" name="month" required class="form-control">
-							<option value="" disabled selected>月を選択</option>
-							<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
-						</select>
-						<span class="input-group-text">月</span>
- 
-						<button type="submit" name="display" class="btn btn-primary">表示</button>
-					</div>
-				</div>
-			</form>
- 
-			<button type="submit" class="btn btn-success">登録</button>
- 
-			<div th:if="${error}" class="alert alert-danger">
-				[[${error}]]
-			</div>
- 
-			<table class="table table-hover dataTable no-footer" border="1" cellspacing="0">
-				<thead>
-					<tr>
-						<th>日付</th>
-						<th>曜日</th>
-						<th>勤務状況</th>
-						<th>出勤時間</th>
-						<th>退勤時間</th>
-						<th>備考</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="date : ${dates}">
-						<td th:text="${date}"></td>
-                        <td th:text="${date.dayOfWeek}"></td>
-						<td>
-							<input type="text" th:name="'attendance[' + ${date.dayOfMonth} + '].status'"
-								class="form-control" />
-						</td>
-						<td>
-							<input type="time" th:name="'attendance[' + ${date.dayOfMonth} + '].startTime'"
-								class="form-control" />
-						</td>
-						<td>
-							<input type="time" th:name="'attendance[' + ${date.dayOfMonth} + '].endTime'"
-								class="form-control" />
-						</td>
-						<td>
-							<input type="text" th:name="'attendance[' + ${date.dayOfMonth} + '].note'"
-								class="form-control" />
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+    <table>
+        <tr>
+            <td>ユーザー名:</td>
+            <td th:text="${username}"></td>
+            <td>ユーザーID:</td>
+            <td th:text="${userId}"></td>
+            <td>ステータス:</td>
+            <td th:text="${status}"></td>
+        </tr>
+    </table>
+
+    <div class="row">
+        <div class="bs-component col-sm-12">
+            <form th:action="@{/attendance}" method="post">
+                <div class="form-group">
+                    表示年月:
+                    <div class="input-group">
+                        <select id="year" name="year" required class="form-control">
+                            <option value="" disabled selected>年を選択</option>
+                            <option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
+                        </select>
+                        <span class="input-group-text">年</span>
+
+                        <select id="month" name="month" required class="form-control">
+                            <option value="" disabled selected>月を選択</option>
+                            <option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
+                        </select>
+                        <span class="input-group-text">月</span>
+
+                        <button type="submit" name="display" class="btn btn-primary">表示</button>
+                    </div>
+                </div>
+            </form>
+            <form th:action="@{/attendance/register}" method="post">
+                <button type="submit" th:if="${role == 'manager'}" name="rejected" class="btn btn-primary">却下</button>
+                <button type="submit" th:if="${role == 'manager'}" name="approval" class="btn btn-primary">承認</button>
+                <button type="submit" name="request" class="btn btn-primary">承認申請</button>
+                <button type="submit" name="regist" class="btn btn-primary">登録</button>
+                <table class="table table-hover dataTable no-footer" border="1" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>曜日</th>
+                            <th>勤務状況</th>
+                            <th>出勤時間</th>
+                            <th>退勤時間</th>
+                            <th>備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="date : ${dates}">
+                            <td th:text="${date}"></td>
+                            <td th:text="${date.dayOfWeek}"></td>
+                            <td>
+                                <select th:name="'attendance[' + ${date.dayOfMonth} + '].status'" class="form-control">
+                                    <option value="0">通常出勤</option>
+                                    <option value="1">休日</option>
+                                    <option value="2">祝日</option>
+                                    <option value="3">遅刻</option>
+                                    <option value="4">有給</option>
+                                    <option value="5">欠勤</option>
+                                   	<option value="6">早退</option>
+                                    <option value="7">時間外勤務</option>
+                                    <option value="8">振替出勤</option>
+                                    <option value="9">振替休日</option>
+                                    <option value="10">代替出勤</option>
+                                    <option value="11">代替休日</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="time" th:name="'attendance[' + ${date.dayOfMonth} + '].startTime'" class="form-control" />
+                            </td>
+                            <td>
+                                <input type="time" th:name="'attendance[' + ${date.dayOfMonth} + '].endTime'" class="form-control" />
+                            </td>
+                            <td>
+                                <input type="text" th:name="'attendance[' + ${date.dayOfMonth} + '].note'" class="form-control" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+            <div th:if="${error}" class="alert alert-danger">
+                [[${error}]]
+            </div>
+        </div>
+    </div>
 </body>
- 
+
 </html>
+
+
