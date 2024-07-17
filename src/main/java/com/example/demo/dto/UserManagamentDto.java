@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class LoginUserDto {
+public class UserManagamentDto {
 	
 	/** ユーザーID */
 	private Integer id;
