@@ -20,7 +20,7 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 
-	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	/*
 	 * ログイン画面初期表示
@@ -30,26 +30,30 @@ public class LoginController {
 		return "login/login";
 	}
 
-	//SpringSecurityのログイン画面 初期表示
-	@GetMapping("/") // ルートURL ("/") に対するGETリクエストを処理します
-	public String redirectToIndex() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 現在のユーザーの認証情報を取得します
-		if (authentication != null && authentication.isAuthenticated()) { // ユーザーがログインしている場合
-			return "redirect:/attendance";
-		}
-		return "redirect:/login"; // ユーザーがログインしていない場合、"/login"にリダイレクトします
-	}
+//	//SpringSecurityのログイン画面 初期表示
+//	@GetMapping("/") // ルートURL ("/") に対するGETリクエストを処理します
+//	public String redirectToIndex() {
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // 現在のユーザーの認証情報を取得します
+//		if (authentication != null && authentication.isAuthenticated()) { // ユーザーがログインしている場合
+//			return "redirect:/attendance";
+//		}
+//		return "redirect:/login"; // ユーザーがログインしていない場合、"/login"にリダイレクトします
+//	}
 
 	//SpringSecurityを使わない場合
 	@PostMapping("/login")
-	public String login(@RequestParam("id") Integer id, @RequestParam("password") String password, Model model) {
-		Users user = loginService.login(id, password);
-		if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-			model.addAttribute("user", user);
-			return "redirect:/attendance";
-		} else {
-			model.addAttribute("error", "Invalid ID or Password");
-			return "login/login";
-		}
-	}
+    public String login(@RequestParam("id") Integer id, 
+                        @RequestParam("password") String password, 
+                        Model model) {
+        boolean isAuthenticated = loginService.authenticate(id, password);
+        
+        System.out.println(password);
+        
+        if (isAuthenticated) {
+            return "redirect:/attendance";
+        } else {
+            model.addAttribute("error", "ユーザIDまたはパスワードが間違っています。");
+            return "login/login";
+        }
+    }
 }

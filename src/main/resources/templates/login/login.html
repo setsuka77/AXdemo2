@@ -28,38 +28,39 @@
             </div>
 
             <button type="submit">ログイン</button>
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
 
         </form>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        document.addEventListener("DOMContentLoaded", function() {
+            const loginForm = document.getElementById("loginForm");
 
-            const userId = document.getElementById('id').value;
-            const password = document.getElementById('password').value;
+            loginForm.addEventListener("submit", function(event) {
+                let valid = true;
 
-            let valid = true;
+                const idInput = document.getElementById("id");
+                const passwordInput = document.getElementById("password");
 
-            if (!userId) {
-                document.getElementById('idError').style.display = 'block';
-                valid = false;
-            } else {
-                document.getElementById('idError').style.display = 'none';
-            }
+                if (idInput.value.trim() === "") {
+                    document.getElementById("idError").style.display = "block";
+                    valid = false;
+                } else {
+                    document.getElementById("idError").style.display = "none";
+                }
 
-            if (!password) {
-                document.getElementById('passwordError').style.display = 'block';
-                valid = false;
-            } else {
-                document.getElementById('passwordError').style.display = 'none';
-            }
+                if (passwordInput.value.trim() === "") {
+                    document.getElementById("passwordError").style.display = "block";
+                    valid = false;
+                } else {
+                    document.getElementById("passwordError").style.display = "none";
+                }
 
-            if (valid) {
-                // フォームの送信ロジックをここに記述
-                console.log('フォームが送信されました');
-            }
+                if (!valid) {
+                    event.preventDefault();
+                }
+            });
         });
     </script>
 

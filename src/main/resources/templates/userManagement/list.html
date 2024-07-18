@@ -118,79 +118,73 @@
 <body>
 
 	<div class="container">
-		<div class="form-container">
-			<form id="user-form" class="login-form" th:object="${userManagementDto}">
-				<h2>ユーザ管理</h2>
-				<div class="input-group">
-					<label for="name">ユーザ名</label>
-					<input type="text" id="name" name="name">
-					<div class="error-message" id="username-error">ユーザ名を入力してください。</div>
-					<div class="button-group">
-						<button type="button" onclick="searchUser()">検索</button>
-					</div>
-				</div>
-				<div class="input-group">
+        <div class="form-container">
+            <form id="user-form" class="login-form" th:object="${userManagementDto}" th:action="@{/api/users/register}" method="post">
+                <h2>ユーザ管理</h2>
+                <div class="input-group">
+                    <label for="name">ユーザ名</label>
+                    <input type="text" id="name" th:field="*{name}" name="name">
+                    <div class="error-message" id="username-error">ユーザ名を入力してください。</div>
+                    <div class="button-group">
+                        <button type="button" onclick="searchUser()">検索</button>
+                    </div>
+                </div>
+                <div class="input-group">
 					<label for="id">ユーザID</label>
 					<input type="text" id="id" name="id" disabled>
-				</div>
-				<div class="input-group">
-					<label for="password">パスワード</label>
-					<input type="password" id="password" name="password">
-					<div class="error-message" id="password-error">パスワードを入力してください。</div>
-				</div>
-				<div class="input-group">
-					<label for="role">権限</label>
-					<input type="text" id="role" name="role">
-					<div class="error-message" id="role-error">権限を入力してください。</div>
-				</div>
-				<div class="input-group">
-					<label for="department">所属部署</label>
-					<input type="text" id="department" name="department">
-					<div class="error-message" id="department-error">所属部署を入力してください。</div>
-				</div>
-				<div class="input-group">
-					<label for="start-date">利用開始日</label>
-					<input type="date" id="start-date" name="start-date">
-					<div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
-				</div>
-				<div class="button-group">
-					<button type="button" onclick="registerUser()">登録</button>
-				</div>
-			</form>
-		</div>
-	</div>
+                <input type="hidden" th:field="*{id}" id="id" name="id">
+                </div>
+                <div class="input-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" th:field="*{password}" name="password">
+                    <div class="error-message" id="password-error">パスワードを入力してください。</div>
+                </div>
+                <div class="input-group">
+                    <label for="role">権限</label>
+                    <input type="text" id="role" th:field="*{role}" name="role">
+                    <div class="error-message" id="role-error">権限を入力してください。</div>
+                </div>
+                <div class="input-group">
+                    <label for="start-date">利用開始日</label>
+                    <input type="date" id="start-date" th:field="*{startDate}" name="startDate">
+                    <div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
+                </div>
+                <div class="button-group">
+                    <button type="submit">登録</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-	<script>
-		function searchUser() {
-			const name = document.getElementById('name').value;
-			if (!name) {
-				document.getElementById('username-error').style.display = 'block';
-				return;
-			} else {
-				document.getElementById('username-error').style.display = 'none';
-			}
+	 <script>
+        function searchUser() {
+            const name = document.getElementById('name').value;
+            if (!name) {
+                document.getElementById('username-error').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('username-error').style.display = 'none';
+            }
 
-			fetch(`/api/users/search?name=${encodeURIComponent(name)}`)
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('ユーザが見つかりませんでした。');
-					}
-					return response.json();
-				})
-				.then(user => {
-					// フォームにユーザ情報を反映する処理を追加する
-					document.getElementById('id').value = user.id;
-					document.getElementById('password').value = user.password;
-					document.getElementById('role').value = user.role;
-					document.getElementById('department').value = user.department;
-					document.getElementById('start-date').value = user.startDate;
-				})
-				.catch(error => {
-					alert(error.message);
-				});
-		}
-
-		function registerUser() {
+            fetch(`/api/users/search?name=${name}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById('id').value = data.id;
+                        document.getElementById('password').value = data.password;
+                        document.getElementById('role').value = data.role;
+                        document.getElementById('start-date').value = data.startDate;
+                    } else {
+                        alert('ユーザが見つかりませんでした。');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('検索中にエラーが発生しました。');
+                });
+        }
+        
+        function registerUser() {
 			const name = document.getElementById('name').value;
 			const password = document.getElementById('password').value;
 			const role = document.getElementById('role').value;
@@ -203,7 +197,7 @@
 				return;
 			}
 
-			fetch(`/api/users/register`, {
+			fetch(/api/users/register, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -230,9 +224,8 @@
 					alert(error.message);
 				});
 		}
-
-	</script>
-
+		
+    </script>
 </body>
 
 </html>

@@ -12,12 +12,7 @@ public class LoginService {
 	@Autowired
     private UsersMapper usersMapper;
 
-    public Users login(Integer id, String password) {
-        Users user = usersMapper.findByUserId(id);
-        if (user != null && password.equals(user.getPassword())) { // 簡易的なパスワードチェック（ハッシュ化されていない場合）
-            return user;
-        }
-        return null;
+	public boolean authenticate(Integer id, String password) {
+        return usersMapper.findByUserIdAndPassword(id, password) != null;
     }
-
 }
