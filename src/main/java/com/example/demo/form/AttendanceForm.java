@@ -1,13 +1,12 @@
-package com.example.demo.dto;
+package com.example.demo.form;
 
 import java.util.Date;
-import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class AttendanceDto {
-
+public class AttendanceForm {
+		
 	/** 勤怠ID */
 	private Integer id;
 	/** ユーザーID */
@@ -23,7 +22,7 @@ public class AttendanceDto {
 	/** 備考 */
 	private String remarks;
 	
-	/** 勤怠登録情報DTOリスト */
-	private List<AttendanceDto> attendanceDto;
+
 
 }
+

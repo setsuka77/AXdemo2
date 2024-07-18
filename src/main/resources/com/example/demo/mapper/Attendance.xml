@@ -2,22 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.AttendanceMapper">
-   
-   <!-- 勤怠登録情報取得(ユーザーID) -->
-    <select id="findByUserId" parameterType="int" resultType="com.example.demo.entity.Attendance">
-        SELECT * FROM attendance WHERE user_id = #{userId}
-    </select>
 
-    <!-- 勤怠登録情報用DTOリスト取得 -->
-    <select id="getAttendance" parameterType="map" resultType="com.example.demo.dto.AttendanceDto">
-        SELECT * FROM attendance WHERE user_id = #{userId} AND date = #{date}
-    </select>
+	<!-- 勤怠登録情報取得(ユーザーID) -->
+	<select id="findByUserId" parameterType="int" resultType="com.example.demo.entity.Attendance">
+		SELECT * FROM attendance WHERE user_id = #{userId}
+	</select>
 
-    <!-- 勤怠登録情報登録 -->
-    <insert id="insert" parameterType="com.example.demo.entity.Attendance">
-        INSERT INTO attendance (user_id, status, date, start_time, end_time, remarks)
-        VALUES (#{userId}, #{status}, #{date}, #{startTime}, #{endTime}, #{remarks})
-    </insert>
+	   <!-- 勤怠登録情報用DTOリスト取得 -->
+	<select id="findAttendanceByUserIdAndMonth" parameterType="map" resultType="com.example.demo.dto.AttendanceDto">
+		SELECT * FROM attendance
+		WHERE user_id = #{userId}
+		AND
+		YEAR(date) = #{year}
+		AND MONTH(date) = #{month}
+	</select>
+
+	<!-- 勤怠登録情報登録 -->
+	<insert id="insert" parameterType="com.example.demo.entity.Attendance">
+		INSERT INTO attendance (user_id, status, date, start_time, end_time,
+		remarks)
+		VALUES (#{userId}, #{status}, #{date}, #{startTime}, #{endTime}, #{remarks})
+	</insert>
+	
+	<!-- 勤怠登録情報更新 -->
+	<update id="update" parameterType="com.example.demo.entity.Attendance">
+		UPDATE attendance
+		SET
+		user_id = #{userId},
+		status = #{status},
+		date = #{date},
+		start_time = #{startTime},
+		end_time = #{endTime},
+		remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+
 
     <!-- 勤怠登録情報 承認申請 -->
     <!--  <update id="approveAttendance" parameterType="map">
