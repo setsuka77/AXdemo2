@@ -3,11 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.Users">
 
-    <select id="findByUserIdAndPassword" resultType="com.example.demo.entity.Users">
+	<!-- ログイン画面で使用 -->
+	<select id="findByUserId" resultType="com.example.demo.entity.Users">
         SELECT * FROM users
-        WHERE id = #{id} AND password = #{password}
+        WHERE id = #{id}
     </select>
     
+    <!-- ユーザ管理画面で使用 -->
     <select id="findByUserName" resultType="com.example.demo.entity.Users">
         SELECT * FROM users
         WHERE name = #{name}

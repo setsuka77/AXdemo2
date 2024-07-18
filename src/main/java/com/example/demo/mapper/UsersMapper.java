@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.entity.Users;
+import com.example.demo.form.LoginForm;
 
 /*
  * ユーザテーブルマッパー
@@ -13,12 +14,10 @@ import com.example.demo.entity.Users;
 public interface UsersMapper {
 
     /*
-     * ログインに必要な情報取得(id、パスワード参照用)
+     * ログインに必要な情報取得(id参照用)
      */
+	@Select(value= "SELECT * FROM users WHERE id = #{id}")
     Users findByUserId(@Param("id") Integer id);
-	
-    @Select("SELECT * FROM users WHERE id = #{id} AND password = #{password}")
-	Users findByUserIdAndPassword(@Param("id") Integer id, @Param("password") String password);
     
     /*
      * 勤怠登録画面 ユーザ情報取得

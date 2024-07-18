@@ -5,8 +5,8 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class LoginForm {
-	
+public class UserManagementForm {
+
 	/** ユーザーID */
 	private Integer id;
 	/** パスワード */
@@ -15,7 +15,9 @@ public class LoginForm {
 	private String name;
 	/** 役職 */
 	private String role;
+	/** 所属部署(部署コード) */
+	private Integer departmentId;
 	/** 有効開始日 */
 	private Date startDate;
-
+	
 }
