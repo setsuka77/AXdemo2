@@ -1,8 +1,11 @@
 package com.example.demo.mapper;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import com.example.demo.dto.UserManagamentDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.LoginForm;
 
@@ -25,9 +28,10 @@ public interface UsersMapper {
     Users findByIdAndNameAndRole(@Param("id") Integer id, @Param("name") String name, @Param("role") String role);
 	
 	/*
-	 * ユーザ管理画面 検索
+	 * ユーザ管理画面
+	 * ユーザ情報取得(検索用)リスト
 	 */
-	Users findByUserName(@Param("name") String name);
+	List<UserManagamentDto> getUserListForSearch(@Param("name") String name);
 	
 	/*
 	 * ユーザ管理画面 登録

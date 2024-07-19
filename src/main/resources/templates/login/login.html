@@ -6,63 +6,74 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>ログイン | Analix社内管理システム</title>
 	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
 </head>
 
 <body>
 
 	<div class="login-container">
-        <form class="login-form" id="loginForm" th:action="@{/login}"  method="post">
-            <h2>Analix社内管理システム</h2>
+		<form class="login-form" id="loginForm" th:action="@{/login}" method="post">
+			<h2>Analix社内管理システム</h2>
 
-            <div class="input-group">
-                <label for="userId">ユーザID</label>
-                <input type="text" id="id" name="id" required>
-                <span class="error-message" id="idError">ユーザIDを入力してください。</span>
-            </div>
+			<div class="input-group">
+				<label for="userId">ユーザID</label>
+				<input type="text" id="id" name="id" required>
+				<span class="error-message" id="idError">ユーザIDを入力してください。</span>
+			</div>
 
-            <div class="input-group">
-                <label for="password">パスワード</label>
-                <input type="password" id="password" name="password" required>
-                <span class="error-message" id="passwordError">パスワードを入力してください。</span>
-            </div>
+			<div class="input-group">
+				<label for="password">パスワード</label>
+				<input type="password" id="password" name="password" required>
+				<span class="error-message" id="passwordError">パスワードを入力してください。</span>
+			</div>
 
-            <button type="submit">ログイン</button>
-            <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+			<div th:if="${error}"  class="alert alert-danger" role="alert">
+				<p th:text="${error}"></p>
+			</div>
 
-        </form>
-    </div>
+			<button type="submit">ログイン</button>
+			<!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const loginForm = document.getElementById("loginForm");
+		</form>
+	</div>
 
-            loginForm.addEventListener("submit", function(event) {
-                let valid = true;
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const loginForm = document.getElementById("loginForm");
 
-                const idInput = document.getElementById("id");
-                const passwordInput = document.getElementById("password");
+			loginForm.addEventListener("submit", function (event) {
+				let valid = true;
 
-                if (idInput.value.trim() === "") {
-                    document.getElementById("idError").style.display = "block";
-                    valid = false;
-                } else {
-                    document.getElementById("idError").style.display = "none";
-                }
+				const idInput = document.getElementById("id");
+				const idError = document.getElementById("idError");
+				const passwordInput = document.getElementById("password");
+				const passwordError = document.getElementById("passwordError");
 
-                if (passwordInput.value.trim() === "") {
-                    document.getElementById("passwordError").style.display = "block";
-                    valid = false;
-                } else {
-                    document.getElementById("passwordError").style.display = "none";
-                }
+				// 初期状態を設定
+				idError.style.display = "none";
+				passwordError.style.display = "none";
 
-                if (!valid) {
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
+				if (idInput.value.trim() === "") {
+					idError.style.display = "block";
+					valid = false;
+				} else {
+					idError.style.display = "none";
+				}
+
+				if (passwordInput.value.trim() === "") {
+					passwordError.style.display = "block";
+					valid = false;
+				} else {
+					passwordError.style.display = "none";
+				}
+
+				if (!valid) {
+					event.preventDefault();
+				}
+			});
+		});
+	</script>
 
 </body>
 

@@ -7,31 +7,34 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.Users;
 import com.example.demo.service.LoginService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class LoginController {
 
-	@Autowired
-	private LoginService loginService;
+    @Autowired
+    private LoginService loginService;
 
-	/*
-	 * ログイン画面初期表示
-	 */
-	@RequestMapping("/")
-	public String login() {
-		return "login/login";
-	}
+    /*
+     * ログイン画面初期表示
+     */
+    @RequestMapping("/")
+    public String login() {
+        return "login/login";
+    }
 
-	/*
-	 * ログインボタン押下
-	 */
-
-	@PostMapping("/login")
-	public String login(@ModelAttribute @RequestParam Integer id, @RequestParam String password, Model model) {
-		Users user = loginService.login(id, password);
+    /*
+     * ログインボタン押下
+     */
+    @PostMapping("/login")
+    public String login(@RequestParam Integer id, @RequestParam String password, RedirectAttributes redirectAttributes,HttpSession session) {
+        Users user = loginService.login(id, password);
+        session.setAttribute("user",user);
         if (user != null) {
             String role = user.getRole();
             if ("1".equals(role)) {
@@ -39,14 +42,12 @@ public class LoginController {
             } else if ("2".equals(role) || "3".equals(role) || "4".equals(role)) {
                 return "redirect:/attendance";
             } else {
-                model.addAttribute("error", "不明なロールです。");
-                return "login/login";
+                redirectAttributes.addFlashAttribute("error", "不明なロールです。");
+                return "redirect:/";
             }
         } else {
-            model.addAttribute("error", "ユーザIDまたはパスワードが間違っています。");
-            return "login/login";
+            redirectAttributes.addFlashAttribute("error", "ユーザIDまたはパスワードが間違っています。");
+            return "redirect:/";
         }
-	}
-	
-	
+    }
 }

@@ -71,9 +71,9 @@ body {
 
 .input-group .error-message {
 	display: none;
-	color: red;
-	font-size: 0.9em;
-	margin-top: 5px;
+	color: red !important; /* 重要度を上げる */
+	font-size: 0.9em !important; /* 重要度を上げる */
+	margin-top: 5px !important; /* 重要度を上げる */
 }
 
 .button-group {

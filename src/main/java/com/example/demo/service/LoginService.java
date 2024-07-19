@@ -19,10 +19,9 @@ public class LoginService {
 //		return user != null && user.getPassword().equals(password);
 //	}
 	
-	public Users login(Integer id, String password,HttpSession session) {
+	public Users login(Integer id, String password) {
         Users user = usersMapper.findByUserId(id);
         if (user != null && user.getPassword().equals(password)) {
-        	session.setAttribute("user",user);
             return user;
         }
         return null;
