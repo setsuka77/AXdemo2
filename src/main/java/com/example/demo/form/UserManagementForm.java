@@ -7,15 +7,15 @@ import lombok.Data;
 @Data
 public class UserManagementForm {
 
-	/** 氏名 */
+	/** ユーザ名 */
 	private String name;
 	/** ユーザーID */
-	private Integer id;
+	private String id;
 	/** パスワード */
 	private String password;
 	/** 役職 */
 	private String role;
 	/** 有効開始日 */
-	private Date startDate;
+	private String startDate;
 	
 }

@@ -119,34 +119,43 @@
 
 	<div class="container">
         <div class="form-container">
-            <form id="user-form" class="login-form" th:object="${userManagementDto}" th:action="@{/api/users/register}" method="post">
+            <!-- 検索用フォーム -->
+            <form id="search-form" method="post" th:action="@{/search}" onsubmit="return validateSearch()">
                 <h2>ユーザ管理</h2>
                 <div class="input-group">
                     <label for="name">ユーザ名</label>
-                    <input type="text" id="name" th:field="*{name}" name="name">
+                    <input type="text" id="name" name="name" th:value="${userForm.name}">
                     <div class="error-message" id="username-error">ユーザ名を入力してください。</div>
                     <div class="button-group">
-                        <button type="button" onclick="searchUser()">検索</button>
+                        <button type="submit">検索</button>
                     </div>
                 </div>
+            </form>
+
+            <!-- 登録用フォーム -->
+            <form id="register-form" method="post" th:action="@{/register}" onsubmit="return validateRegister()">
                 <div class="input-group">
-					<label for="id">ユーザID</label>
-					<input type="text" id="id" name="id" disabled>
-                <input type="hidden" th:field="*{id}" id="id" name="id">
+                    <label for="id">ユーザID</label>
+                    <input type="text" id="id" name="id" th:value="${userForm.id}" disabled>
                 </div>
                 <div class="input-group">
                     <label for="password">パスワード</label>
-                    <input type="password" id="password" th:field="*{password}" name="password">
+                    <input type="password" id="password" name="password" th:value="${userForm.password}">
                     <div class="error-message" id="password-error">パスワードを入力してください。</div>
                 </div>
                 <div class="input-group">
                     <label for="role">権限</label>
-                    <input type="text" id="role" th:field="*{role}" name="role">
-                    <div class="error-message" id="role-error">権限を入力してください。</div>
+                    <select id="role" name="role">
+                        <option value="1" th:selected="${userForm.role == '1'}">管理者</option>
+                        <option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
+                        <option value="3" th:selected="${userForm.role == '3'}">UM</option>
+                        <option value="4" th:selected="${userForm.role == '4'}">メンバー</option>
+                    </select>
+                    <div class="error-message" id="role-error">権限を選択してください。</div>
                 </div>
                 <div class="input-group">
                     <label for="start-date">利用開始日</label>
-                    <input type="date" id="start-date" th:field="*{startDate}" name="startDate">
+                    <input type="text" id="start-date" name="start-date" th:value="${userForm.startDate}">
                     <div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
                 </div>
                 <div class="button-group">
@@ -156,76 +165,32 @@
         </div>
     </div>
 
-	 <script>
-        function searchUser() {
-            const name = document.getElementById('name').value;
-            if (!name) {
+    <script>
+        function validateSearch() {
+            const username = document.getElementById('name').value;
+            if (!username) {
                 document.getElementById('username-error').style.display = 'block';
-                return;
+                return false; // フォームの送信をキャンセル
             } else {
                 document.getElementById('username-error').style.display = 'none';
+                return true; // フォームの送信を許可
             }
-
-            fetch(`/api/users/search?name=${name}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        document.getElementById('id').value = data.id;
-                        document.getElementById('password').value = data.password;
-                        document.getElementById('role').value = data.role;
-                        document.getElementById('start-date').value = data.startDate;
-                    } else {
-                        alert('ユーザが見つかりませんでした。');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('検索中にエラーが発生しました。');
-                });
         }
-        
-        function registerUser() {
-			const name = document.getElementById('name').value;
-			const password = document.getElementById('password').value;
-			const role = document.getElementById('role').value;
-			const department = document.getElementById('department').value;
-			const startDate = document.getElementById('start-date').value;
 
-			// バリデーションチェック
-			if (!name || !password || !role || !department || !startDate) {
-				alert('全ての項目を入力してください。');
-				return;
-			}
+        function validateRegister() {
+            const username = document.getElementById('name').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const startDate = document.getElementById('start-date').value;
 
-			fetch(/api/users/register, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					name: name,
-					password: password,
-					role: role,
-					department: department,
-					startDate: startDate
-				})
-			})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('ユーザの登録に失敗しました。');
-					}
-					return response.text();
-				})
-				.then(message => {
-					alert(message);
-					// 登録成功後の処理を追加する（フォームのクリアなど）
-				})
-				.catch(error => {
-					alert(error.message);
-				});
-		}
-		
+            if (!username || !password || !role || !startDate) {
+                alert('全ての項目を入力してください。');
+                return false; // フォームの送信をキャンセル
+            }
+            return true; // フォームの送信を許可
+        }
     </script>
+
 </body>
 
 </html>

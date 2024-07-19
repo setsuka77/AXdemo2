@@ -1,65 +1,51 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UserManagamentDto;
+import com.example.demo.dto.UserManagementDto;
 import com.example.demo.form.UserManagementForm;
 import com.example.demo.service.UserManagementService;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/userManagement")
 public class UserManagementController {
-
+	
 	@Autowired
-	private UserManagementService userService;
+    private UserManagementService userManagementService;
 
-	@GetMapping("/list")
+
+	@RequestMapping("/userManagement/list")
 	public String userManage(Model model) {
-		model.addAttribute("userManagementForm", new UserManagementForm());
+		model.addAttribute("userForm", new UserManagementForm());
 		return "userManagement/list";
 	}
 
-	/*
-	 * 検索ボタン 押下
-	 */
-//	@GetMapping("/search")
-//	@ResponseBody
-//	public UserManagementForm searchUser(@RequestParam String name, Model model) {
-//		// 検索処理を実装する
-//		List<UserManagamentDto> UserListForSearch = userService.getUserListForSearch(name);
-//
-//		// 結果をモデルに追加
-//		model.addAttribute("UserDetailDto", userDetailForSearch);
-//		model.addAttribute("userName", userName);
-//
-//		return "userManagement/list";
-//	}
+	@PostMapping("/search")
+    public String searchUser(@ModelAttribute UserManagementForm userForm, Model model) {
+        UserManagementDto user = userManagementService.searchUserByName(userForm.getName());
+        System.out.println("フォームの名前：" + userForm.getName());
+
+        if (user != null) {
+            userForm.setId(user.getId());
+            userForm.setPassword(user.getPassword());
+            userForm.setRole(user.getRole());
+            userForm.setStartDate(user.getStartDate());
+        } else {
+            userForm.setId(userManagementService.generateUniqueUserId());
+        }
+        model.addAttribute("userForm", userForm);
+        return "userManagement/list";
+    }
 
 //    @PostMapping("/register")
-//    public String registerUser(@ModelAttribute("userManagementForm") @Validated UserManagementForm form,
-//                               BindingResult bindingResult,Model model) {
-//        if (bindingResult.hasErrors()) {
+//    public String registerUser(@ModelAttribute UserManagementForm userForm, Model model) {
+//        if (userForm.getName().isEmpty() || userForm.getPassword().isEmpty() || userForm.getRole().isEmpty() || userForm.getStartDate().isEmpty()) {
+//            model.addAttribute("errorMessage", "すべてのフィールドを入力してください。");
 //            return "userManagement/list";
 //        }
-//
-//        // 重複チェック
-//        if (userService.existsByUsername(form.getName())) {
-//            model.addAttribute("errorMessage", "既に同じユーザ名が登録されています。");
-//            return "userManagement/list";
-//        }
-//
-//        // ユーザ登録
-//        userService.registerUser(form);
-//
-//        model.addAttribute("successMessage", "ユーザを登録しました。");
+//        userManagementService.registerUser(userForm);
 //        return "redirect:/userManagement/list";
 //    }
-
+	
 }

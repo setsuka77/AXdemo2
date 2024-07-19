@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import com.example.demo.dto.UserManagamentDto;
+import com.example.demo.dto.UserManagementDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.LoginForm;
 
@@ -29,13 +29,19 @@ public interface UsersMapper {
 	
 	/*
 	 * ユーザ管理画面
-	 * ユーザ情報取得(検索用)リスト
+	 * ユーザ情報取得(検索用)
 	 */
-	List<UserManagamentDto> getUserListForSearch(@Param("name") String name);
+    @Select("SELECT * FROM users WHERE name = #{name}")
+    Users findByName(String name);
 	
 	/*
 	 * ユーザ管理画面 登録
 	 */
-	Boolean insertUser(Users user);
+	void insertUser(Users user);
+	
+	/*
+	 * ユーザ管理画面 更新
+	 */
+	void updateUser(Users user);
 	
 }

@@ -9,20 +9,27 @@
         WHERE id = #{id}
     </select>
     
+    <!-- 勤怠管理画面で使用 -->
+    <select id="findByIdAndNameAndRole" resultType="com.example.demo.entity.Users">
+    	SELECT * FROM users
+        WHERE id = #{id} AND name = #{name} AND role = #{role}  
+    </select>
+    
     <!-- ユーザ管理画面で使用 -->
     <select id="findByUserName" resultType="com.example.demo.entity.Users">
         SELECT * FROM users
         WHERE name = #{name}
     </select>
     
-    <select id="findByIdAndNameAndRole" resultType="com.example.demo.entity.Users">
-    	SELECT * FROM users
-        WHERE id = #{id} AND name = #{name} AND role = #{role}  
-    </select>
-    
     <insert id="insertUser" parameterType="com.example.demo.entity.Users">
         INSERT INTO users (password, name, role, start_date)
         VALUES (#{password}, #{name}, #{role}, #{startDate})
     </insert>
+    
+    <update id="updateUser" parameterType="com.example.demo.entity.Users">
+        UPDATE users SET password = #{password}, role = #{role}, start_date = #{startDate}
+        WHERE name = #{name}
+    </update>
+    
     
 </mapper>
