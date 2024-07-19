@@ -25,5 +25,8 @@ public class AttendanceDto {
 	
 	/** 勤怠登録情報DTOリスト */
 	private List<AttendanceDto> attendanceDto;
-
+	/**月の初日 */
+	private Date startDate;
+	/**月の最終日 */
+	private Date EndDate;
 }

@@ -27,7 +27,7 @@ public interface AttendanceMapper {
      * @param month
      * @return 勤怠登録情報用DTOリスト
      */
-    List<AttendanceDto> findAttendanceByUserIdAndMonth(@Param("userId") Integer userId, @Param("year") int year, @Param("month") int month);
+	 List<AttendanceDto> findAttendanceByUserIdAndDate(@Param("userId") Integer userId, @Param("startDate") Integer year, @Param("endDate") Integer month);
 	
 	
 	/*

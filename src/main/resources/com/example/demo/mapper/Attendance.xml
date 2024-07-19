@@ -9,7 +9,7 @@
 	</select>
 
 	   <!-- 勤怠登録情報用DTOリスト取得 -->
-	<select id="findAttendanceByUserIdAndMonth" parameterType="map" resultType="com.example.demo.dto.AttendanceDto">
+	<select id="findAttendanceByUserIdAndDate" parameterType="map" resultType="com.example.demo.dto.AttendanceDto">
 		SELECT * FROM attendance
 		WHERE user_id = #{userId}
 		AND

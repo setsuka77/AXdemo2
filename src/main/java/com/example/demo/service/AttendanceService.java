@@ -17,7 +17,7 @@ public class AttendanceService {
 
     // 勤怠登録情報取得
     public List<AttendanceDto> getAttendanceByUserIdAndMonth(int userId, Integer year, Integer month) {
-        return attendanceMapper.findAttendanceByUserIdAndMonth(userId, year, month);
+        return attendanceMapper.findAttendanceByUserIdAndDate(userId, year, month);
     }
 
     // 勤怠登録情報登録

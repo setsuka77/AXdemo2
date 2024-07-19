@@ -8,13 +8,17 @@
     <table>
         <tr>
             <td>ユーザー名:</td>
-          <!--  <td th:text="${loginUser.name}"></td>-->
+           <td th:text="${loginUser.name}"></td> 
             <td>ユーザーID:</td>
-          <!--  <td th:text="${loginUser.id}"></td> -->
+            <td th:text="${loginUser.id}"></td> 
             <td>ステータス:</td>
           <!--  <td th:text="${monthlyAttendanceReqDto.status}"></td> -->
         </tr>
     </table>
+	<div th:if="${error}" class="alert alert-danger" role="alert">
+		<p th:text="${error}"></p>
+	</div>
+
 
     <div class="row">
         <div class="bs-component col-sm-12">
