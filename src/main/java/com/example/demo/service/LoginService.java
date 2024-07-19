@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Users;
-import com.example.demo.form.LoginForm;
-import com.example.demo.mapper.UsersMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.entity.Users;
+import com.example.demo.mapper.UsersMapper;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class LoginService {
@@ -17,11 +19,14 @@ public class LoginService {
 //		return user != null && user.getPassword().equals(password);
 //	}
 	
-	public Users login(Integer id, String password) {
+	public Users login(Integer id, String password,HttpSession session) {
         Users user = usersMapper.findByUserId(id);
         if (user != null && user.getPassword().equals(password)) {
+        	session.setAttribute("user",user);
             return user;
         }
         return null;
     }
+	
+	
 }
