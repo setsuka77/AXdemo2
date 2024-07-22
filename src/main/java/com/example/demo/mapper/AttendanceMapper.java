@@ -24,7 +24,8 @@ public interface AttendanceMapper {
      * 勤怠登録情報用DTOリスト取得
      * 
      * @param userId
-     * @param 
+     * @param startDate
+     * @param endDate
      * @return 勤怠登録情報用DTOリスト
      */
 	List<AttendanceDto> findAttendanceByUserIdAndDateRange(@Param("userId") Integer userId, @Param("startDate") Date startDate,@Param("endDate") Date endDate);

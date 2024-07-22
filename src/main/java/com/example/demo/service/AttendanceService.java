@@ -55,7 +55,7 @@ public class AttendanceService {
 	
 	/*//勤怠フォームの生成
 	public AttendanceForm setAttendanceForm(List<AttendanceDto> attendanceDtoList) {
-	        // 新しい AttendanceForm オブジェクトを作成
+	        
 	        AttendanceForm attendanceForm = new AttendanceForm();
 	        // AttendanceForm に必要な初期値や設定を行う
 	        attendanceForm.setAttendanceList(new ArrayList<AttendanceForm>());
@@ -97,7 +97,7 @@ public class AttendanceService {
 	
 	
 	// 勤怠登録情報登録
-	public void registerAttendance(AttendanceDto attendanceDto) {
+	public void registerAttendance() {
 		Attendance attendance = new Attendance();
 		attendance.setUserId(attendanceDto.getUserId());
 		attendance.setStatus(attendanceDto.getStatus());

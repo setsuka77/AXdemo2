@@ -76,18 +76,15 @@ public class AttendanceController {
 	     //DBから勤怠情報取得
 	     List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendarList,loginUser);
 	     System.out.println(attendanceDtoList);
-	     //勤怠フォームへの生成
-	    // AttendanceForm attendanceForm= attendanceService.setAttendanceForm(attendanceDtoList);
-	     
+	     //勤怠フォームの生成
+	     //AttendanceForm attendanceForm= attendanceService.setAttendanceForm(attendanceDtoList);
+
 	     model.addAttribute("loginUser",loginUser);
 	     model.addAttribute("calendarList", calendarList);
-	     model.addAttribute("attendanceDtoList",attendanceDtoList);
+	     //model.addAttribute("attendanceForm",attendanceForm);
 	     return "attendance/record";
 	 }
 
-
-
-	 
 
 	
 	/*
@@ -95,13 +92,15 @@ public class AttendanceController {
 	 * @param model
 	 * @return 勤怠登録画面
 	 */
-	/*	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
-		public String registAttendance(AttendanceDto attendanceDto,Model model) {
-			//登録処理
-			attendanceService.registerAttendance(attendanceDto);
-			
-			return "attendance/record";
-		}*/
+	/*@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
+	public String registAttendance(AttendanceForm attendanceForm,Model model) {
+		//登録処理
+		attendanceService.registerAttendance();
+		//一覧の再取得
+		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance();
+		
+		return "attendance/record";
+	}*/
 	
 	
 	

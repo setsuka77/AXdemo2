@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import lombok.Data;
@@ -17,6 +18,12 @@ public class CalendarDto {
 	public CalendarDto(LocalDate date,String dayOfWeek) {
         this.date = date;
         this.dayOfWeek = dayOfWeek;
+    }
+
+	// 日付を M/d 形式で表示するためのメソッド
+    public String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d");
+        return date.format(formatter);
     }
 	
 }

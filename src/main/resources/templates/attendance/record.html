@@ -62,11 +62,11 @@
             </thead>
             <tbody>
                 <tr th:each="calendar : ${calendarList}">
-                    <td th:text="${calendar.date}"></td>
+                    <td th:text="${calendar.getFormattedDate}"></td>
                     <td th:text="${calendar.dayOfWeek}"></td>
                     <!-- Check if the date is present in attendanceDtoList -->
                     <td>
-                        <select th:if="${#lists.contains(attendanceDtoList, calendar.date)}" 
+                        <select th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
                                 th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].status'" class="form-control">
                             <option value="0" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 0}">通常出勤</option>
                             <option value="1" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 1}">休日</option>
@@ -81,25 +81,25 @@
                             <option value="10" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 10}">代替出勤</option>
                             <option value="11" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 11}">代替休日</option>
                         </select>
-                        <input type="text" th:if="${!#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+                        <input type="text" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
                     </td>
                     <td>
-                        <input type="time" th:if="${#lists.contains(attendanceDtoList, calendar.date)}" 
+                        <input type="time" th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
                                th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].startTime'" 
                                class="form-control" th:value="${attendanceDtoList[calendar.date.dayOfMonth].startTime}">
-                        <input type="time" th:if="${!#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+                        <input type="time" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
                     </td>
                     <td>
-                        <input type="time" th:if="${#lists.contains(attendanceDtoList, calendar.date)}" 
+                        <input type="time" th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
                                th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].endTime'" 
                                class="form-control" th:value="${attendanceDtoList[calendar.date.dayOfMonth].endTime}">
-                        <input type="time" th:if="${!#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+                        <input type="time" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
                     </td>
                     <td>
-                        <input type="text" th:if="${#lists.contains(attendanceDtoList, calendar.date)}" 
+                        <input type="text" th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
                                th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].remarks'" 
                                class="form-control" th:value="${attendanceDtoList[calendar.date.dayOfMonth].remarks}">
-                        <input type="text" th:if="${!#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+                        <input type="text" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
                     </td>
                 </tr>
             </tbody>
