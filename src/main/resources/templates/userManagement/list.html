@@ -118,78 +118,93 @@
 <body>
 
 	<div class="container">
-        <div class="form-container">
-            <!-- 検索用フォーム -->
-            <form id="search-form" method="post" th:action="@{/search}" onsubmit="return validateSearch()">
-                <h2>ユーザ管理</h2>
-                <div class="input-group">
-                    <label for="name">ユーザ名</label>
-                    <input type="text" id="name" name="name" th:value="${userForm.name}">
-                    <div class="error-message" id="username-error">ユーザ名を入力してください。</div>
-                    <div class="button-group">
-                        <button type="submit">検索</button>
-                    </div>
-                </div>
-            </form>
+		<div class="form-container">
+			<!-- 検索用フォーム -->
+			<form id="search-form" method="post" th:action="@{/search}" th:object="${userForm}" onsubmit="return validateSearch()">
+				<h2>ユーザ管理</h2>
+				<div class="input-group">
+					<label for="name">ユーザ名</label>
+					<input type="text" id="name" name="name" th:field="*{name}">
+					<div class="error-message" id="username-error">ユーザ名を入力してください。</div>
+					<div class="button-group">
+						<button type="submit">検索</button>
+					</div>
+				</div>
+			</form>
 
-            <!-- 登録用フォーム -->
-            <form id="register-form" method="post" th:action="@{/register}" onsubmit="return validateRegister()">
-                <div class="input-group">
-                    <label for="id">ユーザID</label>
-                    <input type="text" id="id" name="id" th:value="${userForm.id}" disabled>
-                </div>
-                <div class="input-group">
-                    <label for="password">パスワード</label>
-                    <input type="password" id="password" name="password" th:value="${userForm.password}">
-                    <div class="error-message" id="password-error">パスワードを入力してください。</div>
-                </div>
-                <div class="input-group">
-                    <label for="role">権限</label>
-                    <select id="role" name="role">
-                        <option value="1" th:selected="${userForm.role == '1'}">管理者</option>
-                        <option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
-                        <option value="3" th:selected="${userForm.role == '3'}">UM</option>
-                        <option value="4" th:selected="${userForm.role == '4'}">メンバー</option>
-                    </select>
-                    <div class="error-message" id="role-error">権限を選択してください。</div>
-                </div>
-                <div class="input-group">
-                    <label for="start-date">利用開始日</label>
-                    <input type="text" id="start-date" name="start-date" th:value="${userForm.startDate}">
-                    <div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
-                </div>
-                <div class="button-group">
-                    <button type="submit">登録</button>
-                </div>
-            </form>
-        </div>
-    </div>
+			<!-- 登録用フォーム -->
+			<form id="register-form" method="post" th:action="@{/register}" th:object="${userForm}" onsubmit="return validateRegister()">
+				<input type="hidden" id="hidden-name" name="name">
+				<input type="hidden" id="hidden-id" name="id">
+				<div class="input-group">
+					<label for="id">ユーザID</label>
+					<input type="text" id="id" name="id" th:field="*{id}" disabled>
+				</div>
+				<div class="input-group">
+					<label for="password">パスワード</label>
+					<input type="password" id="password" name="password" th:field="*{password}" required>
+					<div class="error-message" id="password-error">パスワードを入力してください。</div>
+				</div>
+				<div class="input-group">
+					<label for="role">権限</label>
+					<select id="role" name="role" required>
+						<option value="1" th:selected="${userForm.role == '1'}">管理者</option>
+						<option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
+						<option value="3" th:selected="${userForm.role == '3'}">UM</option>
+						<option value="4" th:selected="${userForm.role == '4'}">メンバー</option>
+					</select>
+					<div class="error-message" id="role-error">権限を選択してください。</div>
+				</div>
+				<div class="input-group">
+					<label for="start-date">利用開始日</label>
+					<input type="text" id="start-date" name="startDate" th:field="*{startDate}" placeholder="YYYY/MM/DD" required>
+					<div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
+				</div>
+				<div class="button-group">
+					<button type="submit">登録</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
-    <script>
-        function validateSearch() {
-            const username = document.getElementById('name').value;
-            if (!username) {
-                document.getElementById('username-error').style.display = 'block';
-                return false; // フォームの送信をキャンセル
-            } else {
-                document.getElementById('username-error').style.display = 'none';
-                return true; // フォームの送信を許可
-            }
-        }
+	<script>
+		//検索時必須チェック
+		function validateSearch() {
+			const username = document.getElementById('name').value;
+			if (!username) {
+				document.getElementById('username-error').style.display = 'block';
+				return false; // フォームの送信をキャンセル
+			} else {
+				document.getElementById('username-error').style.display = 'none';
+				return true; // フォームの送信を許可
+			}
+		}
 
-        function validateRegister() {
-            const username = document.getElementById('name').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
-            const startDate = document.getElementById('start-date').value;
+		document.getElementById('register-form').onsubmit = function () {
+			// 検索フォームからの値を取得
+			var searchName = document.getElementById('name').value;
+			var searchId = document.getElementById('id').value;
 
-            if (!username || !password || !role || !startDate) {
-                alert('全ての項目を入力してください。');
-                return false; // フォームの送信をキャンセル
-            }
-            return true; // フォームの送信を許可
-        }
-    </script>
+			// 登録フォームのhiddenフィールドに値を設定
+			document.getElementById('hidden-name').value = searchName;
+			document.getElementById('hidden-id').value = searchId;
+		};
+
+
+		//登録・更新時必須チェック
+		function validateRegister() {
+			const username = document.getElementById('name').value;
+			const password = document.getElementById('password').value;
+			const role = document.getElementById('role').value;
+			const startDate = document.getElementById('start-date').value;
+
+			if (!username || !password || !role || !startDate) {
+				alert('全ての項目を入力してください。');
+				return false; // フォームの送信をキャンセル
+			}
+			return true; // フォームの送信を許可
+		}
+	</script>
 
 </body>
 

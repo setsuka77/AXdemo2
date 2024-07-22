@@ -1,18 +1,19 @@
 package com.example.demo.entity;
 
-import java.sql.Date;
+import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.Data;
 
 @Data
 public class Users {
 
+	/** ユーザ名 */
+	private String name;
 	/** ユーザーID */
 	private Integer id;
 	/** パスワード */
 	private String password;
-	/** 氏名 */
-	private String name;
 	/** 役職 */
 	private String role;
 	/** 有効開始日 */

@@ -1,13 +1,13 @@
 package com.example.demo.mapper;
-import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import java.time.LocalDate;
+
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.LocalDateTypeHandler;
 
 import com.example.demo.dto.UserManagementDto;
 import com.example.demo.entity.Users;
-import com.example.demo.form.LoginForm;
 
 /*
  * ユーザテーブルマッパー
@@ -16,32 +16,53 @@ import com.example.demo.form.LoginForm;
 @Mapper
 public interface UsersMapper {
 
-    /*
-     * ログインに必要な情報取得(id参照用)
-     */
-	@Select(value= "SELECT * FROM users WHERE id = #{id}")
-    Users findByUserId(@Param("id") Integer id);
-    
-    /*
-     * 勤怠登録画面 ユーザ情報取得
-     */
-    Users findByIdAndNameAndRole(@Param("id") Integer id, @Param("name") String name, @Param("role") String role);
+	/*
+	 * ログイン画面 ログインに必要な情報取得(id参照用)
+	 */
+	@Select(value = "SELECT * FROM users WHERE id = #{id}")
+	Users findByUserId(@Param("id") Integer id);
+
+	/*
+	 * 勤怠登録画面 ユーザ情報取得
+	 */
+	Users findByIdAndNameAndRole(@Param("id") Integer id, @Param("name") String name, @Param("role") String role);
+
+	/*
+	 * ユーザ管理画面 ユーザ情報取得(検索用)
+	 */
+	
+	@Results({
+		@Result(property = "startDate", column = "start_date", javaType = LocalDate.class, jdbcType = JdbcType.DATE, typeHandler = LocalDateTypeHandler.class)
+	})
+	@Select("SELECT * FROM users WHERE name = #{name}")
+	UserManagementDto findByName(@Param("name") String name);
+
+	/*
+	 * ユーザ管理画面 新規ユーザID生成用
+	 */
+	@Select("SELECT MAX(id) FROM users")
+	Integer findMaxId();
 	
 	/*
-	 * ユーザ管理画面
-	 * ユーザ情報取得(検索用)
+	 * ユーザ管理画面 登録更新判別用
 	 */
-    @Select("SELECT * FROM users WHERE name = #{name}")
-    Users findByName(String name);
-	
+	@Select("SELECT * FROM users WHERE id = #{id}")
+	UserManagementDto identifyUserId(@Param("id") Integer id);
+
 	/*
-	 * ユーザ管理画面 登録
+	 * ユーザ管理画面 新規ユーザ情報登録
 	 */
-	void insertUser(Users user);
-	
+	@Insert("INSERT INTO users (id, name, password, role, start_date) VALUES (#{id}, #{name}, #{password}, #{role}, #{startDate})")
+	void insertUser(UserManagementDto user);
+
 	/*
-	 * ユーザ管理画面 更新
+	 * ユーザ管理画面 既存ユーザ情報更新
 	 */
-	void updateUser(Users user);
-	
+	@Update("UPDATE users SET password = #{password}, role = #{role}, start_date = #{startDate} WHERE id = #{id}")
+	void updateUser(UserManagementDto user);
+
+	/*
+	 * ユーザ管理画面 既存ユーザ情報削除
+	 */
+
 }

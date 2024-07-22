@@ -3,33 +3,57 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.Users">
 
+	<resultMap id="userResultMap"
+		type="com.example.demo.dto.UserManagementDto">
+		<result property="startDate" column="start_date"
+			javaType="java.time.LocalDate" jdbcType="DATE"
+			typeHandler="org.apache.ibatis.type.LocalDateTypeHandler" />
+	</resultMap>
+
 	<!-- ログイン画面で使用 -->
-	<select id="findByUserId" resultType="com.example.demo.entity.Users">
-        SELECT * FROM users
-        WHERE id = #{id}
-    </select>
-    
-    <!-- 勤怠管理画面で使用 -->
-    <select id="findByIdAndNameAndRole" resultType="com.example.demo.entity.Users">
-    	SELECT * FROM users
-        WHERE id = #{id} AND name = #{name} AND role = #{role}  
-    </select>
-    
-    <!-- ユーザ管理画面で使用 -->
-    <select id="findByUserName" resultType="com.example.demo.entity.Users">
-        SELECT * FROM users
-        WHERE name = #{name}
-    </select>
-    
-    <insert id="insertUser" parameterType="com.example.demo.entity.Users">
-        INSERT INTO users (password, name, role, start_date)
-        VALUES (#{password}, #{name}, #{role}, #{startDate})
-    </insert>
-    
-    <update id="updateUser" parameterType="com.example.demo.entity.Users">
-        UPDATE users SET password = #{password}, role = #{role}, start_date = #{startDate}
-        WHERE name = #{name}
-    </update>
-    
-    
+	<select id="findByUserId"
+		resultType="com.example.demo.entity.Users">
+		SELECT * FROM users
+		WHERE id = #{id}
+	</select>
+
+	<!-- 勤怠管理画面で使用 -->
+	<select id="findByIdAndNameAndRole"
+		resultType="com.example.demo.entity.Users">
+		SELECT * FROM users
+		WHERE id = #{id} AND name = #{name} AND
+		role = #{role}
+	</select>
+
+	<!-- ユーザ管理画面で使用 -->
+	<select id="findByUserName"
+		resultType="com.example.demo.dto.UserManagementDto">
+		SELECT * FROM users
+		WHERE name = #{name}
+	</select>
+
+	<select id="findMaxId" resultType="java.lang.Integer">
+		SELECT MAX(id) FROM users
+	</select>
+
+	<select id="identifyUserId"
+		resultType="com.example.demo.dto.UserManagementDto">
+		SELECT * FROM users
+		WHERE id = #{id}
+	</select>
+
+	<insert id="insertUser"
+		parameterType="com.example.demo.dto.UserManagementDto">
+		INSERT INTO users (id, name, password, role, start_date)
+		VALUES (#{id}, #{name}, #{password}, #{role}, #{startDate})
+	</insert>
+
+	<update id="updateUser"
+		parameterType="com.example.demo.dto.UserManagementDto">
+		UPDATE users SET password = #{password}, role = #{role},
+		start_date =
+		#{startDate} WHERE id = #{id}
+	</update>
+
+
 </mapper>

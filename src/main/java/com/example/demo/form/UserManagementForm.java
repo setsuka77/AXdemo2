@@ -1,6 +1,6 @@
 package com.example.demo.form;
 
-import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
 
@@ -10,12 +10,13 @@ public class UserManagementForm {
 	/** ユーザ名 */
 	private String name;
 	/** ユーザーID */
-	private String id;
+	private Integer id;
 	/** パスワード */
 	private String password;
 	/** 役職 */
 	private String role;
 	/** 有効開始日 */
+	@DateTimeFormat(pattern = "yyyy/MM/dd") // 入力フォームのフォーマットに合わせる
 	private String startDate;
 	
 }
