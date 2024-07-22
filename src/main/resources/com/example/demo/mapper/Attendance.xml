@@ -9,12 +9,12 @@
 	</select>
 
 	   <!-- 勤怠登録情報用DTOリスト取得 -->
-	<select id="findAttendanceByUserIdAndDate" parameterType="map" resultType="com.example.demo.dto.AttendanceDto">
-		SELECT * FROM attendance
-		WHERE user_id = #{userId}
-		AND
-		YEAR(date) = #{year}
-		AND MONTH(date) = #{month}
+	<select id="findAttendanceByUserIdAndDateRange" resultType="com.example.demo.dto.AttendanceDto">
+    SELECT a.* 
+    FROM attendance a
+    INNER JOIN users u ON a.user_id = u.id
+    WHERE u.id = #{userId} 
+    AND a.date BETWEEN #{startDate} AND #{endDate}
 	</select>
 
 	<!-- 勤怠登録情報登録 -->

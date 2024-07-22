@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -23,11 +24,10 @@ public interface AttendanceMapper {
      * 勤怠登録情報用DTOリスト取得
      * 
      * @param userId
-     * @param year
-     * @param month
+     * @param 
      * @return 勤怠登録情報用DTOリスト
      */
-	 List<AttendanceDto> findAttendanceByUserIdAndDate(@Param("userId") Integer userId, @Param("startDate") Integer year, @Param("endDate") Integer month);
+	List<AttendanceDto> findAttendanceByUserIdAndDateRange(@Param("userId") Integer userId, @Param("startDate") Date startDate,@Param("endDate") Date endDate);
 	
 	
 	/*

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
- 
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.dto.AttendanceDto;
+import com.example.demo.dto.CalendarDto;
 import com.example.demo.entity.Users;
-import com.example.demo.mapper.AttendanceMapper;
 import com.example.demo.service.AttendanceService;
 
 import jakarta.servlet.http.HttpSession;
@@ -19,8 +21,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class AttendanceController {
 	
-	@Autowired
-	private AttendanceMapper attendanceMapper;
+	
 	
 	@Autowired
 	private AttendanceService attendanceService;
@@ -63,16 +64,29 @@ public class AttendanceController {
 	 */
 	 @PostMapping("/attendance")
 	 public String showAttendance(@RequestParam("year") Integer year, @RequestParam("month") Integer month, Model model,HttpSession session) {
-	     //  年と月に必須チェックを入れる
+		//ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		 //  年と月に必須チェックを入れる
 	     if (year == null || month == null) {
 	         model.addAttribute("error", "年と月を選択してください");
 	         return "attendance/record";
 	     }
+	     //日付リスト作成
+	     List<CalendarDto> calendarList = attendanceService.generateCalendar(year, month);
+	     //DBから勤怠情報取得
+	     List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendarList,loginUser);
+	     System.out.println(attendanceDtoList);
+	     //勤怠フォームへの生成
+	    // AttendanceForm attendanceForm= attendanceService.setAttendanceForm(attendanceDtoList);
 	     
-	
-
+	     model.addAttribute("loginUser",loginUser);
+	     model.addAttribute("calendarList", calendarList);
+	     model.addAttribute("attendanceDtoList",attendanceDtoList);
 	     return "attendance/record";
 	 }
+
+
+
 	 
 
 	

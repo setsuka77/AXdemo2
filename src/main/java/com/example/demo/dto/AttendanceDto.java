@@ -1,7 +1,6 @@
 package com.example.demo.dto;
 
 import java.util.Date;
-import java.util.List;
 
 import lombok.Data;
 
@@ -23,10 +22,5 @@ public class AttendanceDto {
 	/** 備考 */
 	private String remarks;
 	
-	/** 勤怠登録情報DTOリスト */
-	private List<AttendanceDto> attendanceDto;
-	/**月の初日 */
-	private Date startDate;
-	/**月の最終日 */
-	private Date EndDate;
+
 }
