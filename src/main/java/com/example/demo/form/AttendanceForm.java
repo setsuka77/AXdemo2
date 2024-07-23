@@ -22,6 +22,7 @@ public class AttendanceForm {
 	private String endTime;
 	/** 備考 */
 	private String remarks;
+	
 	/**日次勤怠フォームlist作成*/
 	private List<DailyAttendanceForm> dailyAttendanceList;
 

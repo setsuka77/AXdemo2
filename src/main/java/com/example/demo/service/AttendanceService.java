@@ -93,18 +93,25 @@ public class AttendanceService {
 	//登録処理
 	public String registAttendance(AttendanceForm attendanceForm) {
 	        List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-	        for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
-	            Attendance attendance = new Attendance();
-	            attendance.setId(dailyForm.getId());
-	            attendance.setUserId(dailyForm.getUserId());
-	            attendance.setStatus(dailyForm.getStatus());
-	            attendance.setDate(dailyForm.getDate());
-	            attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
-	            attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
-	            attendance.setRemarks(dailyForm.getRemarks());
-
-	            // 勤怠情報を更新
-	            attendanceMapper.update(attendance);
+	        if (dailyAttendanceList == null) {
+	            dailyAttendanceList = new ArrayList<>(); // 空のリストで初期化
+	            System.out.println("テスト4");
+	        
+		        for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
+		            Attendance attendance = new Attendance();
+		            attendance.setId(dailyForm.getId());
+		            attendance.setUserId(dailyForm.getUserId());
+		            attendance.setStatus(dailyForm.getStatus());
+		            attendance.setDate(dailyForm.getDate());
+		            attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
+		            attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
+		            attendance.setRemarks(dailyForm.getRemarks());
+		            
+		            System.out.println("テスト5");
+		            // 勤怠情報を更新
+		            attendanceMapper.update(attendance);
+		            System.out.println("テスト6");
+		        }
 	        }
 
 	        return "勤怠情報が登録されました";

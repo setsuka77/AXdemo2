@@ -43,8 +43,8 @@
     </div>
 
     <form th:action="@{/attendance}" method="post">
-        <button type="submit" th:if="${role == 'manager'}" name="rejected" class="btn btn-primary">却下</button>
-        <button type="submit" th:if="${role == 'manager'}" name="approval" class="btn btn-primary">承認</button>
+        <button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="btn btn-primary">却下</button>
+        <button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="btn btn-primary">承認</button>
         <button type="submit" name="request" class="btn btn-primary">承認申請</button>
         <button type="submit" name="regist" class="btn btn-primary">登録</button>
 
@@ -94,6 +94,7 @@
 						<input type="text" th:name="|attendanceForm.remarks|"
 							th:value="${attendanceForm.remarks}" class="form-control"></input>
                     </td>
+                  </tr>
             </tbody>
         </table>
     </form>
