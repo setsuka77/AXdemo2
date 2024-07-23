@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
+import com.example.demo.entity.Attendance;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.form.DailyAttendanceForm;
@@ -84,27 +86,30 @@ public class AttendanceService {
             attendanceForm.getDailyAttendanceList().add(dailyForm);
         }
         System.out.println("テスト1");
-	    // 完成した AttendanceForm を返す
-        return attendanceForm;
-	 }
-	
 	    
+        return attendanceForm;
+	}
+
+	//登録処理
+	public String registAttendance(AttendanceForm attendanceForm) {
+	        List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
+	        for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
+	            Attendance attendance = new Attendance();
+	            attendance.setId(dailyForm.getId());
+	            attendance.setUserId(dailyForm.getUserId());
+	            attendance.setStatus(dailyForm.getStatus());
+	            attendance.setDate(dailyForm.getDate());
+	            attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
+	            attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
+	            attendance.setRemarks(dailyForm.getRemarks());
+
+	            // 勤怠情報を更新
+	            attendanceMapper.update(attendance);
+	        }
+
+	        return "勤怠情報が登録されました";
+	 }
 
 	
-	
-	// 勤怠登録情報登録
-	/*public void registerAttendance() {
-		Attendance attendance = new Attendance();
-		attendance.setUserId(attendanceDto.getUserId());
-		attendance.setStatus(attendanceDto.getStatus());
-		attendance.setDate(attendanceDto.getDate());
-		attendance.setStartTime(attendanceDto.getStartTime());
-		attendance.setEndTime(attendanceDto.getEndTime());
-		attendance.setRemarks(attendanceDto.getRemarks());
-	
-		attendanceMapper.insert(attendance);
-	}*/
 
-
-	
 }

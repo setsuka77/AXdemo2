@@ -5,6 +5,7 @@
     <title>勤怠管理登録画面</title>
 </head>
 <body>
+
     <table>
         <tr>
             <td>ユーザー名:</td>
@@ -23,27 +24,25 @@
             <form th:action="@{/attendance}" method="post">
                 <div class="form-group">
                     表示年月:
-                    <div class="input-group">
-                        <select id="year" name="year" required class="form-control">
-                            <option value="" disabled selected>年を選択</option>
+                        <select id="year" name="year">
+                            <option hidden>年を選択</option>
                             <option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
                         </select>
-                        <span class="input-group-text">年</span>
+                        <span>年</span>
 
-                        <select id="month" name="month" required class="form-control">
-                            <option value="" disabled selected>月を選択</option>
+                        <select id="month" name="month">
+                            <option hidden>月を選択</option>
                             <option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
                         </select>
-                        <span class="input-group-text">月</span>
+                        <span>月</span>
 
                         <button type="submit" name="display" class="btn btn-primary">表示</button>
-                    </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <form th:action="@{/attendance/register}" method="post">
+    <form th:action="@{/attendance}" method="post">
         <button type="submit" th:if="${role == 'manager'}" name="rejected" class="btn btn-primary">却下</button>
         <button type="submit" th:if="${role == 'manager'}" name="approval" class="btn btn-primary">承認</button>
         <button type="submit" name="request" class="btn btn-primary">承認申請</button>
@@ -64,44 +63,37 @@
                 <tr th:each="calendar : ${calendarList}">
                     <td th:text="${calendar.getFormattedDate}"></td>
                     <td th:text="${calendar.dayOfWeek}"></td>
-                    <!-- Check if the date is present in attendanceDtoList -->
                     <td>
-                        <select th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
-                                th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].status'" class="form-control">
-                            <option value="0" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 0}">通常出勤</option>
-                            <option value="1" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 1}">休日</option>
-                            <option value="2" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 2}">祝日</option>
-                            <option value="3" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 3}">遅刻</option>
-                            <option value="4" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 4}">有給</option>
-                            <option value="5" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 5}">欠勤</option>
-                            <option value="6" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 6}">早退</option>
-                            <option value="7" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 7}">時間外勤務</option>
-                            <option value="8" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 8}">振替出勤</option>
-                            <option value="9" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 9}">振替休日</option>
-                            <option value="10" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 10}">代替出勤</option>
-                            <option value="11" th:selected="${attendanceDtoList[calendar.date.dayOfMonth].status == 11}">代替休日</option>
+                        <select th:name="|attendanceForm.status|"
+							th:value="${attendanceForm.status}" class="form-control">
+							<option hidden> </option>
+                            <option value="0" th:selected="${attendanceForm.status == 0}">通常出勤</option>
+                            <option value="1" th:selected="${attendanceForm.status == 1}">休日</option>
+                            <option value="2" th:selected="${attendanceForm.status == 2}">祝日</option>
+                            <option value="3" th:selected="${attendanceForm.status == 3}">遅刻</option>
+                            <option value="4" th:selected="${attendanceForm.status == 4}">有給</option>
+                            <option value="5" th:selected="${attendanceForm.status == 5}">欠勤</option>
+                            <option value="6" th:selected="${attendanceForm.status == 6}">早退</option>
+                            <option value="7" th:selected="${attendanceForm.status == 7}">時間外勤務</option>
+                            <option value="8" th:selected="${attendanceForm.status == 8}">振替出勤</option>
+                            <option value="9" th:selected="${attendanceForm.status == 9}">振替休日</option>
+                            <option value="10" th:selected="${attendanceForm.status == 10}">代替出勤</option>
+                            <option value="11" th:selected="${attendanceForm.status == 11}">代替休日</option>
                         </select>
-                        <input type="text" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+                    </td>
+                  
+                    <td>
+						<input type="text" th:name="|attendanceForm.startTime|"
+							th:value="${attendanceForm.startTime}" class="form-control"></input>
                     </td>
                     <td>
-                        <input type="time" th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
-                               th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].startTime'" 
-                               class="form-control" th:value="${attendanceDtoList[calendar.date.dayOfMonth].startTime}">
-                        <input type="time" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+						<input type="text" th:name="|attendanceForm.endTime|"
+							th:value="${attendanceForm.endTime}" class="form-control"></input>
                     </td>
                     <td>
-                        <input type="time" th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
-                               th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].endTime'" 
-                               class="form-control" th:value="${attendanceDtoList[calendar.date.dayOfMonth].endTime}">
-                        <input type="time" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
+						<input type="text" th:name="|attendanceForm.remarks|"
+							th:value="${attendanceForm.remarks}" class="form-control"></input>
                     </td>
-                    <td>
-                        <input type="text" th:if="${attendanceDtoList != null && #lists.contains(attendanceDtoList, calendar.date)}" 
-                               th:name="'attendance[' + ${calendar.date.dayOfMonth} + '].remarks'" 
-                               class="form-control" th:value="${attendanceDtoList[calendar.date.dayOfMonth].remarks}">
-                        <input type="text" th:if="${attendanceDtoList == null || !#lists.contains(attendanceDtoList, calendar.date)}" class="form-control" disabled>
-                    </td>
-                </tr>
             </tbody>
         </table>
     </form>

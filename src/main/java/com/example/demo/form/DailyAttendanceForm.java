@@ -20,5 +20,5 @@ public class DailyAttendanceForm {
 	private String endTime;
 	/** 備考 */
 	private String remarks;
-
+	
 }
