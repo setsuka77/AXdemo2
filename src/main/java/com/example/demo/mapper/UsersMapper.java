@@ -64,5 +64,7 @@ public interface UsersMapper {
 	/*
 	 * ユーザ管理画面 既存ユーザ情報削除
 	 */
+    @Delete("DELETE FROM users WHERE id = #{id}")
+    void deleteUser(@Param("id") Integer id);
 
 }

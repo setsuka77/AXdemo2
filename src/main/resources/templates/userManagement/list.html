@@ -1,118 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ユーザ管理 | Analix社内管理システム</title>
-	<link rel="stylesheet" href="styles.css">
-	<style>
-		* {
-			box-sizing: border-box;
-			margin: 0;
-			padding: 0;
-			font-family: Arial, sans-serif;
-		}
-
-		body {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			background-color: #f5f5f5;
-		}
-
-		.container {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 100%;
-			padding: 20px;
-		}
-
-		.form-container {
-			width: 100%;
-			max-width: 600px;
-			padding: 20px;
-			background: #fff;
-			border-radius: 8px;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-		}
-
-		.form-container h2 {
-			margin-bottom: 20px;
-			text-align: center;
-		}
-
-		.input-group {
-			margin-bottom: 20px;
-		}
-
-		.input-group label {
-			display: block;
-			margin-bottom: 5px;
-			font-weight: bold;
-		}
-
-		.input-group input[type="text"],
-		.input-group input[type="password"],
-		.input-group input[type="date"] {
-			width: 100%;
-			padding: 10px;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			font-size: 14px;
-		}
-
-		.input-group .error-message {
-			display: none;
-			color: red;
-			font-size: 0.9em;
-			margin-top: 5px;
-		}
-
-		.button-group {
-			display: flex;
-			justify-content: flex-end;
-			gap: 10px;
-			margin-top: 30px;
-		}
-
-		button {
-			width: 100px;
-			padding: 10px;
-			border: none;
-			border-radius: 4px;
-			background: #007BFF;
-			color: white;
-			font-size: 16px;
-			cursor: pointer;
-		}
-
-		button:hover {
-			background: #0056b3;
-		}
-
-		@media (max-width: 768px) {
-			.container {
-				flex-direction: column;
-			}
-
-			.form-container {
-				max-width: 100%;
-			}
-
-			.button-group {
-				flex-direction: column;
-				gap: 10px;
-				justify-content: center;
-			}
-
-			button {
-				width: 100%;
-			}
-		}
-	</style>
+	<link rel="stylesheet" href="/login/styles.css">
 </head>
 
 <body>
@@ -120,34 +13,49 @@
 	<div class="container">
 		<div class="form-container">
 			<!-- 検索用フォーム -->
-			<form id="search-form" method="post" th:action="@{/search}" th:object="${userForm}" onsubmit="return validateSearch()">
+			<form id="search-form" method="post" th:action="@{/search}" th:object="${userForm}"
+				onsubmit="return validateSearch()">
 				<h2>ユーザ管理</h2>
+				
+				<!-- 成功メッセージ表示 -->
+				<div th:if="${successMessage}" class="alert alert-success" role="alert">
+					<p th:utext="${successMessage}"></p>
+				</div>
+				
 				<div class="input-group">
 					<label for="name">ユーザ名</label>
 					<input type="text" id="name" name="name" th:field="*{name}">
 					<div class="error-message" id="username-error">ユーザ名を入力してください。</div>
+					<!-- エラーメッセージ表示 -->
+					<div th:if="${searchError}" class="alert alert-danger" role="alert">
+						<p th:utext="${searchError}"></p>
+					</div>
 					<div class="button-group">
 						<button type="submit">検索</button>
 					</div>
 				</div>
+				
 			</form>
 
 			<!-- 登録用フォーム -->
-			<form id="register-form" method="post" th:action="@{/register}" th:object="${userForm}" onsubmit="return validateRegister()">
+			<form id="register-form" method="post" th:action="@{/register}" th:object="${userForm}"
+				onsubmit="return validateRegister()">
 				<input type="hidden" id="hidden-name" name="name">
 				<input type="hidden" id="hidden-id" name="id">
+				
 				<div class="input-group">
 					<label for="id">ユーザID</label>
 					<input type="text" id="id" name="id" th:field="*{id}" disabled>
 				</div>
 				<div class="input-group">
 					<label for="password">パスワード</label>
-					<input type="password" id="password" name="password" th:field="*{password}" required>
+					<input type="password" id="password" name="password" th:field="*{password}">
 					<div class="error-message" id="password-error">パスワードを入力してください。</div>
 				</div>
 				<div class="input-group">
 					<label for="role">権限</label>
-					<select id="role" name="role" required>
+					<select id="role" name="role">
+						<option value="" disabled selected>選択してください</option>
 						<option value="1" th:selected="${userForm.role == '1'}">管理者</option>
 						<option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
 						<option value="3" th:selected="${userForm.role == '3'}">UM</option>
@@ -157,12 +65,19 @@
 				</div>
 				<div class="input-group">
 					<label for="start-date">利用開始日</label>
-					<input type="text" id="start-date" name="startDate" th:field="*{startDate}" placeholder="YYYY/MM/DD" required>
+					<input type="text" id="start-date" name="startDate" th:field="*{startDate}"
+						placeholder="YYYY/MM/DD">
 					<div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
 				</div>
+				<!-- エラーメッセージ表示 -->
+				<div th:if="${registerError}" class="alert alert-danger" role="alert">
+					<p th:utext="${registerError}"></p>
+				</div>
+				
 				<div class="button-group">
 					<button type="submit">登録</button>
 				</div>
+
 			</form>
 		</div>
 	</div>
@@ -180,6 +95,7 @@
 			}
 		}
 
+		// 登録フォームのhiddenフィールドに値を設定
 		document.getElementById('register-form').onsubmit = function () {
 			// 検索フォームからの値を取得
 			var searchName = document.getElementById('name').value;
@@ -188,21 +104,51 @@
 			// 登録フォームのhiddenフィールドに値を設定
 			document.getElementById('hidden-name').value = searchName;
 			document.getElementById('hidden-id').value = searchId;
+
+			if (!validateRegister()) {
+				event.preventDefault(); // フォームの送信をキャンセル
+			}
 		};
 
 
-		//登録・更新時必須チェック
+		// 登録・更新時必須チェック
 		function validateRegister() {
-			const username = document.getElementById('name').value;
+			const username = document.getElementById('hidden-name').value;
 			const password = document.getElementById('password').value;
 			const role = document.getElementById('role').value;
 			const startDate = document.getElementById('start-date').value;
 
-			if (!username || !password || !role || !startDate) {
-				alert('全ての項目を入力してください。');
-				return false; // フォームの送信をキャンセル
+			let isValid = true;
+
+			// 各項目のエラーメッセージの非表示
+			document.getElementById('username-error').style.display = 'none';
+			document.getElementById('password-error').style.display = 'none';
+			document.getElementById('role-error').style.display = 'none';
+			document.getElementById('start-date-error').style.display = 'none';
+
+			// 各項目の入力チェック
+			if (!username) {
+				document.getElementById('username-error').style.display = 'block';
+				isValid = false;
 			}
-			return true; // フォームの送信を許可
+			if (!password) {
+				document.getElementById('password-error').style.display = 'block';
+				isValid = false;
+			}
+			if (!role) {
+				document.getElementById('role-error').style.display = 'block';
+				isValid = false;
+			}
+			if (!startDate) {
+				document.getElementById('start-date-error').style.display = 'block';
+				isValid = false;
+			}
+
+			if (!isValid) {
+				alert('全ての項目を入力してください。');
+			}
+
+			return isValid; // フォームの送信を許可またはキャンセル
 		}
 	</script>
 

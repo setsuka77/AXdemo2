@@ -46,7 +46,7 @@ public class LoginController {
                 return "redirect:/";
             }
         } else {
-            redirectAttributes.addFlashAttribute("error", "ユーザIDまたはパスワードが間違っています。");
+            redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
             return "redirect:/";
         }
     }

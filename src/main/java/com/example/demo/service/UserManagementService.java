@@ -6,6 +6,7 @@ import com.example.demo.mapper.UsersMapper;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,38 +55,79 @@ public class UserManagementService {
 	public void registerOrUpdateUser(UserManagementForm userForm, Integer id) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-
 		// 入力内容取得
 		UserManagementDto user = new UserManagementDto();
 		user.setName(userForm.getName());
 		user.setPassword(userForm.getPassword());
 		user.setRole(userForm.getRole());
-		
+
 		// startDateをStringからLocalDateに変換
-        if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
-            LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
-            user.setStartDate(startDate);
-        }
+		if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
+			LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
+			user.setStartDate(startDate);
+		}
 
-     // フォームのIDが存在するか確認
-        Integer userId = userForm.getId();
-        UserManagementDto existingUser = null;
+		 // フォームのIDが存在するか確認
+	    Integer userId = userForm.getId();
+	    UserManagementDto existingUser = null;
 
-        if (userId != null) {
-            existingUser = usersMapper.identifyUserId(id);
-        }
+	    if (userId != null) {
+	        existingUser = usersMapper.identifyUserId(userId);
+	    }
 
-        if (existingUser == null) {
-            // 新規登録
-        	System.out.println("新規登録レーン");
-            user.setId(userId);
-            usersMapper.insertUser(user);
-        } else {
-            // 更新
-        	System.out.println("既存更新レーン");
-            user.setId(userId);
-            usersMapper.updateUser(user);
-        }
+	    if (existingUser == null) {
+	        // 新規登録実行
+	        System.out.println("新規登録レーン");
+	        user.setId(userId); 
+	        usersMapper.insertUser(user);
+	    } else {
+	        // 既存更新実行
+	        System.out.println("既存更新レーン");
+	        user.setId(userId);
+	        usersMapper.updateUser(user);
+	    }
 	}
+
+	/*
+	 * ユーザ管理画面
+	 * 既存ユーザ削除機能
+	 */
+	public void deleteUser(Integer id) {
+		if (id != null) {
+			System.out.println("既存削除レーン");
+			usersMapper.deleteUser(id);
+		}
+	}
+	
+	/*
+	 * ユーザ管理画面
+	 * 文字数制限・日付形式チェック
+	 */
+	public String validateUserForm(UserManagementForm userForm) {
+        StringBuilder errorMessage = new StringBuilder("ユーザー登録/更新に失敗しました。<br>");
+
+        boolean hasErrors = false;
+
+        // ユーザ名チェック
+        if (userForm.getName().length() > 20) {
+            errorMessage.append("ユーザ名 : 全角20文字以内で入力してください。<br>");
+            hasErrors = true;
+        }
+
+        // パスワードチェック
+        if (userForm.getPassword().length() > 16) {
+            errorMessage.append("パスワード : 桁数は16桁以下で入力してください。<br>");
+            hasErrors = true;
+        }
+
+        // 日付形式チェック
+        Pattern datePattern = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$");
+        if (!datePattern.matcher(userForm.getStartDate()).matches()) {
+            errorMessage.append("利用開始日 : yyyy/mm/dd のフォーマットで入力してください。<br>");
+            hasErrors = true;
+        }
+
+        return hasErrors ? errorMessage.toString() : null;
+    }
 
 }
