@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
 import com.example.demo.entity.Users;
+import com.example.demo.form.AttendanceForm;
 import com.example.demo.service.AttendanceService;
 
 import jakarta.servlet.http.HttpSession;
@@ -77,11 +78,12 @@ public class AttendanceController {
 	     List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendarList,loginUser);
 	     System.out.println(attendanceDtoList);
 	     //勤怠フォームの生成
-	     //AttendanceForm attendanceForm= attendanceService.setAttendanceForm(attendanceDtoList);
+	     AttendanceForm attendanceForm= attendanceService.setAttendanceForm(calendarList,attendanceDtoList);
+	     System.out.println(attendanceForm);
 
 	     model.addAttribute("loginUser",loginUser);
 	     model.addAttribute("calendarList", calendarList);
-	     //model.addAttribute("attendanceForm",attendanceForm);
+	     model.addAttribute("attendanceForm",attendanceForm);
 	     return "attendance/record";
 	 }
 

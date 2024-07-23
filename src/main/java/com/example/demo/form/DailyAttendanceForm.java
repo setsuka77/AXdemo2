@@ -1,13 +1,11 @@
-package com.example.demo.entity;
+package com.example.demo.form;
 
-import java.sql.Time;
 import java.util.Date;
 
 import lombok.Data;
 
 @Data
-public class Attendance {
-	
+public class DailyAttendanceForm {
 	/** 勤怠ID */
 	private Integer id;
 	/** ユーザーID */
@@ -17,9 +15,10 @@ public class Attendance {
 	/**日付 */
 	private Date date;
 	/** 勤務開始時刻 */
-	private Time startTime;
+	private String startTime;
 	/** 勤務開始時刻 */
-	private Time endTime;
+	private String endTime;
 	/** 備考 */
 	private String remarks;
+
 }

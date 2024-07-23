@@ -8,7 +8,7 @@
 		SELECT * FROM attendance WHERE user_id = #{userId}
 	</select>
 
-	   <!-- 勤怠登録情報用DTOリスト取得 -->
+	<!-- 勤怠登録情報用DTOリスト取得 -->
 	<select id="findAttendanceByUserIdAndDateRange" resultType="com.example.demo.dto.AttendanceDto">
     SELECT a.* 
     FROM attendance a
