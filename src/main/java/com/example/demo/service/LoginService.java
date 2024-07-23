@@ -13,12 +13,11 @@ public class LoginService {
 
 	@Autowired
 	private UsersMapper usersMapper;
-
-//	public boolean login(Integer id, String password) {
-//		Users user = usersMapper.findByUserId(id);
-//		return user != null && user.getPassword().equals(password);
-//	}
 	
+	/*
+	 * ログイン画面
+	 * ユーザ検索、パスワード判定ログイン機能
+	 */
 	public Users login(Integer id, String password) {
         Users user = usersMapper.findByUserId(id);
         if (user != null && user.getPassword().equals(password)) {

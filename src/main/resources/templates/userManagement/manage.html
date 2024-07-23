@@ -13,7 +13,7 @@
 	<div class="container">
 		<div class="form-container">
 			<!-- 検索用フォーム -->
-			<form id="search-form" method="post" th:action="@{/search}" th:object="${userForm}"
+			<form id="search-form" method="post" th:action="@{/userManagement/search}" th:object="${userForm}"
 				onsubmit="return validateSearch()">
 				<h2>ユーザ管理</h2>
 				
@@ -38,7 +38,7 @@
 			</form>
 
 			<!-- 登録用フォーム -->
-			<form id="register-form" method="post" th:action="@{/register}" th:object="${userForm}"
+			<form id="register-form" method="post" th:action="@{/userManagement/register}" th:object="${userForm}"
 				onsubmit="return validateRegister()">
 				<input type="hidden" id="hidden-name" name="name">
 				<input type="hidden" id="hidden-id" name="id">

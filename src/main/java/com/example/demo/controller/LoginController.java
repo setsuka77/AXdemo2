@@ -37,8 +37,9 @@ public class LoginController {
         session.setAttribute("user",user);
         if (user != null) {
             String role = user.getRole();
+            System.out.println("ロール: " + user.getRole());
             if ("1".equals(role)) {
-                return "redirect:/userManagement/list";
+                return "redirect:/userManagement/manage";
             } else if ("2".equals(role) || "3".equals(role) || "4".equals(role)) {
                 return "redirect:/attendance";
             } else {
@@ -50,4 +51,6 @@ public class LoginController {
             return "redirect:/";
         }
     }
+    
+    
 }
