@@ -98,15 +98,18 @@ public class AttendanceController {
 	 * @return 勤怠登録画面
 	 */
 	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
-	public String registAttendance(AttendanceForm attendanceForm,Model model) {
+	public String registAttendance(AttendanceForm attendanceForm,Model model,HttpSession session) {
 		System.out.println("テストその３");
+		System.out.println(attendanceForm);
+		//ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
 		//登録処理
-		String message = attendanceService.registAttendance(attendanceForm);
+		String message = attendanceService.registAttendance(attendanceForm,loginUser);
 		model.addAttribute("mesaage",message);
 		System.out.println(message);
 		//一覧の再取得
 		
-		
+		model.addAttribute("loginUser",loginUser);
 		return "attendance/record";
 	}
 	
