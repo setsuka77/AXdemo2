@@ -10,51 +10,69 @@
 
 <body>
 	<div class="attendance-container">
-		<table>
-			<tr>
-				<td>ユーザー名:</td>
-				<td th:text="${loginUser.name}"></td>
-				<td>ユーザーID:</td>
-				<td th:text="${loginUser.id}"></td>
-				<td>ステータス:</td>
-			</tr>
-		</table>
+
+		<tr>
+			<td>
+				<div class="info-container">
+					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+					<div class="info-item">ステータス:</div>
+				</div>
+			</td>
+		</tr>
+
+
 		<div th:if="${error}" class="alert alert-danger" role="alert">
 			<p th:text="${error}"></p>
 		</div>
 
 		<div class="row">
-			<div class="bs-component col-sm-12">
-				<form id="attendance-form" th:action="@{/attendance}" method="post"
-					onsubmit="return validateDisplay();">
-					<div class="form-group">
-						表示年月:
-						<select id="year" name="year">
-							<option value="">年を選択</option>
-							<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
-						</select>
-						<span>年</span>
 
-						<select id="month" name="month">
-							<option value="">月を選択</option>
-							<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
-						</select>
-						<span>月</span>
-						<button type="submit" name="display" class="button">表示</button>
-						<span id="year-error" class="error-message">表示させたい年月を指定してください。</span>
+			<form id="attendance-form" th:action="@{/attendance}" method="post" onsubmit="return validateDisplay();"
+				th:if="${loginUser.role != '2'}">
+				<div class="form-group">
+					表示年月:
+					<select id="year" name="year">
+						<option value="">年を選択</option>
+						<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
+					</select>
+					<span>年</span>
 
-					</div>
-				</form>
-			</div>
+					<select id="month" name="month">
+						<option value="">月を選択</option>
+						<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
+					</select>
+					<span>月</span>
+					<button type="submit" name="display" class="button">表示</button>
+					<span id="year-error" class="error-message">表示させたい年月を指定してください。</span>
+
+				</div>
+			</form>
 		</div>
 
-		<form th:action="@{/attendance}" method="post">
+		<form id="register-form" th:action="@{/attendance}" method="post">
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="button">却下</button>
 				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
-				<button type="submit" name="request" class="button">承認申請</button>
-				<button type="submit" name="regist" class="button">登録</button>
+				<button type="submit" th:if="${loginUser.role != '2'}" name="request" class="button">承認申請</button>
+				<button type="submit" th:if="${loginUser.role != '2'}" name="regist" class="button">登録</button>
 			</div>
+
+			<!-- 申請一覧 マネージャのみ表示 -->
+			<table class="table table-hover" border="1" cellspacing="0" th:if="${loginUser.role == '2'}">
+				<thead>
+					<tr>
+						<th>承認申請者</th>
+						<th>申請対象年月</th>
+						<th>申請日</th>
+					</tr>
+				</thead>
+				<tbody>
+					<td></td>
+					<!--<td th:text="${monthlyAttendanceReq.targetYearMonth}"></td>
+					<td th:text="${monthlyAttendanceReq.date}"></td>-->
+				</tbody>
+			</table>
 
 			<table class="table table-hover" border="1" cellspacing="0">
 				<thead>
@@ -98,7 +116,8 @@
 								</option>
 								<option value="7"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 7}">
-									時間外勤務</option>
+									時間外勤務
+								</option>
 								<option value="8"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 8}">振替出勤
 								</option>
@@ -107,10 +126,12 @@
 								</option>
 								<option value="10"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 10}">
-									代替出勤</option>
+									代替出勤
+								</option>
 								<option value="11"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 11}">
-									代替休日</option>
+									代替休日
+								</option>
 							</select>
 						</td>
 						<td>
