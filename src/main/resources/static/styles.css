@@ -64,9 +64,8 @@ body {
 }
 
 /* 入力フィールドスタイル */
-.input-group input[type="text"], 
-.input-group input[type="password"],
-.input-group input[type="date"] {
+.input-group input[type="text"], .input-group input[type="password"],
+	.input-group input[type="date"] {
 	width: 100%; /* 幅を100%に設定 */
 	padding: 10px; /* 内部パディングを設定 */
 	border: 1px solid #ccc; /* ボーダーを設定 */
@@ -75,7 +74,7 @@ body {
 }
 
 /* エラーメッセージスタイル */
-.input-group .error-message {
+.error-message {
 	display: none; /* デフォルトで非表示 */
 	color: red; /* テキスト色を赤に設定 */
 	font-size: 0.9em; /* フォントサイズを設定 */
@@ -107,7 +106,7 @@ button:hover {
 }
 
 /* メディアクエリ (768px以下のスクリーン) */
-@media (max-width: 768px) {
+@media ( max-width : 768px) {
 	.container {
 		flex-direction: column; /* 縦方向のレイアウトに変更 */
 	}
@@ -165,4 +164,66 @@ button:hover {
 
 .alert p {
 	margin: 0; /* マージンをゼロに設定 */
+}
+
+/* 勤怠管理画面 */
+/* 出勤時間と退勤時間の入力フォームの横幅調整 */
+.input-time {
+	width: 80px;
+	/* 横幅を短く設定 */
+}
+
+/* 出勤時間と退勤時間のカラムの横幅調整 */
+th.time-column, td.time-column {
+	width: 90px;
+	/* カラムの横幅を短く設定 */
+}
+
+/* 勤務状況のカラムの横幅調整 */
+th.status-column, td.status-column {
+	width: 150px;
+	/* プルダウンの横幅に合わせて設定 */
+}
+
+/* 備考欄の入力フォームの横幅調整 */
+input.note {
+	width: 450px;
+	/* 勤務状況カラムに合わせた横幅設定 */
+}
+
+/* 勤怠管理画面コンテナ */
+.attendance-container {
+	width: 90%;
+	max-width: 1000px;
+	max-height: 80vh;
+	padding: 20px;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	overflow-x: auto; /* 横スクロールを許可 */
+}
+
+/* テーブルスタイル */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 20px 0;
+	background: #fff;
+}
+
+th, td {
+	padding: 10px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+	white-space: nowrap;
+	/* テーブルのセルの内容を折り返さないようにする */
+}
+
+th {
+	background: #f2f2f2;
+}
+
+/* フォームスタイル */
+.form-group {
+	margin-bottom: 1rem;
 }

@@ -1,100 +1,159 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>勤怠管理登録画面</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>勤怠管理登録 | Analix社内管理システム</title>
+	<link rel="stylesheet" href="/login/styles.css">
 </head>
+
 <body>
+	<div class="attendance-container">
+		<table>
+			<tr>
+				<td>ユーザー名:</td>
+				<td th:text="${loginUser.name}"></td>
+				<td>ユーザーID:</td>
+				<td th:text="${loginUser.id}"></td>
+				<td>ステータス:</td>
+			</tr>
+		</table>
+		<div th:if="${error}" class="alert alert-danger" role="alert">
+			<p th:text="${error}"></p>
+		</div>
 
-    <table>
-        <tr>
-            <td>ユーザー名:</td>
-            <td th:text="${loginUser.name}"></td> 
-            <td>ユーザーID:</td>
-            <td th:text="${loginUser.id}"></td> 
-            <td>ステータス:</td>
-        </tr>
-    </table>
-    <div th:if="${error}" class="alert alert-danger" role="alert">
-        <p th:text="${error}"></p>
-    </div>
+		<div class="row">
+			<div class="bs-component col-sm-12">
+				<form id="attendance-form" th:action="@{/attendance}" method="post"
+					onsubmit="return validateDisplay();">
+					<div class="form-group">
+						表示年月:
+						<select id="year" name="year">
+							<option value="">年を選択</option>
+							<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
+						</select>
+						<span>年</span>
 
-    <div class="row">
-        <div class="bs-component col-sm-12">
-            <form th:action="@{/attendance}" method="post">
-                <div class="form-group">
-                    表示年月:
-                        <select id="year" name="year">
-                            <option hidden>年を選択</option>
-                            <option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
-                        </select>
-                        <span>年</span>
+						<select id="month" name="month">
+							<option value="">月を選択</option>
+							<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
+						</select>
+						<span>月</span>
+						<button type="submit" name="display" class="button">表示</button>
+						<span id="year-error" class="error-message">表示させたい年月を指定してください。</span>
 
-                        <select id="month" name="month">
-                            <option hidden>月を選択</option>
-                            <option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"></option>
-                        </select>
-                        <span>月</span>
+					</div>
+				</form>
+			</div>
+		</div>
 
-                        <button type="submit" name="display" class="btn btn-primary">表示</button>
-                </div>
-            </form>
-        </div>
-    </div>
+		<form th:action="@{/attendance}" method="post">
+			<div class="button-group">
+				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="button">却下</button>
+				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
+				<button type="submit" name="request" class="button">承認申請</button>
+				<button type="submit" name="regist" class="button">登録</button>
+			</div>
 
-    <form th:action="@{/attendance}" method="post">
-        <button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="btn btn-primary">却下</button>
-        <button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="btn btn-primary">承認</button>
-        <button type="submit" name="request" class="btn btn-primary">承認申請</button>
-        <button type="submit" name="regist" class="btn btn-primary">登録</button>
+			<table class="table table-hover" border="1" cellspacing="0">
+				<thead>
+					<tr>
+						<th>日付</th>
+						<th>曜日</th>
+						<th class="status-column">勤務状況</th>
+						<th class="time-column">出勤時間</th>
+						<th class="time-column">退勤時間</th>
+						<th>備考</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="calendar, iterStat : ${calendarList}">
+						<td th:text="${calendar.getFormattedDate()}"></td>
+						<td th:text="${calendar.dayOfWeek}"></td>
+						<td>
+							<select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'"
+								class="form-control">
+								<option value="" hidden> </option>
+								<option value="0"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">通常出勤
+								</option>
+								<option value="1"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 1}">休日
+								</option>
+								<option value="2"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 2}">祝日
+								</option>
+								<option value="3"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 3}">遅刻
+								</option>
+								<option value="4"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 4}">有給
+								</option>
+								<option value="5"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 5}">欠勤
+								</option>
+								<option value="6"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 6}">早退
+								</option>
+								<option value="7"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 7}">
+									時間外勤務</option>
+								<option value="8"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 8}">振替出勤
+								</option>
+								<option value="9"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 9}">振替休日
+								</option>
+								<option value="10"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 10}">
+									代替出勤</option>
+								<option value="11"
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 11}">
+									代替休日</option>
+							</select>
+						</td>
+						<td>
+							<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].startTime'"
+								th:value="${attendanceForm.dailyAttendanceList[iterStat.index].startTime}"
+								class="form-control input-time">
+						</td>
+						<td>
+							<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].endTime'"
+								th:value="${attendanceForm.dailyAttendanceList[iterStat.index].endTime}"
+								class="form-control input-time">
+						</td>
+						<td>
+							<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].remarks'"
+								th:value="${attendanceForm.dailyAttendanceList[iterStat.index].remarks}"
+								class="form-control note">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<script>
+		//表示時必須チェック
+		function validateDisplay() {
+			const year = document.getElementById('year').value;
+			const month = document.getElementById('month').value;
+			const errorElement = document.getElementById('year-error');
 
-        <table class="table table-hover dataTable no-footer" border="1" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>日付</th>
-                    <th>曜日</th>
-                    <th>勤務状況</th>
-                    <th>出勤時間</th>
-                    <th>退勤時間</th>
-                    <th>備考</th>
-                </tr>
-            </thead>
-            <tbody>
-                 <tr th:each="calendar, iterStat : ${calendarList}">
-                    <td th:text="${calendar.getFormattedDate()}"></td>
-                    <td th:text="${calendar.dayOfWeek}"></td>
-                    <td>
-                        <select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'" class="form-control">
-                            <option hidden> </option>
-                            <option value="0" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">通常出勤</option>
-                            <option value="1" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 1}">休日</option>
-                            <option value="2" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 2}">祝日</option>
-                            <option value="3" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 3}">遅刻</option>
-                            <option value="4" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 4}">有給</option>
-                            <option value="5" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 5}">欠勤</option>
-                            <option value="6" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 6}">早退</option>
-                            <option value="7" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 7}">時間外勤務</option>
-                            <option value="8" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 8}">振替出勤</option>
-                            <option value="9" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 9}">振替休日</option>
-                            <option value="10" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 10}">代替出勤</option>
-                            <option value="11" th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 11}">代替休日</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].startTime'"
-                            th:value="${attendanceForm.dailyAttendanceList[iterStat.index].startTime}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].endTime'"
-                            th:value="${attendanceForm.dailyAttendanceList[iterStat.index].endTime}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].remarks'"
-                            th:value="${attendanceForm.dailyAttendanceList[iterStat.index].remarks}" class="form-control">
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
+			if (!year || !month) {
+				errorElement.style.display = 'block';
+				return false; // フォームの送信をキャンセル
+			} else {
+				errorElement.style.display = 'none';
+				return true; // フォームの送信を許可
+			}
+		}
+
+		//登録時必須チェック
+		//承認申請ボタンを活性化させる
+
+	</script>
+
 </body>
+
 </html>
