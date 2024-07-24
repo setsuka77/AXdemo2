@@ -68,11 +68,7 @@ public class AttendanceController {
 	 public String showAttendance(@RequestParam("year") Integer year, @RequestParam("month") Integer month, Model model,HttpSession session) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-		 //  年と月に必須チェックを入れる
-	     if (year == null || month == null) {
-	         model.addAttribute("error", "年と月を選択してください");
-	         return "attendance/record";
-	     }
+
 	     //日付リスト作成
 	     List<CalendarDto> calendarList = attendanceService.generateCalendar(year, month);
 	     //DBから勤怠情報取得
@@ -99,10 +95,11 @@ public class AttendanceController {
 	 */
 	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
 	public String registAttendance(AttendanceForm attendanceForm,Model model,HttpSession session) {
-		System.out.println("テストその３");
+		//System.out.println("テストその３");
 		System.out.println(attendanceForm);
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		System.out.println(loginUser);
 		//登録処理
 		String message = attendanceService.registAttendance(attendanceForm,loginUser);
 		model.addAttribute("mesaage",message);

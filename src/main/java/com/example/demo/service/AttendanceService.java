@@ -74,7 +74,9 @@ public class AttendanceService {
             DailyAttendanceForm dailyForm = new DailyAttendanceForm();
             LocalDate date = calendarDto.getDate();
             dailyForm.setDate(dateUtil.localDateToDate(date)); // DateUtil を利用して変換
-
+            
+            System.out.println(dailyForm);
+            
             AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
             dailyForm.setId(attendanceDto.getId());
             dailyForm.setUserId(attendanceDto.getUserId());
@@ -99,8 +101,7 @@ public class AttendanceService {
 	        }
 	        
 	        System.out.println("dailyAttendanceList size: " + dailyAttendanceList.size());
-
-	        
+	        System.out.println("Login User: " + loginUser);
 			for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
 				Attendance attendance = new Attendance();
 				attendance.setId(dailyForm.getId());
@@ -112,6 +113,7 @@ public class AttendanceService {
 				attendance.setRemarks(dailyForm.getRemarks());
 
 				System.out.println("テスト5");
+				System.out.println(attendance);
 				// 勤怠情報を更新
 				attendanceMapper.update(attendance);
 				System.out.println("テスト6");
