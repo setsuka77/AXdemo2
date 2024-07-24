@@ -1,6 +1,6 @@
 package com.example.demo.controller;
-
-
+ 
+ 
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,17 +19,12 @@ import com.example.demo.form.AttendanceForm;
 import com.example.demo.service.AttendanceService;
 
 import jakarta.servlet.http.HttpSession;
- 
 @Controller
 public class AttendanceController {
-	
-	
-	
+
 	@Autowired
 	private AttendanceService attendanceService;
-	
-	
-	
+
 	/**
 	 * 勤怠登録画面 初期表示
 	 *
@@ -40,7 +35,6 @@ public class AttendanceController {
 	public String showAttendanceForm(Model model, HttpSession session) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-		
 		//年リストと月リスト作成
 		List<Integer> yearList = new ArrayList<>();
 		for (int year = 2000; year <= 2100; year++) {
@@ -50,14 +44,13 @@ public class AttendanceController {
 		for (int month = 1; month <= 12; month++) {
 			monthList.add(month);
 		}
-		
 		model.addAttribute("yearList", yearList);
 		model.addAttribute("monthList", monthList);
 		model.addAttribute("loginUser",loginUser);
 		return "attendance/record"; 
 	}
- 
 
+ 
 	/**
 	 * 「表示」ボタン押下
 	 * 
@@ -68,14 +61,16 @@ public class AttendanceController {
 	 public String showAttendance(@RequestParam("year") Integer year, @RequestParam("month") Integer month, Model model,HttpSession session) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-
+ 
 	     //日付リスト作成
 	     List<CalendarDto> calendarList = attendanceService.generateCalendar(year, month);
 	     //DBから勤怠情報取得
 	     List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendarList,loginUser);
-	     System.out.println(attendanceDtoList);
+	     //Dateしか存在おらず、DBの情報はない。DtoListではなくDailyAttendanceFormが表示される
+	     System.out.printf("困り中",attendanceDtoList);
 	     //勤怠フォームの生成
 	     AttendanceForm attendanceForm= attendanceService.setAttendanceForm(calendarList,attendanceDtoList);
+	     //userIdなし、Dateあり
 	     System.out.println(attendanceForm);
 	     
 	     model.addAttribute("year",year);
@@ -83,10 +78,29 @@ public class AttendanceController {
 	     model.addAttribute("loginUser",loginUser);
 	     model.addAttribute("calendarList", calendarList);
 	     model.addAttribute("attendanceForm",attendanceForm);
+	  // 再度リストを設定する
+	        setYearMonthList(model);
 	     return "attendance/record";
 	 }
-
-
+	/**
+     * 年リストと月リストの設定
+     * 
+     * @param model
+     */
+    private void setYearMonthList(Model model) {
+        List<Integer> yearList = new ArrayList<>();
+        for (int year = 2000; year <= 2100; year++) {
+            yearList.add(year);
+        }
+        List<Integer> monthList = new ArrayList<>();
+        for (int month = 1; month <= 12; month++) {
+            monthList.add(month);
+        }
+        model.addAttribute("yearList", yearList);
+        model.addAttribute("monthList", monthList);
+    }
+ 
+ 
 	
 	/*
 	 * 「登録」ボタン押下
@@ -105,22 +119,9 @@ public class AttendanceController {
 		model.addAttribute("mesaage",message);
 		System.out.println(message);
 		//一覧の再取得
-		
 		model.addAttribute("loginUser",loginUser);
+		// 再度リストを設定する
+        setYearMonthList(model);
 		return "attendance/record";
 	}
-	
-	
-	
-	/*
-	 * 「登録申請」ボタン押下
-	 * @param model
-	 * @return 勤怠登録画面
-	 */
-	/*	@RequestMapping(path = "/attendance", params = "request", method = RequestMethod.POST)
-		public String request(Model model) {
-			
-			
-			return "attendance/record";
-		}*/
-	}
+}
