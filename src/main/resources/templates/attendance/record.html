@@ -91,7 +91,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="calendar, iterStat : ${calendarList}">
+					<tr th:each="calendar, iterStat : ${calendar}">
 						<td th:text="${calendar.getFormattedDate()}">
 							<input type="hidden" name="date" th:value="${calendar.date}" />
 						</td>

@@ -1,5 +1,7 @@
 package com.example.demo.util;
 
+import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -61,6 +63,40 @@ public class DateUtil {
      */
     public LocalTime stringToLocalTime(String timeStr) {
         return timeStr != null && !timeStr.isEmpty() ? LocalTime.parse(timeStr) : null;
+    }
+    
+    /**
+     * String を Time に変換
+     * 
+     * @param timeStr 時刻を表す文字列 (例: "HH:mm:ss")
+     * @return Time 型のオブジェクト
+     */
+    public Time stringToTime(String timeStr) {
+    	 if (timeStr == null || timeStr.isEmpty()) {
+             return null;
+         }
+         try {
+             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+             java.util.Date parsedDate = sdf.parse(timeStr);
+             return new Time(parsedDate.getTime());
+         } catch (ParseException e) {
+             e.printStackTrace();
+             return null; // エラーハンドリングを適切に行ってください
+         }
+    }
+
+    /**
+     * Time を String に変換
+     * 
+     * @param time Time 型のオブジェクト
+     * @return 時刻を表す文字列 (例: "HH:mm:ss")
+     */
+    public String timeToString(Time time) {
+        if (time == null) {
+            return "";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(time);
     }
 
     /**

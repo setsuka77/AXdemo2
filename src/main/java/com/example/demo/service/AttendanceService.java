@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
@@ -20,7 +19,6 @@ import com.example.demo.entity.Attendance;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.form.DailyAttendanceForm;
-import com.example.demo.form.UserManagementForm;
 import com.example.demo.mapper.AttendanceMapper;
 import com.example.demo.util.DateUtil;
 
@@ -103,43 +101,40 @@ public class AttendanceService {
 	/*
 	 * 勤怠管理画面 勤怠情報登録処理
 	 */
-	public String registAttendance(AttendanceForm attendanceForm, Users loginUser, LocalDate calendarList) {
-		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-		for (DailyAttendanceForm dailyAttendance : dailyAttendanceList) {
-			dailyAttendance.setDate(dateUtil.localDateToDate(calendarList));
-			dailyAttendance.setUserId(loginUser.getId()); // メソッド呼び出しに修正
-		}
+	public String registAttendance(AttendanceForm attendanceForm, Users loginUser, List<CalendarDto> calendar) {
+        List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
+        
+        for (int i = 0; i < dailyAttendanceList.size(); i++) {
+            DailyAttendanceForm dailyForm = dailyAttendanceList.get(i);
+            CalendarDto calendarDto = calendar.get(i);
 
-		if (dailyAttendanceList == null) {
-			dailyAttendanceList = new ArrayList<>(); // 空のリストで初期化
-			System.out.println("テスト4");// そもそもtrueになることがない？
-		}
+            // CalendarDto から日付を取得して DailyAttendanceForm に設定
+            if (calendarDto != null) {
+                LocalDate date = calendarDto.getDate();
+                dailyForm.setDate(dateUtil.localDateToDate(date)); 
+                
+                Attendance attendance = new Attendance();
+                attendance.setId(dailyForm.getId());
+                attendance.setUserId(loginUser.getId());
+                attendance.setDate(dailyForm.getDate()); 
+                attendance.setStatus(dailyForm.getStatus());
+                attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
+                attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
+                attendance.setRemarks(dailyForm.getRemarks());
 
-		System.out.println("dailyAttendanceList size: " + dailyAttendanceList.size());
-		System.out.println(loginUser);
-		System.out.println(dailyAttendanceList);
-
-		for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
-			Attendance attendance = new Attendance();
-			attendance.setId(dailyForm.getId());
-			attendance.setUserId(loginUser.getId());
-			attendance.setStatus(dailyForm.getStatus());
-			attendance.setDate(dateUtil.localDateToDate(calendarList));
-			attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
-			attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
-			attendance.setRemarks(dailyForm.getRemarks());
-
-			System.out.println("ID: " + attendance.getUserId());
-			System.out.println("Date: " + attendance.getDate());
-			System.out.println("テスト5");
-			System.out.println(attendance);
-			// 勤怠情報を更新
-			attendanceMapper.insert(attendance);
-			System.out.println("テスト6");
-		}
-
-		return "勤怠情報が登録されました";
-	}
+                if (attendance.getId() == null) {
+                    // 勤怠情報を登録
+                    attendanceMapper.insert(attendance);
+                } else {
+                    // 勤怠情報を更新
+                    attendanceMapper.update(attendance);
+                }
+            } else {
+                System.out.println("No matching CalendarDto found for index: " + i);
+            }
+        }
+        return "勤怠情報が登録されました";
+    }
 
 	/*
 	 * ユーザ管理画面 文字数制限・日付形式チェック

@@ -17,7 +17,6 @@ import com.example.demo.dto.CalendarDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.service.AttendanceService;
-import com.example.demo.util.DateUtil;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -26,8 +25,6 @@ public class AttendanceController {
 
 	@Autowired
 	private AttendanceService attendanceService;
-	@Autowired
-	private DateUtil dateUtil;
 
 	/**
 	 * 勤怠登録画面 初期表示
@@ -94,22 +91,22 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 
 		// 日付リスト作成
-		List<CalendarDto> calendarList = attendanceService.generateCalendar(year, month);
+		List<CalendarDto> calendar = attendanceService.generateCalendar(year, month);
 		// DBから勤怠情報取得
-		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendarList, loginUser);
+		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, loginUser);
 		// Dateしか存在おらず、DBの情報はない。DtoListではなくDailyAttendanceFormが表示される
 		System.out.println("困り中");
 		// 勤怠フォームの生成
-		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendarList, attendanceDtoList, loginUser);
+		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, loginUser);
 		// userId、Dateあり
 		System.out.println(attendanceForm);
 
-		session.setAttribute("calendarList", calendarList);
+		session.setAttribute("calendar", calendar);
 
 		model.addAttribute("year", year);
 		model.addAttribute("month", month);
 		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("calendarList", calendarList);
+		model.addAttribute("calendar", calendar);
 		model.addAttribute("attendanceForm", attendanceForm);
 		// 再度リストを設定する
 		setYearMonthList(model);
@@ -127,10 +124,8 @@ public class AttendanceController {
 	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
 	public String registAttendance(AttendanceForm attendanceForm, Model model, HttpSession session,RedirectAttributes redirectAttributes) {
 
-		
-		
-		List<CalendarDto> calendarList = (List<CalendarDto>) session.getAttribute("calendarList");
-		System.out.println(calendarList);
+		List<CalendarDto> calendar = (List<CalendarDto>) session.getAttribute("calendar");
+		System.out.println(calendar);
 		// dateとuserId以外はコンソールに表示済み
 		System.out.println(attendanceForm);
 
@@ -142,20 +137,16 @@ public class AttendanceController {
         if (errorMessage != null) {
             redirectAttributes.addFlashAttribute("registerError", errorMessage);
             redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
-            redirectAttributes.addFlashAttribute("calendarList", calendarList);
-            redirectAttributes.addFlashAttribute("year", calendarList.get(0).getDate().getYear());
-            redirectAttributes.addFlashAttribute("month", calendarList.get(0).getDate().getMonthValue());
+            redirectAttributes.addFlashAttribute("calendarList", calendar);
+            redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
+            redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
             return "redirect:/attendance";
         }
         
 		// 登録処理
-		/*
-		 * String message =
-		 * attendanceService.registAttendance(attendanceForm,loginUser,calendarList);
-		 * model.addAttribute("message",message); System.out.println(message);
-		 */
-		// 一覧の再取得
-		model.addAttribute("loginUser", loginUser);
+        String message = attendanceService.registAttendance(attendanceForm,loginUser,calendar);
+		model.addAttribute("mesaage",message);
+		System.out.println(message);
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
