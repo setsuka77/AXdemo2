@@ -36,6 +36,7 @@ public class UserManagementController {
             return "redirect:/";
         }
 
+        //バリデーションエラー時入力保持
         if (!model.containsAttribute("userForm")) {
             model.addAttribute("userForm", new UserManagementForm());
         }

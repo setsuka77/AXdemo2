@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
@@ -38,6 +39,23 @@ public class AttendanceController {
 	public String showAttendanceForm(Model model, HttpSession session) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		
+		// フラッシュ属性からエラーメッセージとフォームデータを取得
+        if (model.containsAttribute("registerError")) {
+            model.addAttribute("registerError", model.getAttribute("registerError"));
+        }
+        if (model.containsAttribute("attendanceForm")) {
+            model.addAttribute("attendanceForm", model.getAttribute("attendanceForm"));
+        }
+        if (model.containsAttribute("calendarList")) {
+            model.addAttribute("calendarList", model.getAttribute("calendarList"));
+        }
+        if (model.containsAttribute("year")) {
+            model.addAttribute("year", model.getAttribute("year"));
+        }
+        if (model.containsAttribute("month")) {
+            model.addAttribute("month", model.getAttribute("month"));
+        }
 
 		// プルダウンの設定
 		setYearMonthList(model);
@@ -107,8 +125,10 @@ public class AttendanceController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
-	public String registAttendance(AttendanceForm attendanceForm, Model model, HttpSession session) {
+	public String registAttendance(AttendanceForm attendanceForm, Model model, HttpSession session,RedirectAttributes redirectAttributes) {
 
+		
+		
 		List<CalendarDto> calendarList = (List<CalendarDto>) session.getAttribute("calendarList");
 		System.out.println(calendarList);
 		// dateとuserId以外はコンソールに表示済み
@@ -116,11 +136,23 @@ public class AttendanceController {
 
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		
+		// バリデーションエラー表示
+        String errorMessage = attendanceService.validateAttendanceForm(attendanceForm);
+        if (errorMessage != null) {
+            redirectAttributes.addFlashAttribute("registerError", errorMessage);
+            redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
+            redirectAttributes.addFlashAttribute("calendarList", calendarList);
+            redirectAttributes.addFlashAttribute("year", calendarList.get(0).getDate().getYear());
+            redirectAttributes.addFlashAttribute("month", calendarList.get(0).getDate().getMonthValue());
+            return "redirect:/attendance";
+        }
+        
 		// 登録処理
 		/*
 		 * String message =
 		 * attendanceService.registAttendance(attendanceForm,loginUser,calendarList);
-		 * model.addAttribute("mesaage",message); System.out.println(message);
+		 * model.addAttribute("message",message); System.out.println(message);
 		 */
 		// 一覧の再取得
 		model.addAttribute("loginUser", loginUser);

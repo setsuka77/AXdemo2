@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.example.demo.entity.Attendance;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.form.DailyAttendanceForm;
+import com.example.demo.form.UserManagementForm;
 import com.example.demo.mapper.AttendanceMapper;
 import com.example.demo.util.DateUtil;
 
@@ -31,8 +33,7 @@ public class AttendanceService {
 	private DateUtil dateUtil;
 
 	/*
-	 * 勤怠管理画面
-	 * 日付リスト作成
+	 * 勤怠管理画面 日付リスト作成
 	 */
 	public List<CalendarDto> generateCalendar(int year, int month) {
 		List<CalendarDto> calendar = new ArrayList<>();
@@ -50,8 +51,7 @@ public class AttendanceService {
 	}
 
 	/*
-	 * 勤怠管理画面
-	 * DBから勤怠情報取得
+	 * 勤怠管理画面 DBから勤怠情報取得
 	 */
 	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Users loginUser) {
 		LocalDate startDate = calendar.get(0).getDate();
@@ -65,8 +65,7 @@ public class AttendanceService {
 	}
 
 	/*
-	 * 勤怠管理画面
-	 * 勤怠フォームの生成
+	 * 勤怠管理画面 勤怠フォームの生成
 	 */
 	public AttendanceForm setAttendanceForm(List<CalendarDto> calendarList, List<AttendanceDto> attendanceDtoList,
 			Users loginUser) {
@@ -102,8 +101,7 @@ public class AttendanceService {
 	}
 
 	/*
-	 * 勤怠管理画面
-	 * 勤怠情報登録処理
+	 * 勤怠管理画面 勤怠情報登録処理
 	 */
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser, LocalDate calendarList) {
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
@@ -141,6 +139,43 @@ public class AttendanceService {
 		}
 
 		return "勤怠情報が登録されました";
+	}
+
+	/*
+	 * ユーザ管理画面 文字数制限・日付形式チェック
+	 */
+	public String validateAttendanceForm(AttendanceForm attendanceForm) {
+	    StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
+
+	    boolean hasErrors = false;
+
+	    // 出退勤時間形式チェック
+	    Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
+
+	    for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
+	        // 出勤時間チェック
+	        String startTime = dailyForm.getStartTime();
+	        if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
+	            errorMessage.append(dailyForm.getDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
+	            hasErrors = true;
+	        }
+
+	        // 退勤時間チェック
+	        String endTime = dailyForm.getEndTime();
+	        if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
+	            errorMessage.append(dailyForm.getDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
+	            hasErrors = true;
+	        }
+
+	        // 備考欄文字数チェック
+	        String remarks = dailyForm.getRemarks();
+	        if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
+	            errorMessage.append(dailyForm.getDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
+	            hasErrors = true;
+	        }
+	    }
+
+	    return hasErrors ? errorMessage.toString() : null;
 	}
 
 }
