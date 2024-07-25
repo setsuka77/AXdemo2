@@ -4,6 +4,9 @@ import java.util.Date;
 
 import lombok.Data;
 
+/*
+ * 月次勤怠申請エンティティ
+ */
 @Data
 public class MonthlyAttendanceReq {
 	

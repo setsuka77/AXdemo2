@@ -102,75 +102,90 @@ public class AttendanceService {
 	 * 勤怠管理画面 勤怠情報登録処理
 	 */
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser, List<CalendarDto> calendar) {
-        List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-        
-        for (int i = 0; i < dailyAttendanceList.size(); i++) {
-            DailyAttendanceForm dailyForm = dailyAttendanceList.get(i);
-            CalendarDto calendarDto = calendar.get(i);
+		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
 
-            // CalendarDto から日付を取得して DailyAttendanceForm に設定
-            if (calendarDto != null) {
-                LocalDate date = calendarDto.getDate();
-                dailyForm.setDate(dateUtil.localDateToDate(date)); 
-                
-                Attendance attendance = new Attendance();
-                attendance.setId(dailyForm.getId());
-                attendance.setUserId(loginUser.getId());
-                attendance.setDate(dailyForm.getDate()); 
-                attendance.setStatus(dailyForm.getStatus());
-                attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
-                attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
-                attendance.setRemarks(dailyForm.getRemarks());
+		for (int i = 0; i < dailyAttendanceList.size(); i++) {
+			DailyAttendanceForm dailyForm = dailyAttendanceList.get(i);
+			CalendarDto calendarDto = calendar.get(i);
 
-                if (attendance.getId() == null) {
-                    // 勤怠情報を登録
-                    attendanceMapper.insert(attendance);
-                } else {
-                    // 勤怠情報を更新
-                    attendanceMapper.update(attendance);
-                }
-            } else {
-                System.out.println("No matching CalendarDto found for index: " + i);
-            }
-        }
-        return "勤怠情報が登録されました";
-    }
+			// CalendarDto から日付を取得して DailyAttendanceForm に設定
+			if (calendarDto != null) {
+				LocalDate date = calendarDto.getDate();
+				dailyForm.setDate(dateUtil.localDateToDate(date));
+
+				Attendance attendance = new Attendance();
+				attendance.setId(dailyForm.getId());
+				attendance.setUserId(loginUser.getId());
+				attendance.setDate(dailyForm.getDate());
+				attendance.setStatus(dailyForm.getStatus());
+				attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
+				attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
+				attendance.setRemarks(dailyForm.getRemarks());
+
+				if (attendance.getId() == null) {
+					// 勤怠情報を登録
+					attendanceMapper.insert(attendance);
+				} else {
+					// 勤怠情報を更新
+					attendanceMapper.update(attendance);
+				}
+			} else {
+				System.out.println("No matching CalendarDto found for index: " + i);
+			}
+		}
+		return "勤怠情報が登録されました";
+	}
 
 	/*
 	 * ユーザ管理画面 文字数制限・日付形式チェック
 	 */
-	public String validateAttendanceForm(AttendanceForm attendanceForm) {
-	    StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
+	public String validateAttendanceForm(AttendanceForm attendanceForm, boolean isApprovalRequest) {
+		StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
 
-	    boolean hasErrors = false;
+		boolean hasErrors = false;
 
-	    // 出退勤時間形式チェック
-	    Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
+		// 出退勤時間形式チェック
+		Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
 
-	    for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
-	        // 出勤時間チェック
-	        String startTime = dailyForm.getStartTime();
-	        if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
-	            errorMessage.append(dailyForm.getDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
-	            hasErrors = true;
-	        }
+		for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
+			// 出勤時間チェック
+			String startTime = dailyForm.getStartTime();
+			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
+				errorMessage.append(dailyForm.getDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
+				hasErrors = true;
+			}
 
-	        // 退勤時間チェック
-	        String endTime = dailyForm.getEndTime();
-	        if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
-	            errorMessage.append(dailyForm.getDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
-	            hasErrors = true;
-	        }
+			// 退勤時間チェック
+			String endTime = dailyForm.getEndTime();
+			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
+				errorMessage.append(dailyForm.getDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
+				hasErrors = true;
+			}
 
-	        // 備考欄文字数チェック
-	        String remarks = dailyForm.getRemarks();
-	        if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
-	            errorMessage.append(dailyForm.getDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
-	            hasErrors = true;
-	        }
-	    }
+			// 備考欄文字数チェック
+			String remarks = dailyForm.getRemarks();
+			if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
+				errorMessage.append(dailyForm.getDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
+				hasErrors = true;
+			}
 
-	    return hasErrors ? errorMessage.toString() : null;
+			// ステータス必須チェック (承認申請時のみ)
+			if (isApprovalRequest) {
+				Integer status = dailyForm.getStatus();
+				if (status == null) {
+					errorMessage.append(dailyForm.getDate()).append(" のステータス : 必ず選択してください。<br>");
+					hasErrors = true;
+				}
+			}
+
+		}
+
+		return hasErrors ? errorMessage.toString() : null;
 	}
+
+	/*
+	 * 勤怠管理画面 承認申請ボタン 活性非活性確認フラグ用
+	 *
+	 */
 
 }

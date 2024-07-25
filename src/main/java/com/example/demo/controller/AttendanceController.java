@@ -36,23 +36,23 @@ public class AttendanceController {
 	public String showAttendanceForm(Model model, HttpSession session) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-		
+
 		// フラッシュ属性からエラーメッセージとフォームデータを取得
-        if (model.containsAttribute("registerError")) {
-            model.addAttribute("registerError", model.getAttribute("registerError"));
-        }
-        if (model.containsAttribute("attendanceForm")) {
-            model.addAttribute("attendanceForm", model.getAttribute("attendanceForm"));
-        }
-        if (model.containsAttribute("calendarList")) {
-            model.addAttribute("calendarList", model.getAttribute("calendarList"));
-        }
-        if (model.containsAttribute("year")) {
-            model.addAttribute("year", model.getAttribute("year"));
-        }
-        if (model.containsAttribute("month")) {
-            model.addAttribute("month", model.getAttribute("month"));
-        }
+		if (model.containsAttribute("registerError")) {
+			model.addAttribute("registerError", model.getAttribute("registerError"));
+		}
+		if (model.containsAttribute("attendanceForm")) {
+			model.addAttribute("attendanceForm", model.getAttribute("attendanceForm"));
+		}
+		if (model.containsAttribute("calendar")) {
+			model.addAttribute("calendar", model.getAttribute("calendar"));
+		}
+		if (model.containsAttribute("year")) {
+			model.addAttribute("year", model.getAttribute("year"));
+		}
+		if (model.containsAttribute("month")) {
+			model.addAttribute("month", model.getAttribute("month"));
+		}
 
 		// プルダウンの設定
 		setYearMonthList(model);
@@ -122,7 +122,8 @@ public class AttendanceController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
-	public String registAttendance(AttendanceForm attendanceForm, Model model, HttpSession session,RedirectAttributes redirectAttributes) {
+	public String registAttendance(AttendanceForm attendanceForm, Model model, HttpSession session,
+			RedirectAttributes redirectAttributes) {
 
 		List<CalendarDto> calendar = (List<CalendarDto>) session.getAttribute("calendar");
 		System.out.println(calendar);
@@ -131,24 +132,60 @@ public class AttendanceController {
 
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-		
+
 		// バリデーションエラー表示
-        String errorMessage = attendanceService.validateAttendanceForm(attendanceForm);
-        if (errorMessage != null) {
-            redirectAttributes.addFlashAttribute("registerError", errorMessage);
-            redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
-            redirectAttributes.addFlashAttribute("calendarList", calendar);
-            redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
-            redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
-            return "redirect:/attendance";
-        }
-        
+		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm,true);
+		if (errorMessage != null) {
+			redirectAttributes.addFlashAttribute("registerError", errorMessage);
+			redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
+			redirectAttributes.addFlashAttribute("calendar", calendar);
+			redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
+			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
+			return "redirect:/attendance";
+		}
+
 		// 登録処理
-        String message = attendanceService.registAttendance(attendanceForm,loginUser,calendar);
-		model.addAttribute("mesaage",message);
+		String message = attendanceService.registAttendance(attendanceForm, loginUser, calendar);
+		model.addAttribute("mesaage", message);
 		System.out.println(message);
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
 	}
+
+	/**
+	 * 勤怠登録画面 承認申請機能 全ての日付が登録完了しているかどうかを確認
+	 *
+	 * @param attendanceForm
+	 * @return 全て登録完了していれば true、そうでなければ false
+	 */
+
+	/**
+	 * 勤怠登録画面 承認申請機能
+	 * 
+	 */
+	@RequestMapping(path = "/attendance", params = "request", method = RequestMethod.POST)
+	public String requestApproval(AttendanceForm attendanceForm, Model model, HttpSession session,
+			RedirectAttributes redirectAttributes) {
+
+		List<CalendarDto> calendar = (List<CalendarDto>) session.getAttribute("calendarList");
+		Users loginUser = (Users) session.getAttribute("user");
+
+		// バリデーションエラー表示 (承認申請時のみステータスチェック)
+		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, true);
+		if (errorMessage != null) {
+			redirectAttributes.addFlashAttribute("registerError", errorMessage);
+			redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
+			redirectAttributes.addFlashAttribute("calendar", calendar);
+			redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
+			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
+			return "redirect:/attendance";
+		}
+
+		// 承認申請処理を実行するコードを追加
+		// ...
+
+		return "redirect:/attendance";
+	}
+
 }
