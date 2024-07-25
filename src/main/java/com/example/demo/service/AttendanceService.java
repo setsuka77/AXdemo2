@@ -30,7 +30,10 @@ public class AttendanceService {
 	@Autowired
 	private DateUtil dateUtil;
 
-	// 日付リスト作成
+	/*
+	 * 勤怠管理画面
+	 * 日付リスト作成
+	 */
 	public List<CalendarDto> generateCalendar(int year, int month) {
 		List<CalendarDto> calendar = new ArrayList<>();
 		YearMonth yearMonth = YearMonth.of(year, month);
@@ -46,19 +49,25 @@ public class AttendanceService {
 		return calendar;
 	}
 
-	//勤怠情報取得
+	/*
+	 * 勤怠管理画面
+	 * DBから勤怠情報取得
+	 */
 	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Users loginUser) {
 		LocalDate startDate = calendar.get(0).getDate();
 		LocalDate endDate = calendar.get(calendar.size() - 1).getDate();
 
 		// DBから勤怠情報を取得
-		List<AttendanceDto> attendanceDtoList = attendanceMapper.findAttendanceByUserIdAndDateRange(
-				loginUser.getId(), java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+		List<AttendanceDto> attendanceDtoList = attendanceMapper.findAttendanceByUserIdAndDateRange(loginUser.getId(),
+				java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
 
 		return attendanceDtoList;
 	}
 
-	//勤怠フォームの生成
+	/*
+	 * 勤怠管理画面
+	 * 勤怠フォームの生成
+	 */
 	public AttendanceForm setAttendanceForm(List<CalendarDto> calendarList, List<AttendanceDto> attendanceDtoList,
 			Users loginUser) {
 
@@ -74,7 +83,7 @@ public class AttendanceService {
 			LocalDate date = calendarDto.getDate();
 			dailyForm.setDate(dateUtil.localDateToDate(date)); // 日付をDateに変換して設定
 
-			//この時点で日付の数だけリストが出てる
+			// この時点で日付の数だけリストが出てる
 			System.out.println("とても眠い");
 
 			AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
@@ -92,7 +101,10 @@ public class AttendanceService {
 		return attendanceForm;
 	}
 
-	//登録処理
+	/*
+	 * 勤怠管理画面
+	 * 勤怠情報登録処理
+	 */
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser, LocalDate calendarList) {
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
 		for (DailyAttendanceForm dailyAttendance : dailyAttendanceList) {
@@ -102,7 +114,7 @@ public class AttendanceService {
 
 		if (dailyAttendanceList == null) {
 			dailyAttendanceList = new ArrayList<>(); // 空のリストで初期化
-			System.out.println("テスト4");//そもそもtrueになることがない？
+			System.out.println("テスト4");// そもそもtrueになることがない？
 		}
 
 		System.out.println("dailyAttendanceList size: " + dailyAttendanceList.size());
@@ -118,9 +130,9 @@ public class AttendanceService {
 			attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
 			attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
 			attendance.setRemarks(dailyForm.getRemarks());
-			
+
 			System.out.println("ID: " + attendance.getUserId());
-		    System.out.println("Date: " + attendance.getDate());
+			System.out.println("Date: " + attendance.getDate());
 			System.out.println("テスト5");
 			System.out.println(attendance);
 			// 勤怠情報を更新

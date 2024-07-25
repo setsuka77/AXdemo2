@@ -134,6 +134,7 @@ button:hover {
 	.button-group {
 		flex-direction: column;
 		gap: 10px;
+		justify-content: center;
 	}
 	button {
 		width: 100%;
@@ -240,5 +241,6 @@ th {
 
 .info-item {
 	flex: 1; /* アイテムが均等に広がる */
+	padding: 10px;
 	white-space: nowrap; /* テキストの折り返しを防ぐ */
 }
