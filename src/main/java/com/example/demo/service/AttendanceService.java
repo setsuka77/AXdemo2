@@ -28,7 +28,7 @@ public class AttendanceService {
 	@Autowired
 	private AttendanceMapper attendanceMapper;
 	@Autowired
-    private DateUtil dateUtil;
+	private DateUtil dateUtil;
 
 	// 日付リスト作成
 	public List<CalendarDto> generateCalendar(int year, int month) {
@@ -46,82 +46,89 @@ public class AttendanceService {
 		return calendar;
 	}
 
-	
 	//勤怠情報取得
-	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Users loginUser){
+	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Users loginUser) {
 		LocalDate startDate = calendar.get(0).getDate();
-        LocalDate endDate = calendar.get(calendar.size() - 1).getDate();
+		LocalDate endDate = calendar.get(calendar.size() - 1).getDate();
 
-        // DBから勤怠情報を取得
-        List<AttendanceDto> attendanceDtoList = attendanceMapper.findAttendanceByUserIdAndDateRange(
-                loginUser.getId(), java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+		// DBから勤怠情報を取得
+		List<AttendanceDto> attendanceDtoList = attendanceMapper.findAttendanceByUserIdAndDateRange(
+				loginUser.getId(), java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
 
-        return attendanceDtoList;
+		return attendanceDtoList;
 	}
 
-	
 	//勤怠フォームの生成
-	public AttendanceForm setAttendanceForm(List<CalendarDto> calendarList, List<AttendanceDto> attendanceDtoList) {
-	        
-	    AttendanceForm attendanceForm = new AttendanceForm();
-	    attendanceForm.setDailyAttendanceList(new ArrayList<>());
-	    
-	 // カレンダーの日付に対応する勤怠情報を Map に変換
-        Map<LocalDate, AttendanceDto> attendanceMap = attendanceDtoList.stream()
-                .collect(Collectors.toMap(dto -> dateUtil.dateToLocalDate(dto.getDate()), dto -> dto));
-        // 各日付に対応するフォームを生成
-        for (CalendarDto calendarDto : calendarList) {
-            DailyAttendanceForm dailyForm = new DailyAttendanceForm();
-            LocalDate date = calendarDto.getDate();
-            dailyForm.setDate(dateUtil.localDateToDate(date)); // DateUtil を利用して変換
-            
-            System.out.println(dailyForm);
-            
-            AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
-            dailyForm.setId(attendanceDto.getId());
-            dailyForm.setUserId(attendanceDto.getUserId());
-            dailyForm.setStatus(attendanceDto.getStatus());
-            dailyForm.setStartTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getStartTime())));
-            dailyForm.setEndTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getEndTime())));
-            dailyForm.setRemarks(attendanceDto.getRemarks());
-            
-            attendanceForm.getDailyAttendanceList().add(dailyForm);
-        }
-        System.out.println("テスト1");
-	    
-        return attendanceForm;
+	public AttendanceForm setAttendanceForm(List<CalendarDto> calendarList, List<AttendanceDto> attendanceDtoList,
+			Users loginUser) {
+
+		AttendanceForm attendanceForm = new AttendanceForm();
+		attendanceForm.setDailyAttendanceList(new ArrayList<>());
+
+		// カレンダーの日付に対応する勤怠情報を Map に変換
+		Map<LocalDate, AttendanceDto> attendanceMap = attendanceDtoList.stream()
+				.collect(Collectors.toMap(dto -> dateUtil.dateToLocalDate(dto.getDate()), dto -> dto));
+		// 各日付に対応するフォームを生成
+		for (CalendarDto calendarDto : calendarList) {
+			DailyAttendanceForm dailyForm = new DailyAttendanceForm();
+			LocalDate date = calendarDto.getDate();
+			dailyForm.setDate(dateUtil.localDateToDate(date)); // 日付をDateに変換して設定
+
+			//この時点で日付の数だけリストが出てる
+			System.out.println("とても眠い");
+
+			AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
+			dailyForm.setId(attendanceDto.getId());
+			dailyForm.setUserId(loginUser.getId());
+			dailyForm.setStatus(attendanceDto.getStatus());
+			dailyForm
+					.setStartTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getStartTime())));
+			dailyForm.setEndTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getEndTime())));
+			dailyForm.setRemarks(attendanceDto.getRemarks());
+
+			attendanceForm.getDailyAttendanceList().add(dailyForm);
+		}
+
+		return attendanceForm;
 	}
 
 	//登録処理
-	public String registAttendance(AttendanceForm attendanceForm,Users loginUser) {
-	        List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-	        if (dailyAttendanceList == null) {
-	            dailyAttendanceList = new ArrayList<>(); // 空のリストで初期化
-	            System.out.println("テスト4");
-	        }
-	        
-	        System.out.println("dailyAttendanceList size: " + dailyAttendanceList.size());
-	        System.out.println("Login User: " + loginUser);
-			for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
-				Attendance attendance = new Attendance();
-				attendance.setId(dailyForm.getId());
-				attendance.setUserId(loginUser.getId());
-				attendance.setStatus(dailyForm.getStatus());
-				attendance.setDate(dailyForm.getDate());
-				attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
-				attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
-				attendance.setRemarks(dailyForm.getRemarks());
+	public String registAttendance(AttendanceForm attendanceForm, Users loginUser, LocalDate calendarList) {
+		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
+		for (DailyAttendanceForm dailyAttendance : dailyAttendanceList) {
+			dailyAttendance.setDate(dateUtil.localDateToDate(calendarList));
+			dailyAttendance.setUserId(loginUser.getId()); // メソッド呼び出しに修正
+		}
 
-				System.out.println("テスト5");
-				System.out.println(attendance);
-				// 勤怠情報を更新
-				attendanceMapper.update(attendance);
-				System.out.println("テスト6");
-			}
+		if (dailyAttendanceList == null) {
+			dailyAttendanceList = new ArrayList<>(); // 空のリストで初期化
+			System.out.println("テスト4");//そもそもtrueになることがない？
+		}
 
-	        return "勤怠情報が登録されました";
-	 }
+		System.out.println("dailyAttendanceList size: " + dailyAttendanceList.size());
+		System.out.println(loginUser);
+		System.out.println(dailyAttendanceList);
 
-	
+		for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
+			Attendance attendance = new Attendance();
+			attendance.setId(dailyForm.getId());
+			attendance.setUserId(loginUser.getId());
+			attendance.setStatus(dailyForm.getStatus());
+			attendance.setDate(dateUtil.localDateToDate(calendarList));
+			attendance.setStartTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getStartTime())));
+			attendance.setEndTime(Time.valueOf(dateUtil.stringToLocalTime(dailyForm.getEndTime())));
+			attendance.setRemarks(dailyForm.getRemarks());
+			
+			System.out.println("ID: " + attendance.getUserId());
+		    System.out.println("Date: " + attendance.getDate());
+			System.out.println("テスト5");
+			System.out.println(attendance);
+			// 勤怠情報を更新
+			attendanceMapper.insert(attendance);
+			System.out.println("テスト6");
+		}
+
+		return "勤怠情報が登録されました";
+	}
 
 }

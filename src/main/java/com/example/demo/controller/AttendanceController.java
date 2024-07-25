@@ -17,6 +17,7 @@ import com.example.demo.dto.CalendarDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.service.AttendanceService;
+import com.example.demo.util.DateUtil;
 
 import jakarta.servlet.http.HttpSession;
 @Controller
@@ -24,6 +25,8 @@ public class AttendanceController {
 
 	@Autowired
 	private AttendanceService attendanceService;
+	@Autowired
+    private DateUtil dateUtil;
 
 	/**
 	 * 勤怠登録画面 初期表示
@@ -67,11 +70,13 @@ public class AttendanceController {
 	     //DBから勤怠情報取得
 	     List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendarList,loginUser);
 	     //Dateしか存在おらず、DBの情報はない。DtoListではなくDailyAttendanceFormが表示される
-	     System.out.printf("困り中",attendanceDtoList);
+	     System.out.println("困り中");
 	     //勤怠フォームの生成
-	     AttendanceForm attendanceForm= attendanceService.setAttendanceForm(calendarList,attendanceDtoList);
-	     //userIdなし、Dateあり
+	     AttendanceForm attendanceForm= attendanceService.setAttendanceForm(calendarList,attendanceDtoList,loginUser);
+	     //userId、Dateあり
 	     System.out.println(attendanceForm);
+	     
+	     session.setAttribute("calendarList", calendarList);
 	     
 	     model.addAttribute("year",year);
 	     model.addAttribute("month",month);
@@ -107,17 +112,21 @@ public class AttendanceController {
 	 * @param model
 	 * @return 勤怠登録画面
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
 	public String registAttendance(AttendanceForm attendanceForm,Model model,HttpSession session) {
-		//System.out.println("テストその３");
+		
+		List<CalendarDto> calendarList = (List<CalendarDto>) session.getAttribute("calendarList");
+		System.out.println(calendarList);
+		//dateとuserId以外はコンソールに表示済み
 		System.out.println(attendanceForm);
+		
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-		System.out.println(loginUser);
 		//登録処理
-		String message = attendanceService.registAttendance(attendanceForm,loginUser);
-		model.addAttribute("mesaage",message);
-		System.out.println(message);
+		/*	String message = attendanceService.registAttendance(attendanceForm,loginUser,calendarList);
+			model.addAttribute("mesaage",message);
+			System.out.println(message);*/
 		//一覧の再取得
 		model.addAttribute("loginUser",loginUser);
 		// 再度リストを設定する

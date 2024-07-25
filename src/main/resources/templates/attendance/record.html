@@ -87,7 +87,8 @@
 				</thead>
 				<tbody>
 					<tr th:each="calendar, iterStat : ${calendarList}">
-						<td th:text="${calendar.getFormattedDate()}"></td>
+						<td th:text="${calendar.getFormattedDate()}">
+							<input type="hidden" name="date" th:value="${calendar.date}" /></td>
 						<td th:text="${calendar.dayOfWeek}"></td>
 						<td>
 							<select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'"
