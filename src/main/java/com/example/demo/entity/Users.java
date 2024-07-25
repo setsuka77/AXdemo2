@@ -5,6 +5,10 @@ import java.time.LocalDate;
 
 import lombok.Data;
 
+/*
+ * ユーザ情報エンティティ
+ * テーブル：Users
+ */
 @Data
 public class Users {
 

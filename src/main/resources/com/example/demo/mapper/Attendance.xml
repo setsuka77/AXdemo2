@@ -39,9 +39,21 @@
 	
 
 
-    <!-- 勤怠登録情報 承認申請 -->
-    <!--  <update id="approveAttendance" parameterType="map">
-      
-    </update>
-    -->
+    <!-- 勤怠登録情報 承認申請された勤怠情報の取得 -->
+ <!--    <select id="getAttendanceDetails" resultType="com.example.demo.entity.Attendance">
+        SELECT 
+            date, 
+            user_id as userId, 
+            status, 
+            start_time as startTime, 
+            end_time as endTime, 
+            remarks
+        FROM 
+            attendance
+        WHERE 
+            user_id = #{userId} 
+            AND date BETWEEN #{startOfMonth} AND #{endOfMonth}
+    </select> -->
+    
+    
 </mapper>

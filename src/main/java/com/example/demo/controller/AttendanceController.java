@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
+import com.example.demo.entity.Attendance;
+import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.service.AttendanceService;
@@ -33,9 +36,16 @@ public class AttendanceController {
 	 * @return 勤怠登録画面
 	 */
 	@GetMapping("/attendance")
-	public String showAttendanceForm(Model model, HttpSession session) {
+	public String showAttendanceForm(@RequestParam(value = "status", required = false)  Integer statusParam, Model model, HttpSession session) {
+		// デフォルト値を設定（statusParam が null の場合）
+	    Integer status = (statusParam != null) ? statusParam : 1;
+		
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+
+		// 承認申請一覧表示(マネージャ)
+		List<MonthlyAttendanceReq> reqs = attendanceService.getMonthlyAttendanceReqsWithUser(status);
+		model.addAttribute("monthlyAttendanceReqs", reqs);
 
 		// フラッシュ属性からエラーメッセージとフォームデータを取得
 		if (model.containsAttribute("registerError")) {
@@ -59,6 +69,7 @@ public class AttendanceController {
 		model.addAttribute("loginUser", loginUser);
 		return "attendance/record";
 	}
+	
 
 	/**
 	 * プルダウン用 年リストと月リストの設定
@@ -134,7 +145,7 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 
 		// バリデーションエラー表示
-		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm,true);
+		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
 			redirectAttributes.addFlashAttribute("registerError", errorMessage);
 			redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);

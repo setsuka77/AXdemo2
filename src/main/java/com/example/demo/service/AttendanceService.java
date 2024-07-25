@@ -16,10 +16,12 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
 import com.example.demo.entity.Attendance;
+import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.form.DailyAttendanceForm;
 import com.example.demo.mapper.AttendanceMapper;
+import com.example.demo.mapper.MonthlyAttendanceReqMapper;
 import com.example.demo.util.DateUtil;
 
 @Service
@@ -29,6 +31,8 @@ public class AttendanceService {
 	private AttendanceMapper attendanceMapper;
 	@Autowired
 	private DateUtil dateUtil;
+	@Autowired
+    private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
 
 	/*
 	 * 勤怠管理画面 日付リスト作成
@@ -81,7 +85,7 @@ public class AttendanceService {
 			dailyForm.setDate(dateUtil.localDateToDate(date)); // 日付をDateに変換して設定
 
 			// この時点で日付の数だけリストが出てる
-			System.out.println("とても眠い");
+//			System.out.println("とても眠い");
 
 			AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
 			dailyForm.setId(attendanceDto.getId());
@@ -129,8 +133,6 @@ public class AttendanceService {
 					// 勤怠情報を更新
 					attendanceMapper.update(attendance);
 				}
-			} else {
-				System.out.println("No matching CalendarDto found for index: " + i);
 			}
 		}
 		return "勤怠情報が登録されました";
@@ -187,5 +189,13 @@ public class AttendanceService {
 	 * 勤怠管理画面 承認申請ボタン 活性非活性確認フラグ用
 	 *
 	 */
+	
+	/*
+	 * 勤怠管理画面 承認申請一覧表示用
+	 */
+    public List<MonthlyAttendanceReq> getMonthlyAttendanceReqsWithUser(Integer status) {
+        return monthlyAttendanceReqMapper.getMonthlyAttendanceReqWithUser(status);
+    }
+    
 
 }

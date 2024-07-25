@@ -1,10 +1,12 @@
 package com.example.demo.mapper;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.entity.Attendance;
@@ -48,11 +50,6 @@ public interface AttendanceMapper {
 	 */
 	Boolean update(Attendance attendance);
 	
-	
-	/*
-	 * 勤怠登録情報　承認申請
-	 * @return 申請状況
-	 */
 	
 	
 }

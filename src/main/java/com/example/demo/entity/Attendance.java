@@ -5,6 +5,10 @@ import java.util.Date;
 
 import lombok.Data;
 
+/*
+ * 勤怠登録情報エンティティ
+ * テーブル：attendance
+ */
 @Data
 public class Attendance {
 	

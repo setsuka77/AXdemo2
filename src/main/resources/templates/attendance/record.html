@@ -68,9 +68,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<td></td>
-					<!--<td th:text="${monthlyAttendanceReq.targetYearMonth}"></td>
-					<td th:text="${monthlyAttendanceReq.date}"></td>-->
+					<tr th:each="req : ${monthlyAttendanceReqs}">
+                        <td><a th:href="@{/monthlyAttendanceReq/detail(id=${req.id})}" th:text="${req.user.name}">申請者</a></td>
+                        <td th:text="${#dates.format(req.targetYearMonth, 'yyyy-MM')}">申請対象年月</td>
+                        <td th:text="${#dates.format(req.date, 'yyyy-MM-dd')}">申請日</td>
+                    </tr>
 				</tbody>
 			</table>
 
@@ -90,7 +92,7 @@
 						<th>備考</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="attendance-details">
 					<tr th:each="calendar, iterStat : ${calendar}">
 						<td th:text="${calendar.getFormattedDate()}">
 							<input type="hidden" name="date" th:value="${calendar.date}" />
@@ -179,6 +181,11 @@
 
 		//登録時必須チェック
 		//承認申請ボタンを活性化させる
+		
+		
+		
+		//マネージャ権限 申請勤怠情報表示
+
 
 	</script>
 

@@ -20,4 +20,7 @@ public class MonthlyAttendanceReq {
 	private Date date;
 	/** ステータス */
 	private Integer status;
+	
+	/** ユーザ情報エンティティ */
+	private Users user;  // ユーザ情報を追加
 }
