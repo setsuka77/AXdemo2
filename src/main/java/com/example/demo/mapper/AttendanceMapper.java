@@ -58,5 +58,8 @@ public interface AttendanceMapper {
 	Attendance findByDateAndUserId(@Param("date") java.util.Date date,@Param("userId") Integer UserId);
 	
 	
+	List<Attendance> findAttendancesByUserIdAndDateRange(@Param("userId") Integer userId,
+            @Param("startDate") java.sql.Date startDate,
+            @Param("endDate") java.sql.Date endDate);
 	
 }

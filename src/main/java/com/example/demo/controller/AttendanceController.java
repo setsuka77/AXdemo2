@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
+import com.example.demo.entity.Attendance;
 import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
@@ -41,10 +44,6 @@ public class AttendanceController {
 
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-
-		// 承認申請一覧表示(マネージャ)
-		List<MonthlyAttendanceReq> reqs = attendanceService.getMonthlyAttendanceReqsWithUser(status);
-		model.addAttribute("monthlyAttendanceReqs", reqs);
 
 		// フラッシュ属性からエラーメッセージとフォームデータを取得
 		if (model.containsAttribute("registerError")) {
@@ -168,38 +167,51 @@ public class AttendanceController {
 	}
 
 	/**
-	 * 勤怠登録画面 承認申請機能 全ての日付が登録完了しているかどうかを確認
-	 *
-	 * @param attendanceForm
-	 * @return 全て登録完了していれば true、そうでなければ false
-	 */
+     * 月次勤怠申請の詳細表示
+     */
+    @RequestMapping(path = "/attendance", params = "detail", method = RequestMethod.POST)
+    public String getMonthlyAttendanceReqDetail(@RequestParam("id") Integer id, Model model) {
+        MonthlyAttendanceReq req = attendanceService.getMonthlyAttendanceReqById(id);
+        model.addAttribute("monthlyAttendanceReq", req);
+        
+     // java.util.Dateをjava.sql.Dateに変換
+        Date sqlDate = new Date(req.getTargetYearMonth().getTime());
+        
+        List<Attendance> attendances = attendanceService.getAttendancesForMonth((Date) req.getTargetYearMonth(), req.getUserId());
+        model.addAttribute("attendances", attendances);
+        return "attendance/detail";
+    }
 
-	/**
-	 * 勤怠登録画面 承認申請機能
-	 * 
-	 */
-	@RequestMapping(path = "/attendance", params = "request", method = RequestMethod.POST)
-	public String requestApproval(AttendanceForm attendanceForm, Model model, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+    /**
+     * 承認申請を登録
+     */
+    @RequestMapping(path = "/attendance", params = "register", method = RequestMethod.POST)
+    public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
+                                               HttpSession session, RedirectAttributes redirectAttributes) {
+        Users loginUser = (Users) session.getAttribute("user");
 
-		List<CalendarDto> calendar = (List<CalendarDto>) session.getAttribute("calendarList");
-		Users loginUser = (Users) session.getAttribute("user");
+        // 月次勤怠申請の登録処理
+        attendanceService.registerMonthlyAttendanceReq(year, month, loginUser);
 
-		// バリデーションエラー表示 (承認申請時のみステータスチェック)
-		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, true);
-		if (errorMessage != null) {
-			redirectAttributes.addFlashAttribute("registerError", errorMessage);
-			redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
-			redirectAttributes.addFlashAttribute("calendar", calendar);
-			redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
-			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
-			return "redirect:/attendance";
-		}
+        return "redirect:/attendance";
+    }
 
-		// 承認申請処理を実行するコードを追加
-		// ...
+    /**
+     * 承認申請の承認
+     */
+    @RequestMapping(path = "/attendance", params = "approve", method = RequestMethod.POST)
+    public String approveMonthlyAttendanceReq(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
+        attendanceService.updateMonthlyAttendanceReqStatus(id, 2); // 承認済みのステータス
+        return "redirect:/attendance";
+    }
 
-		return "redirect:/attendance";
-	}
+    /**
+     * 承認申請の却下
+     */
+    @RequestMapping(path = "/attendance", params = "reject", method = RequestMethod.POST)
+    public String rejectMonthlyAttendanceReq(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
+        attendanceService.updateMonthlyAttendanceReqStatus(id, 3); // 却下済みのステータス
+        return "redirect:/attendance";
+    }
 
 }

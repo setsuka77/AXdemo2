@@ -33,5 +33,32 @@
         WHERE
             mar.status = #{status}
     </select>
+    
+    <!-- Insert SQL -->
+    <insert id="insert" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+        INSERT INTO monthly_attendance_req (id, user_id, request_date, status)
+        VALUES (#{id}, #{userId}, #{requestDate}, #{status})
+    </insert>
+
+    <!-- Select SQL by ID -->
+    <select id="findById" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
+        SELECT id, user_id, request_date, status
+        FROM monthly_attendance_req
+        WHERE id = #{id}
+    </select>
+
+    <!-- Update SQL -->
+    <update id="update" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+        UPDATE monthly_attendance_req
+        SET user_id = #{userId}, request_date = #{requestDate}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- Select SQL with Status -->
+    <select id="findAllWithStatus" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
+        SELECT id, user_id, request_date, status
+        FROM monthly_attendance_req
+        WHERE status = #{status}
+    </select>
 
 </mapper>
