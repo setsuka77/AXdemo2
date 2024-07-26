@@ -16,12 +16,20 @@
     WHERE u.id = #{userId} 
     AND a.date BETWEEN #{startDate} AND #{endDate}
 	</select>
+	
+	<!-- 勤怠ID取得用 -->
+	<select id="findByDateAndUserId" resultType="com.example.demo.entity.Attendance">
+	SELECT *
+	FROM attendance
+	WHERE user_id = #{userId}
+	AND date = #{date}
+	</select>
+	
 
 	<!-- 勤怠登録情報登録 -->
 	<insert id="insert" parameterType="com.example.demo.entity.Attendance">
-		INSERT INTO attendance (user_id, status, date, start_time, end_time,
-		remarks)
-		VALUES (#{userId}, #{status}, #{date}, #{startTime}, #{endTime}, #{remarks})
+	INSERT INTO attendance (user_id, status, date, start_time, end_time,remarks)
+	VALUES (#{userId}, #{status}, #{date}, #{startTime}, #{endTime}, #{remarks})
 	</insert>
 	
 	<!-- 勤怠登録情報更新 -->

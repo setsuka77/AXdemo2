@@ -1,12 +1,10 @@
 package com.example.demo.mapper;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.entity.Attendance;
@@ -45,10 +43,19 @@ public interface AttendanceMapper {
 	/**
 	 * 勤怠情報（受講生入力）更新
 	 * 
-	 * @param tStudentAttendance
+	 * @param Attendance
 	 * @return 更新結果
 	 */
 	Boolean update(Attendance attendance);
+
+	
+	/**
+	 * 勤怠情報（受講生入力）更新
+	 * 
+	 * @param Attendance
+	 * @return 勤怠ID取得
+	 */
+	Attendance findByDateAndUserId(@Param("date") java.util.Date date,@Param("userId") Integer UserId);
 	
 	
 	

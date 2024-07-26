@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
-import com.example.demo.entity.Attendance;
 import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
@@ -160,8 +158,9 @@ public class AttendanceController {
 		
 		System.out.println(attendanceForm);
 		// 登録処理
-		String message = attendanceService.registAttendance(attendanceForm, loginUser, calendar);
+		String message = attendanceService.registAttendance(attendanceForm, loginUser);
 		model.addAttribute("mesaage", message);
+		model.addAttribute(attendanceForm);
 		System.out.println(message);
 		// 再度リストを設定する
 		setYearMonthList(model);
