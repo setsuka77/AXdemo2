@@ -213,6 +213,7 @@ public class AttendanceService {
 	}
 
 	/**
+     * 承認申請ボタン押下
      * 月次勤怠申請を登録する
      */
     public void registerMonthlyAttendanceReq(Integer year, Integer month, Users user) {
@@ -232,31 +233,31 @@ public class AttendanceService {
     /**
      * 指定月の勤怠情報を取得する
      */
-    public List<Attendance> getAttendancesForMonth(java.sql.Date targetYearMonth, Integer userId) {
-        YearMonth yearMonth = YearMonth.of(targetYearMonth.toLocalDate().getYear(), targetYearMonth.toLocalDate().getMonth());
-        LocalDate startDate = yearMonth.atDay(1);
-        LocalDate endDate = yearMonth.atEndOfMonth();
-
-        return attendanceMapper.findAttendancesByUserIdAndDateRange(userId, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
-    }
+//    public List<Attendance> getAttendancesForMonth(java.sql.Date targetYearMonth, Integer userId) {
+//        YearMonth yearMonth = YearMonth.of(targetYearMonth.toLocalDate().getYear(), targetYearMonth.toLocalDate().getMonth());
+//        LocalDate startDate = yearMonth.atDay(1);
+//        LocalDate endDate = yearMonth.atEndOfMonth();
+//
+//        return attendanceMapper.findAttendancesByUserIdAndDateRange(userId, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
+//    }
 
     /**
      * 月次勤怠申請のIDで取得
      */
-    public MonthlyAttendanceReq getMonthlyAttendanceReqById(Integer id) {
-        return monthlyAttendanceReqMapper.findById(id);
-    }
+//    public MonthlyAttendanceReq getMonthlyAttendanceReqById(Integer id) {
+//        return monthlyAttendanceReqMapper.findById(id);
+//    }
 
     /**
      * 月次勤怠申請のステータスを更新
      */
-    public void updateMonthlyAttendanceReqStatus(Integer id, Integer status) {
-        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
-        if (req != null) {
-            req.setStatus(status);
-            monthlyAttendanceReqMapper.update(req);
-        }
-    }
+//    public void updateMonthlyAttendanceReqStatus(Integer id, Integer status) {
+//        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
+//        if (req != null) {
+//            req.setStatus(status);
+//            monthlyAttendanceReqMapper.update(req);
+//        }
+//    }
     
 
 }

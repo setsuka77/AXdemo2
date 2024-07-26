@@ -53,8 +53,13 @@
 		<form id="register-form" th:action="@{/attendance}" method="post">
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="button">却下</button>
+				
 				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
+				
 				<button type="submit" th:if="${loginUser.role != '2'}" name="request" class="button">承認申請</button>
+				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
+				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
+				
 				<button type="submit" th:if="${loginUser.role != '2'}" name="regist" class="button">登録</button>
 			</div>
 
@@ -69,10 +74,11 @@
 				</thead>
 				<tbody>
 					<tr th:each="req : ${monthlyAttendanceReqs}">
-                        <td><a th:href="@{/monthlyAttendanceReq/detail(id=${req.id})}" th:text="${req.user.name}">申請者</a></td>
-                        <td th:text="${#dates.format(req.targetYearMonth, 'yyyy-MM')}">申請対象年月</td>
-                        <td th:text="${#dates.format(req.date, 'yyyy-MM-dd')}">申請日</td>
-                    </tr>
+						<td><a th:href="@{/monthlyAttendanceReq/detail(id=${req.id})}"
+								th:text="${req.user.name}">申請者</a></td>
+						<td th:text="${#dates.format(req.targetYearMonth, 'yyyy-MM')}">申請対象年月</td>
+						<td th:text="${#dates.format(req.date, 'yyyy-MM-dd')}">申請日</td>
+					</tr>
 				</tbody>
 			</table>
 
@@ -182,8 +188,15 @@
 				return true; // フォームの送信を許可
 			}
 		}
+		
+		// hidden フィールドの値を更新するための JavaScript(ボタン押下時振り分け)
+        document.getElementById('year').addEventListener('change', function() {
+            document.getElementById('hidden-year').value = this.value;
+        });
 
-
+        document.getElementById('month').addEventListener('change', function() {
+            document.getElementById('hidden-month').value = this.value;
+        });
 
 	</script>
 

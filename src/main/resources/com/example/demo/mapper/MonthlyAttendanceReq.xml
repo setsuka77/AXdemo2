@@ -36,9 +36,10 @@
     
     <!-- Insert SQL -->
     <insert id="insert" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
-        INSERT INTO monthly_attendance_req (id, user_id, request_date, status)
-        VALUES (#{id}, #{userId}, #{requestDate}, #{status})
-    </insert>
+    	INSERT INTO monthly_attendance_req (user_id, target_year_month, date, status)
+    	VALUES (#{userId}, #{targetYearMonth}, #{date}, #{status})
+	</insert>
+    
 
     <!-- Select SQL by ID -->
     <select id="findById" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">

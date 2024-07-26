@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,10 +37,7 @@ public class AttendanceController {
 	 * @return 勤怠登録画面
 	 */
 	@GetMapping("/attendance")
-	public String showAttendanceForm(@RequestParam(value = "status", required = false) Integer statusParam, Model model,
-			HttpSession session) {
-		// デフォルト値を設定（statusParam が null の場合）
-		Integer status = (statusParam != null) ? statusParam : 1;
+	public String showAttendanceForm(Model model, HttpSession session) {
 
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
@@ -146,15 +144,16 @@ public class AttendanceController {
 			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
 			return "redirect:/attendance";
 		}
-		
+
 		// 登録処理
 		String message = attendanceService.registAttendance(attendanceForm, loginUser);
 		model.addAttribute("message", message);
 		// DBから一覧を再取得して、再度フォームに表示させる
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, loginUser);
-		AttendanceForm dailyAttendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, loginUser);
-		
-		model.addAttribute("attendanceForm",dailyAttendanceForm);
+		AttendanceForm dailyAttendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList,
+				loginUser);
+
+		model.addAttribute("attendanceForm", dailyAttendanceForm);
 		model.addAttribute("loginUser", loginUser);
 		// 再度リストを設定する
 		setYearMonthList(model);
@@ -162,51 +161,52 @@ public class AttendanceController {
 	}
 
 	/**
-     * 月次勤怠申請の詳細表示
-     */
-    @RequestMapping(path = "/attendance", params = "detail", method = RequestMethod.POST)
-    public String getMonthlyAttendanceReqDetail(@RequestParam("id") Integer id, Model model) {
-        MonthlyAttendanceReq req = attendanceService.getMonthlyAttendanceReqById(id);
-        model.addAttribute("monthlyAttendanceReq", req);
-        
-     // java.util.Dateをjava.sql.Dateに変換
-        Date sqlDate = new Date(req.getTargetYearMonth().getTime());
-        
-        List<Attendance> attendances = attendanceService.getAttendancesForMonth((Date) req.getTargetYearMonth(), req.getUserId());
-        model.addAttribute("attendances", attendances);
-        return "attendance/detail";
-    }
+	 * 月次勤怠申請の詳細表示
+	 */
+//	@PostMapping(path = "/attendance", params = "detail")
+//	public String getMonthlyAttendanceReqDetail(@RequestParam("id") Integer id, Model model) {
+//		MonthlyAttendanceReq req = attendanceService.getMonthlyAttendanceReqById(id);
+//		model.addAttribute("monthlyAttendanceReq", req);
+//
+//		// java.util.Dateをjava.sql.Dateに変換
+//		Date sqlDate = new Date(req.getTargetYearMonth().getTime());
+//
+//		List<Attendance> attendances = attendanceService.getAttendancesForMonth((Date) req.getTargetYearMonth(),
+//				req.getUserId());
+//		model.addAttribute("attendances", attendances);
+//		return "attendance/detail";
+//	}
 
-    /**
-     * 承認申請を登録
-     */
-    @RequestMapping(path = "/attendance", params = "register", method = RequestMethod.POST)
-    public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
-                                               HttpSession session, RedirectAttributes redirectAttributes) {
-        Users loginUser = (Users) session.getAttribute("user");
+	/**
+	 * 承認申請を登録 承認申請ボタンを押下
+	 */
+	@PostMapping(path = "/attendance", params = "request")
+	public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
+			HttpSession session, RedirectAttributes redirectAttributes) {
+		Users loginUser = (Users) session.getAttribute("user");
 
-        // 月次勤怠申請の登録処理
-        attendanceService.registerMonthlyAttendanceReq(year, month, loginUser);
+		// 月次勤怠申請の登録処理
+		attendanceService.registerMonthlyAttendanceReq(year, month, loginUser);
 
-        return "redirect:/attendance";
-    }
+		return "redirect:/attendance";
+	}
 
-    /**
-     * 承認申請の承認
-     */
-    @RequestMapping(path = "/attendance", params = "approve", method = RequestMethod.POST)
-    public String approveMonthlyAttendanceReq(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
-        attendanceService.updateMonthlyAttendanceReqStatus(id, 2); // 承認済みのステータス
-        return "redirect:/attendance";
-    }
+	/**
+	 * 承認申請の承認
+	 */
+//	@PostMapping(path = "/attendance", params = "approve")
+//	public String approveMonthlyAttendanceReq(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
+//		attendanceService.updateMonthlyAttendanceReqStatus(id, 2); // 承認済みのステータス
+//		return "redirect:/attendance";
+//	}
 
-    /**
-     * 承認申請の却下
-     */
-    @RequestMapping(path = "/attendance", params = "reject", method = RequestMethod.POST)
-    public String rejectMonthlyAttendanceReq(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
-        attendanceService.updateMonthlyAttendanceReqStatus(id, 3); // 却下済みのステータス
-        return "redirect:/attendance";
-    }
+	/**
+	 * 承認申請の却下
+	 */
+//	@PostMapping(path = "/attendance", params = "reject")
+//	public String rejectMonthlyAttendanceReq(@RequestParam("id") Integer id, RedirectAttributes redirectAttributes) {
+//		attendanceService.updateMonthlyAttendanceReqStatus(id, 3); // 却下済みのステータス
+//		return "redirect:/attendance";
+//	}
 
 }
