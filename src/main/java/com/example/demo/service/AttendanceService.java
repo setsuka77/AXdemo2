@@ -216,7 +216,7 @@ public class AttendanceService {
      * 承認申請ボタン押下
      * 月次勤怠申請を登録する
      */
-    public void registerMonthlyAttendanceReq(Integer year, Integer month, Users user) {
+    public String registerMonthlyAttendanceReq(Integer year, Integer month, Users user) {
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
         LocalDate endDate = yearMonth.atEndOfMonth();
@@ -228,6 +228,8 @@ public class AttendanceService {
         req.setStatus(1); // 承認待ち
 
         monthlyAttendanceReqMapper.insert(req);
+        
+        return "承認申請が完了しました。";
     }
 
     /**

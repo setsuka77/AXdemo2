@@ -161,6 +161,24 @@ public class AttendanceController {
 	}
 
 	/**
+	 * 勤怠管理画面 メンバー、UM権限
+	 * 承認申請を登録 
+	 * 承認申請ボタンを押下
+	 */
+	@PostMapping(path = "/attendance", params = "request")
+	public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
+			HttpSession session, RedirectAttributes redirectAttributes) {
+		Users loginUser = (Users) session.getAttribute("user");
+
+		// 月次勤怠申請の登録処理
+		String message = attendanceService.registerMonthlyAttendanceReq(year, month, loginUser);
+
+		redirectAttributes.addFlashAttribute("message", message);
+		return "redirect:/attendance";
+	}
+	
+	/**
+	 * 勤怠管理画面 マネージャ権限
 	 * 月次勤怠申請の詳細表示
 	 */
 //	@PostMapping(path = "/attendance", params = "detail")
@@ -177,19 +195,6 @@ public class AttendanceController {
 //		return "attendance/detail";
 //	}
 
-	/**
-	 * 承認申請を登録 承認申請ボタンを押下
-	 */
-	@PostMapping(path = "/attendance", params = "request")
-	public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
-			HttpSession session, RedirectAttributes redirectAttributes) {
-		Users loginUser = (Users) session.getAttribute("user");
-
-		// 月次勤怠申請の登録処理
-		attendanceService.registerMonthlyAttendanceReq(year, month, loginUser);
-
-		return "redirect:/attendance";
-	}
 
 	/**
 	 * 承認申請の承認
