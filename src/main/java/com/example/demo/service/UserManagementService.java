@@ -19,8 +19,7 @@ public class UserManagementService {
 	private UsersMapper usersMapper;
 
 	/*
-	 * ユーザ管理画面 
-	 * ユーザ名検索、取得
+	 * ユーザ管理画面 ユーザ名検索、取得
 	 */
 	@Transactional(readOnly = true)
 	public UserManagementDto searchUserByName(String name) {
@@ -39,8 +38,7 @@ public class UserManagementService {
 	}
 
 	/*
-	 * ユーザ管理画面 
-	 * 新規ユーザのユーザID生成
+	 * ユーザ管理画面 新規ユーザのユーザID生成
 	 */
 	public Integer generateNewUserId() {
 		Integer maxId = usersMapper.findMaxId();
@@ -48,9 +46,7 @@ public class UserManagementService {
 	}
 
 	/*
-	 * ユーザ管理画面 
-	 * 新規ユーザ情報登録 
-	 * 既存ユーザ情報更新
+	 * ユーザ管理画面 新規ユーザ情報登録 既存ユーザ情報更新
 	 */
 	public void registerOrUpdateUser(UserManagementForm userForm, Integer id) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -67,30 +63,29 @@ public class UserManagementService {
 			user.setStartDate(startDate);
 		}
 
-		 // フォームのIDが存在するか確認
-	    Integer userId = userForm.getId();
-	    UserManagementDto existingUser = null;
+		// フォームのIDが存在するか確認
+		Integer userId = userForm.getId();
+		UserManagementDto existingUser = null;
 
-	    if (userId != null) {
-	        existingUser = usersMapper.identifyUserId(userId);
-	    }
+		if (userId != null) {
+			existingUser = usersMapper.identifyUserId(userId);
+		}
 
-	    if (existingUser == null) {
-	        // 新規登録実行
-	        System.out.println("新規登録レーン");
-	        user.setId(userId); 
-	        usersMapper.insertUser(user);
-	    } else {
-	        // 既存更新実行
-	        System.out.println("既存更新レーン");
-	        user.setId(userId);
-	        usersMapper.updateUser(user);
-	    }
+		if (existingUser == null) {
+			// 新規登録実行
+			System.out.println("新規登録レーン");
+			user.setId(userId);
+			usersMapper.insertUser(user);
+		} else {
+			// 既存更新実行
+			System.out.println("既存更新レーン");
+			user.setId(userId);
+			usersMapper.updateUser(user);
+		}
 	}
 
 	/*
-	 * ユーザ管理画面
-	 * 既存ユーザ削除機能
+	 * ユーザ管理画面 既存ユーザ削除機能
 	 */
 	public void deleteUser(Integer id) {
 		if (id != null) {
@@ -98,36 +93,39 @@ public class UserManagementService {
 			usersMapper.deleteUser(id);
 		}
 	}
-	
+
 	/*
-	 * ユーザ管理画面
-	 * 文字数制限・日付形式チェック
+	 * ユーザ管理画面 文字数制限・日付形式チェック
 	 */
 	public String validateUserForm(UserManagementForm userForm) {
-        StringBuilder errorMessage = new StringBuilder("ユーザー登録/更新に失敗しました。<br>");
+		StringBuilder errorMessage = new StringBuilder("ユーザー登録/更新に失敗しました。<br>");
 
-        boolean hasErrors = false;
+		boolean hasErrors = false;
 
-        // ユーザ名チェック
-        if (userForm.getName().length() > 20) {
-            errorMessage.append("ユーザ名 : 全角20文字以内で入力してください。<br>");
-            hasErrors = true;
-        }
+		// 全角文字のみで20文字以内かどうかを確認する正規表現
+		String fullWidthAndLengthRegex = "^[\\u3000-\\uFFFD]{1,20}$";
 
-        // パスワードチェック
-        if (userForm.getPassword().length() > 16) {
-            errorMessage.append("パスワード : 桁数は16桁以下で入力してください。<br>");
-            hasErrors = true;
-        }
+		// ユーザ名チェック
+		String name = userForm.getName();
+		if (!name.matches(fullWidthAndLengthRegex)) {
+			errorMessage.append("ユーザ名 : 全角文字のみで20文字以内で入力してください。<br>");
+			hasErrors = true;
+		}
 
-        // 日付形式チェック
-        Pattern datePattern = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$");
-        if (!datePattern.matcher(userForm.getStartDate()).matches()) {
-            errorMessage.append("利用開始日 : yyyy/mm/dd のフォーマットで入力してください。<br>");
-            hasErrors = true;
-        }
+		// パスワードチェック
+		if (userForm.getPassword().length() > 16) {
+			errorMessage.append("パスワード : 桁数は16桁以下で入力してください。<br>");
+			hasErrors = true;
+		}
 
-        return hasErrors ? errorMessage.toString() : null;
-    }
+		// 日付形式チェック
+		Pattern datePattern = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$");
+		if (!datePattern.matcher(userForm.getStartDate()).matches()) {
+			errorMessage.append("利用開始日 : yyyy/mm/dd のフォーマットで入力してください。<br>");
+			hasErrors = true;
+		}
+
+		return hasErrors ? errorMessage.toString() : null;
+	}
 
 }

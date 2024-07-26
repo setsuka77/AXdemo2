@@ -2,8 +2,11 @@ package com.example.demo.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,6 +104,27 @@ public class AttendanceService {
 
 		return attendanceForm;
 	}
+	
+	/*
+	 * 入力チェックエラーメッセージ表示用
+	 * 日付をFormに詰める
+	 */
+	public void fillDatesInAttendanceForm(AttendanceForm attendanceForm, List<CalendarDto> calendar) {
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d");
+	    
+	    for (int i = 0; i < calendar.size(); i++) {
+	        // LocalDate を Date に変換
+	        LocalDate localDate = calendar.get(i).getDate();
+	        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	        
+	        // 日付をフォーマットしてセット
+	        String formattedDate = localDate.format(formatter);
+	        
+	        // 各 CalendarDto の日付を AttendanceForm にセット
+	        attendanceForm.getDailyAttendanceList().get(i).setDate(date);
+	        attendanceForm.getDailyAttendanceList().get(i).setFormattedDate(formattedDate);
+	    }
+	}
 
 	/*
 	 * 勤怠管理画面 勤怠情報登録処理
@@ -142,47 +166,47 @@ public class AttendanceService {
 	 * ユーザ管理画面 文字数制限・日付形式チェック
 	 */
 	public String validateAttendanceForm(AttendanceForm attendanceForm, boolean isApprovalRequest) {
-		StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
+	    
+	    StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
 
-		boolean hasErrors = false;
+	    boolean hasErrors = false;
 
-		// 出退勤時間形式チェック
-		Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
+	    // 出退勤時間形式チェック
+	    Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
 
-		for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
-			// 出勤時間チェック
-			String startTime = dailyForm.getStartTime();
-			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
-				errorMessage.append(dailyForm.getDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
-				hasErrors = true;
-			}
+	    for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
+	        // 出勤時間チェック
+	        String startTime = dailyForm.getStartTime();
+	        if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
+	            errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
+	            hasErrors = true;
+	        }
 
-			// 退勤時間チェック
-			String endTime = dailyForm.getEndTime();
-			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
-				errorMessage.append(dailyForm.getDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
-				hasErrors = true;
-			}
+	        // 退勤時間チェック
+	        String endTime = dailyForm.getEndTime();
+	        if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
+	            errorMessage.append(dailyForm.getFormattedDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
+	            hasErrors = true;
+	        }
 
-			// 備考欄文字数チェック
-			String remarks = dailyForm.getRemarks();
-			if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
-				errorMessage.append(dailyForm.getDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
-				hasErrors = true;
-			}
+	        // 備考欄文字数チェック
+	        String remarks = dailyForm.getRemarks();
+	        if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
+	            errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
+	            hasErrors = true;
+	        }
 
-			// ステータス必須チェック (承認申請時のみ)
-			if (isApprovalRequest) {
-				Integer status = dailyForm.getStatus();
-				if (status == null) {
-					errorMessage.append(dailyForm.getDate()).append(" のステータス : 必ず選択してください。<br>");
-					hasErrors = true;
-				}
-			}
+	        // ステータス必須チェック (承認申請時のみ)
+	        if (isApprovalRequest) {
+	            Integer status = dailyForm.getStatus();
+	            if (status == null) {
+	                errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 必ず選択してください。<br>");
+	                hasErrors = true;
+	            }
+	        }
+	    }
 
-		}
-
-		return hasErrors ? errorMessage.toString() : null;
+	    return hasErrors ? errorMessage.toString() : null;
 	}
 
 	/*

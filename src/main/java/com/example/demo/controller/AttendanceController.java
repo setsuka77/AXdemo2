@@ -36,10 +36,11 @@ public class AttendanceController {
 	 * @return 勤怠登録画面
 	 */
 	@GetMapping("/attendance")
-	public String showAttendanceForm(@RequestParam(value = "status", required = false)  Integer statusParam, Model model, HttpSession session) {
+	public String showAttendanceForm(@RequestParam(value = "status", required = false) Integer statusParam, Model model,
+			HttpSession session) {
 		// デフォルト値を設定（statusParam が null の場合）
-	    Integer status = (statusParam != null) ? statusParam : 1;
-		
+		Integer status = (statusParam != null) ? statusParam : 1;
+
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 
@@ -69,7 +70,6 @@ public class AttendanceController {
 		model.addAttribute("loginUser", loginUser);
 		return "attendance/record";
 	}
-	
 
 	/**
 	 * プルダウン用 年リストと月リストの設定
@@ -144,6 +144,9 @@ public class AttendanceController {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 
+		// AttendanceForm に date を詰める(エラーメッセージ表示用)
+		attendanceService.fillDatesInAttendanceForm(attendanceForm, calendar);
+
 		// バリデーションエラー表示
 		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
@@ -154,7 +157,8 @@ public class AttendanceController {
 			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
 			return "redirect:/attendance";
 		}
-
+		
+		System.out.println(attendanceForm);
 		// 登録処理
 		String message = attendanceService.registAttendance(attendanceForm, loginUser, calendar);
 		model.addAttribute("mesaage", message);

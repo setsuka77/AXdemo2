@@ -14,11 +14,13 @@ public class DailyAttendanceForm {
 	private Integer status;
 	/**日付 */
 	private Date date;
+	/**日付形式 m/d */
+	private String formattedDate;  // フォーマットされた日付を保持
 	/** 勤務開始時刻 */
 	private String startTime;
 	/** 勤務開始時刻 */
 	private String endTime;
 	/** 備考 */
 	private String remarks;
-	
+
 }
