@@ -80,6 +80,10 @@
 			<div th:if="${registerError}" class="alert alert-danger" role="alert">
 				<p th:utext="${registerError}"></p>
 			</div>
+			<!-- 登録完了メッセージ表示 -->
+			<div th:if="${message}" class="alert alert-success" role="alert">
+				<p th:utext="${message}"></p>
+			</div>
 
 			<table class="table table-hover" border="1" cellspacing="0">
 				<thead>

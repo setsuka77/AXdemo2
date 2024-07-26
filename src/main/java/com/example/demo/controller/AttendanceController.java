@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -102,12 +101,8 @@ public class AttendanceController {
 		List<CalendarDto> calendar = attendanceService.generateCalendar(year, month);
 		// DBから勤怠情報取得
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, loginUser);
-		// Dateしか存在おらず、DBの情報はない。DtoListではなくDailyAttendanceFormが表示される
-		System.out.println("困り中");
 		// 勤怠フォームの生成
 		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, loginUser);
-		// userId、Dateあり
-		System.out.println(attendanceForm);
 
 		session.setAttribute("calendar", calendar);
 
@@ -134,9 +129,6 @@ public class AttendanceController {
 			RedirectAttributes redirectAttributes) {
 
 		List<CalendarDto> calendar = (List<CalendarDto>) session.getAttribute("calendar");
-		System.out.println(calendar);
-		// dateとuserId以外はコンソールに表示済み
-		System.out.println(attendanceForm);
 
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
@@ -155,12 +147,15 @@ public class AttendanceController {
 			return "redirect:/attendance";
 		}
 		
-		System.out.println(attendanceForm);
 		// 登録処理
 		String message = attendanceService.registAttendance(attendanceForm, loginUser);
-		model.addAttribute("mesaage", message);
-		model.addAttribute(attendanceForm);
-		System.out.println(message);
+		model.addAttribute("message", message);
+		// DBから一覧を再取得して、再度フォームに表示させる
+		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, loginUser);
+		AttendanceForm dailyAttendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, loginUser);
+		
+		model.addAttribute("attendanceForm",dailyAttendanceForm);
+		model.addAttribute("loginUser", loginUser);
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";

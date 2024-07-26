@@ -129,47 +129,39 @@ public class AttendanceService {
 	/*
 	 * 勤怠管理画面 勤怠情報登録処理
 	 */
-	/*
-	 * 勤怠管理画面 勤怠情報登録処理
-	 */
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser) {
-		System.out.println("はなきん");
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
 		Integer userId = loginUser.getId(); 
-		
-		System.out.println("出てこなさ過ぎてむかつく");
-		System.out.println(userId);
-		
+
 		for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
 	        // 出勤簿から日付とユーザーIDを取得
 	        Date date = dailyForm.getDate();
 	        
-	        // 勤怠情報を検索してIDを取得
-	        Attendance searchAttendance = attendanceMapper.findByDateAndUserId(date, userId);
+	        if (dailyForm.getStatus() != null) {
 	        
-	        System.out.println(searchAttendance);
-	        System.out.println(dailyForm.getStatus());
-	        
-	        // 新しい勤怠オブジェクトを作成
-	        Attendance attendance = new Attendance();
-	        attendance.setId(searchAttendance != null ? searchAttendance.getId() : null);
-	        attendance.setUserId(userId);
-	        attendance.setDate(dailyForm.getDate()); 
-	        attendance.setStatus(dailyForm.getStatus());
-	        attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
-	        attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
-	        attendance.setRemarks(dailyForm.getRemarks());
-	        
-	        // IDが存在しない場合は新規登録、それ以外は更新
-	        if (attendance.getId() == null) {
-	            // 勤怠情報を登録
-	            attendanceMapper.insert(attendance);
-	        } else {
-	            // 勤怠情報を更新
-	            attendanceMapper.update(attendance);
+		        // 勤怠情報を検索してIDを取得
+		        Attendance searchAttendance = attendanceMapper.findByDateAndUserId(date, userId);
+		
+		        // 新しい勤怠オブジェクトを作成
+		        Attendance attendance = new Attendance();
+		        attendance.setId(searchAttendance != null ? searchAttendance.getId() : null);
+		        attendance.setUserId(userId);
+		        attendance.setDate(dailyForm.getDate()); 
+		        attendance.setStatus(dailyForm.getStatus());
+		        attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
+		        attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
+		        attendance.setRemarks(dailyForm.getRemarks());
+		        
+		        // IDが存在しない場合は新規登録、それ以外は更新
+		        if (attendance.getId() == null) {
+		            // 勤怠情報を登録
+		            attendanceMapper.insert(attendance);
+		        } else {
+		            // 勤怠情報を更新
+		            attendanceMapper.update(attendance);
+		        }
 	        }
 	    }
-	    
 	    return "勤怠情報が登録されました";
 	}
 
