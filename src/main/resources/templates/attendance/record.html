@@ -53,7 +53,7 @@
 		<form id="register-form" th:action="@{/attendance}" method="post">
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="button">却下</button>
-				
+			
 				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
 				
 				<button type="submit" th:if="${loginUser.role != '2'}" name="request" class="button">承認申請</button>
@@ -73,11 +73,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="req : ${monthlyAttendanceReqs}">
-						<td><a th:href="@{/monthlyAttendanceReq/detail(id=${req.id})}"
-								th:text="${req.user.name}">申請者</a></td>
-						<td th:text="${#dates.format(req.targetYearMonth, 'yyyy-MM')}">申請対象年月</td>
-						<td th:text="${#dates.format(req.date, 'yyyy-MM-dd')}">申請日</td>
+					<tr th:each="req : ${monthlyAttendanceReq}">
+						<td><a th:href="@{/attendance/detail(id=${req.id})}"
+								th:text="${req.userName}">申請者</a></td>
+						<td th:text="${#dates.format(req.targetYearMonth, 'yyyy/M/dd')}">申請対象年月</td>
+						<td th:text="${#dates.format(req.date, 'yyyy/M/dd')}">申請日</td>
 					</tr>
 				</tbody>
 			</table>

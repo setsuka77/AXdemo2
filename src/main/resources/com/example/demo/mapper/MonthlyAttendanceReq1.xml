@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MonthlyAttendanceReqMapper">
+
+    <!-- MonthlyAttendanceReqとUsersをマッピング -->
+    <resultMap id="MonthlyAttendanceReqWithUserMap"
+        type="com.example.demo.entity.MonthlyAttendanceReq">
+        <result property="id" column="reqId" />
+        <result property="userId" column="userId" />
+        <result property="targetYearMonth" column="targetYearMonth" />
+        <result property="date" column="reqDate" />
+        <result property="status" column="reqStatus" />
+        <association property="user"
+            javaType="com.example.demo.entity.Users">
+            <result property="name" column="name" />
+        </association>
+    </resultMap>
+
+    <!-- ユーザ情報と月次勤怠申請情報を取得 -->
+    <select id="getMonthlyAttendanceReqWithUser"
+        resultMap="MonthlyAttendanceReqWithUserMap">
+        SELECT
+            mar.id as reqId,
+            mar.user_id as userId,
+            mar.target_year_month as targetYearMonth,
+            mar.date as reqDate,
+            mar.status as reqStatus,
+            u.name as name
+        FROM
+            monthly_attendance_req mar
+        INNER JOIN users u ON mar.user_id = u.id
+        WHERE
+            mar.status = #{status}
+    </select>
+    
+    <!-- Insert SQL -->
+    <insert id="insert" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+    	INSERT INTO monthly_attendance_req (user_id, target_year_month, date, status)
+    	VALUES (#{userId}, #{targetYearMonth}, #{date}, #{status})
+	</insert>
+    
+
+    <!-- Select SQL by ID -->
+    <select id="findById" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
+        SELECT id, user_id, request_date, status
+        FROM monthly_attendance_req
+        WHERE id = #{id}
+    </select>
+
+    <!-- Update SQL -->
+    <update id="update" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+        UPDATE monthly_attendance_req
+        SET user_id = #{userId}, request_date = #{requestDate}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- Select SQL with Status -->
+    <select id="findAllWithStatus" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
+        SELECT id, user_id, request_date, status
+        FROM monthly_attendance_req
+        WHERE status = #{status}
+    </select>
+
+</mapper>

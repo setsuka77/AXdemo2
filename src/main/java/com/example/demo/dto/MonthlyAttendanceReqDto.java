@@ -17,4 +17,6 @@ public class MonthlyAttendanceReqDto {
 	private Date date;
 	/** ステータス */
 	private Integer status;
+	/** ユーザーの名前*/
+	private String UserName;
 }

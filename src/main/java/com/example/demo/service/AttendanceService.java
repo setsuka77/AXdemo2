@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
+import com.example.demo.dto.MonthlyAttendanceReqDto;
 import com.example.demo.entity.Attendance;
 import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
@@ -36,6 +37,15 @@ public class AttendanceService {
 	private DateUtil dateUtil;
 	@Autowired
     private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
+	
+	
+
+	/*
+	 *ステータスが1の申請一覧を取得する 
+	 */
+	public List<MonthlyAttendanceReqDto> findAllAttendance() {
+	    return monthlyAttendanceReqMapper.findAllWithStatus();
+	}
 
 	/*
 	 * 勤怠管理画面 日付リスト作成
@@ -58,12 +68,12 @@ public class AttendanceService {
 	/*
 	 * 勤怠管理画面 DBから勤怠情報取得
 	 */
-	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Users loginUser) {
+	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Integer userId) {
 		LocalDate startDate = calendar.get(0).getDate();
 		LocalDate endDate = calendar.get(calendar.size() - 1).getDate();
 
 		// DBから勤怠情報を取得
-		List<AttendanceDto> attendanceDtoList = attendanceMapper.findAttendanceByUserIdAndDateRange(loginUser.getId(),
+		List<AttendanceDto> attendanceDtoList = attendanceMapper.findAttendanceByUserIdAndDateRange(userId,
 				java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
 
 		return attendanceDtoList;
@@ -73,7 +83,7 @@ public class AttendanceService {
 	 * 勤怠管理画面 勤怠フォームの生成
 	 */
 	public AttendanceForm setAttendanceForm(List<CalendarDto> calendarList, List<AttendanceDto> attendanceDtoList,
-			Users loginUser) {
+			Integer userId) {
 
 		AttendanceForm attendanceForm = new AttendanceForm();
 		attendanceForm.setDailyAttendanceList(new ArrayList<>());
@@ -92,7 +102,7 @@ public class AttendanceService {
 
 			AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
 			dailyForm.setId(attendanceDto.getId());
-			dailyForm.setUserId(loginUser.getId());
+			dailyForm.setUserId(userId);
 			dailyForm.setStatus(attendanceDto.getStatus());
 			dailyForm
 					.setStartTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getStartTime())));
@@ -233,33 +243,61 @@ public class AttendanceService {
     }
 
     /**
-     * 指定月の勤怠情報を取得する
-     */
-//    public List<Attendance> getAttendancesForMonth(java.sql.Date targetYearMonth, Integer userId) {
-//        YearMonth yearMonth = YearMonth.of(targetYearMonth.toLocalDate().getYear(), targetYearMonth.toLocalDate().getMonth());
-//        LocalDate startDate = yearMonth.atDay(1);
-//        LocalDate endDate = yearMonth.atEndOfMonth();
-//
-//        return attendanceMapper.findAttendancesByUserIdAndDateRange(userId, java.sql.Date.valueOf(startDate), java.sql.Date.valueOf(endDate));
-//    }
-
-    /**
      * 月次勤怠申請のIDで取得
      */
-//    public MonthlyAttendanceReq getMonthlyAttendanceReqById(Integer id) {
-//        return monthlyAttendanceReqMapper.findById(id);
-//    }
-
-    /**
-     * 月次勤怠申請のステータスを更新
-     */
-//    public void updateMonthlyAttendanceReqStatus(Integer id, Integer status) {
-//        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
-//        if (req != null) {
-//            req.setStatus(status);
-//            monthlyAttendanceReqMapper.update(req);
-//        }
-//    }
+    public MonthlyAttendanceReqDto getMonthlyAttendanceReqById(Integer id) {        
+    	return monthlyAttendanceReqMapper.findById(id);
+    }
     
+    /*
+     * ID取得のための処理
+     */
+    public Integer setIdMonthAttendance(AttendanceForm attendanceForm) {
+    	System.out.println(attendanceForm);
+    List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
+	// リストの最初の要素を取得
+     DailyAttendanceForm firstEntry = dailyAttendanceList.get(0);
+     // userId と date を取得
+     Integer userId = firstEntry.getUserId();
+     Date firstDate = firstEntry.getDate();
+     System.out.println("User ID: " + userId);
+     System.out.println("First Date: " + firstDate);
+     
+     //その２つを使用して、申請IDを取得する
+     MonthlyAttendanceReqDto req = monthlyAttendanceReqMapper.findByIdAndDate(userId,firstDate);
+     Integer id = req.getId();
+     return id;
+    }
+    
+    /*
+     * 承認ボタン押下
+     * ステータスを更新する
+     */
+    public String approvalAttendance(Integer id, int status) {
+        MonthlyAttendanceReqDto req = monthlyAttendanceReqMapper.findById(id);
+        System.out.println("テスト7"+req);
+        
+        // ステータスを承認済みに設定
+        req.setStatus(status);
+        monthlyAttendanceReqMapper.updateStatus(req);
+        System.out.println("テスト8"+req);
 
+        return "申請が承認されました";
+    }
+    
+    /*
+     * 却下ボタン押下
+     * ステータスを更新する
+     */
+    public String rejectAttendance(Integer id, int status) {
+        MonthlyAttendanceReqDto req = monthlyAttendanceReqMapper.findById(id);
+        System.out.println("テスト9"+req);
+        
+        // ステータスを承認済みに設定
+        req.setStatus(status);
+        monthlyAttendanceReqMapper.updateStatus(req);
+        System.out.println("テスト10"+req);
+
+        return "申請が却下されました";
+    }
 }

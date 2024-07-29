@@ -1,32 +1,29 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.MonthlyAttendanceReqMapper">
 
-    <!-- MonthlyAttendanceReqとUsersをマッピング -->
-    <resultMap id="MonthlyAttendanceReqWithUserMap"
-        type="com.example.demo.entity.MonthlyAttendanceReq">
+<!-- MonthlyAttendanceReqとUsersをマッピング -->
+    <resultMap id="MonthlyAttendanceReqWithUserMap" type="com.example.demo.entity.MonthlyAttendanceReq">
         <result property="id" column="reqId" />
         <result property="userId" column="userId" />
         <result property="targetYearMonth" column="targetYearMonth" />
         <result property="date" column="reqDate" />
         <result property="status" column="reqStatus" />
-        <association property="user"
-            javaType="com.example.demo.entity.Users">
+        <association property="user" javaType="com.example.demo.entity.Users">
             <result property="name" column="name" />
         </association>
     </resultMap>
-
+    
     <!-- ユーザ情報と月次勤怠申請情報を取得 -->
-    <select id="getMonthlyAttendanceReqWithUser"
-        resultMap="MonthlyAttendanceReqWithUserMap">
+    <select id="getMonthlyAttendanceReqWithUser" resultMap="MonthlyAttendanceReqWithUserMap">
         SELECT
-            mar.id as reqId,
-            mar.user_id as userId,
-            mar.target_year_month as targetYearMonth,
-            mar.date as reqDate,
-            mar.status as reqStatus,
-            u.name as name
+            mar.id AS reqId,
+            mar.user_id AS userId,
+            mar.target_year_month AS targetYearMonth,
+            mar.date AS reqDate,
+            mar.status AS reqStatus,
+            u.name AS name
         FROM
             monthly_attendance_req mar
         INNER JOIN users u ON mar.user_id = u.id
@@ -36,30 +33,49 @@
     
     <!-- Insert SQL -->
     <insert id="insert" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
-    	INSERT INTO monthly_attendance_req (user_id, target_year_month, date, status)
-    	VALUES (#{userId}, #{targetYearMonth}, #{date}, #{status})
-	</insert>
+        INSERT INTO monthly_attendance_req (user_id, target_year_month, date, status)
+        VALUES (#{userId}, #{targetYearMonth}, #{date}, #{status})
+    </insert>
     
-
-    <!-- Select SQL by ID -->
+    <!--  申請IDで情報を取得 -->
     <select id="findById" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
-        SELECT id, user_id, request_date, status
-        FROM monthly_attendance_req
-        WHERE id = #{id}
+        SELECT
+            u.name AS userName,
+            u.id AS userId,
+            mar.*
+        FROM
+            monthly_attendance_req mar
+        JOIN
+            users u ON mar.user_id = u.id
+        WHERE
+            mar.id = #{id}
     </select>
 
     <!-- Update SQL -->
     <update id="update" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
-        UPDATE monthly_attendance_req
-        SET user_id = #{userId}, request_date = #{requestDate}, status = #{status}
-        WHERE id = #{id}
+        UPDATE monthly_attendance_req SET status = #{status} WHERE id = #{id}
     </update>
 
     <!-- Select SQL with Status -->
-    <select id="findAllWithStatus" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
-        SELECT id, user_id, request_date, status
-        FROM monthly_attendance_req
-        WHERE status = #{status}
+    <select id="findAllWithStatus" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
+        SELECT
+            u.name AS userName,
+            u.id AS userId,
+            mar.*
+        FROM
+            monthly_attendance_req mar
+        JOIN
+            users u ON mar.user_id = u.id
+        WHERE
+            mar.status = 1
     </select>
-
+    
+    <!-- Select SQL with userId AND date -->
+    <select id="findByIdAndDate" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
+        SELECT u.name AS userName, u.id AS userId, mar.*
+        FROM monthly_attendance_req mar
+        JOIN users u ON mar.user_id = u.id
+        WHERE mar.user_id = #{userId} AND mar.date = #{firstDate}
+    </select>
+     
 </mapper>
