@@ -227,6 +227,8 @@ public class AttendanceController {
 	 */
 	@PostMapping(path = "/attendance", params = "approval")
 	public String approvalMontAttendance(AttendanceForm attendanceForm, RedirectAttributes redirectAttributes) {
+		//この時点でFormの中身がない
+		System.out.println(attendanceForm);
 		//ID取得が無理なので、Formから初日とuserIdを取得する
 		Integer id = attendanceService.setIdMonthAttendance(attendanceForm);
 		
