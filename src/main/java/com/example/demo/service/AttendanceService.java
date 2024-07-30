@@ -287,9 +287,11 @@ public class AttendanceService {
         monthlyAttendanceReqMapper.updateStatus(req);
       //メッセージ追加
         String userName = req.getUserName();
-        LocalDate targetDate = req.getTargetYearMonth().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        
-        return userName + "の" + targetDate + "における承認申請が承認されました。";
+        Date targetDate = req.getTargetYearMonth();
+        LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
+
+		return userName + "の" + formattedDate + "における承認申請が承認されました。";
     }
     
     /*
@@ -302,13 +304,13 @@ public class AttendanceService {
         // ステータスを却下済みに設定
         req.setStatus(status);
         monthlyAttendanceReqMapper.updateStatus(req);
-        //メッセージ追加
+      //メッセージ追加
         String userName = req.getUserName();
-        LocalDate targetDate = req.getTargetYearMonth().toLocalDate();
-        String formattedDate = targetDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        Date targetDate = req.getTargetYearMonth();
+        LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 
-        
-        return userName + "の" + targetDate + "における承認申請が却下されました。";
+		return userName + "の" + formattedDate + "における承認申請が却下されました。";
     }
 
 }

@@ -261,34 +261,31 @@ public class AttendanceController {
 	 * 承認申請の承認
 	 */
 	@PostMapping(path = "/attendance", params = "approval")
-	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq, Model model, HttpSession session) {
+	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq,HttpSession session,RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
 		Integer id = req.getId();
-		// ステータスを変更
+		//ステータスを変更
 		String message = attendanceService.approvalAttendance(id, 2); // 承認済みのステータス
-		model.addAttribute("message", message);
-		System.out.println(message);
-
-		return "redirect:/attendance";
+		redirectAttributes.addFlashAttribute("message", message);
+		
+	    return "redirect:/attendance";
 	}
 
 	/**
 	 * 承認申請の却下
 	 */
 	@PostMapping(path = "/attendance", params = "rejected")
-	public String rejectMonthAttendance(AttendanceForm attendanceForm, Model model, HttpSession session) {
+	public String rejectMonthAttendance(AttendanceForm attendanceForm,HttpSession session,RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
 		Integer id = req.getId();
-		// ステータスを変更
+		//ステータスを変更
 		String message = attendanceService.rejectAttendance(id, 3); // 却下済みのステータス
-		model.addAttribute("message", message);
-		System.out.println(message);
+		redirectAttributes.addFlashAttribute("message", message);
 
-		return "redirect:/attendance";
+	    return "redirect:/attendance";
 	}
-
 }
