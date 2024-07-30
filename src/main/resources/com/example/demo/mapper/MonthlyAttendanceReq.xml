@@ -53,7 +53,7 @@
     </select>
  
     <!-- Update SQL -->
-    <update id="update" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+    <update id="updateStatus" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
         UPDATE monthly_attendance_req SET status = #{status} WHERE id = #{id}
     </update>
  
@@ -71,12 +71,5 @@
             mar.status = 1
     </select>
     
-    <!-- Select SQL with userId AND date -->
-    <select id="findByIdAndDate" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
-        SELECT u.name AS userName, u.id AS userId, mar.*
-        FROM monthly_attendance_req mar
-        JOIN users u ON mar.user_id = u.id
-        WHERE mar.user_id = #{userId} AND mar.date = #{firstDate}
-    </select>
 
 </mapper>

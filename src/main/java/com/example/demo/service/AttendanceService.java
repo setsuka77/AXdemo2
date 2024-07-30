@@ -245,28 +245,8 @@ public class AttendanceService {
     /**
      * 月次勤怠申請のIDで取得
      */
-    public MonthlyAttendanceReqDto getMonthlyAttendanceReqById(Integer id) {        
+    public MonthlyAttendanceReq getMonthlyAttendanceReqById(Integer id) {        
     	return monthlyAttendanceReqMapper.findById(id);
-    }
-    
-    /*
-     * ID取得のための処理
-     */
-    public Integer setIdMonthAttendance(AttendanceForm attendanceForm) {
-    	System.out.println(attendanceForm);
-    List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-	// リストの最初の要素を取得
-     DailyAttendanceForm firstEntry = dailyAttendanceList.get(0);
-     // userId と date を取得
-     Integer userId = firstEntry.getUserId();
-     Date firstDate = firstEntry.getDate();
-     System.out.println("User ID: " + userId);
-     System.out.println("First Date: " + firstDate);
-     
-     //その２つを使用して、申請IDを取得する
-     MonthlyAttendanceReqDto req = monthlyAttendanceReqMapper.findByIdAndDate(userId,firstDate);
-     Integer id = req.getId();
-     return id;
     }
     
     /*
@@ -274,14 +254,12 @@ public class AttendanceService {
      * ステータスを更新する
      */
     public String approvalAttendance(Integer id, int status) {
-        MonthlyAttendanceReqDto req = monthlyAttendanceReqMapper.findById(id);
-        System.out.println("テスト7"+req);
-        
+    	//申請IDで申請内容を取得
+        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
         // ステータスを承認済みに設定
         req.setStatus(status);
         monthlyAttendanceReqMapper.updateStatus(req);
-        System.out.println("テスト8"+req);
-
+        
         return "申請が承認されました";
     }
     
@@ -290,13 +268,11 @@ public class AttendanceService {
      * ステータスを更新する
      */
     public String rejectAttendance(Integer id, int status) {
-        MonthlyAttendanceReqDto req = monthlyAttendanceReqMapper.findById(id);
-        System.out.println("テスト9"+req);
-        
-        // ステータスを承認済みに設定
+    	//申請IDで申請内容を取得
+        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
+        // ステータスを却下済みに設定
         req.setStatus(status);
         monthlyAttendanceReqMapper.updateStatus(req);
-        System.out.println("テスト10"+req);
 
         return "申請が却下されました";
     }

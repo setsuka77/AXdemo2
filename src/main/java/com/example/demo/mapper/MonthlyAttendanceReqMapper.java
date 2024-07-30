@@ -41,23 +41,13 @@ public interface MonthlyAttendanceReqMapper {
 //            "FROM monthly_attendance_req mar " +
 //            "JOIN users u ON mar.user_id = u.id " +
 //            "WHERE mar.id = #{id}")
-    MonthlyAttendanceReqDto findById(Integer id);
-    
-    /*
-     * Idとdateから申請IDを取得する
-     */
-//    @Select("SELECT u.name AS userName, u.id AS userId, mar.* " +
-//            "FROM monthly_attendance_req mar " +
-//            "JOIN users u ON mar.user_id = u.id " +
-//            "WHERE mar.user_id = #{userId} AND mar.date = #{firstDate}")
-    MonthlyAttendanceReqDto findByIdAndDate(Integer userId,java.util.Date firstDate);
-    
+    MonthlyAttendanceReq findById(Integer id);
     
     /*
      * ステータスの更新
      */
 //    @Update("UPDATE monthly_attendance_req SET status = #{status} WHERE id = #{id}")
-    void updateStatus(MonthlyAttendanceReqDto req);
+    void updateStatus(MonthlyAttendanceReq req);
     
     
 
