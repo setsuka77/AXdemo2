@@ -16,7 +16,7 @@
 				<div class="info-container">
 					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<div class="info-item">ステータス:</div>
+					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス:</div>
 				</div>
 			</td>
 		</tr>
@@ -56,7 +56,7 @@
 			
 				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
 				
-				<button type="submit" th:if="${loginUser.role != '2'}" th:attr="disabled=${checkAllStatus == false}" name="request" class="button">承認申請</button>
+				<button type="submit" th:if="${loginUser.role != '2'}" th:attr="disabled=${checkAllStatus == false}" name="request" class="button" th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}">承認申請</button>
 				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
 				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
 				
