@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.MonthlyAttendanceReqMapper">
+<mapper
+	namespace="com.example.demo.mapper.MonthlyAttendanceReqMapper">
 
-<!-- MonthlyAttendanceReqとUsersをマッピング -->
+	<!-- MonthlyAttendanceReqとUsersをマッピング -->
     <resultMap id="MonthlyAttendanceReqWithUserMap" type="com.example.demo.entity.MonthlyAttendanceReq">
         <result property="id" column="reqId" />
         <result property="userId" column="userId" />
@@ -50,12 +51,12 @@
         WHERE
             mar.id = #{id}
     </select>
-
+ 
     <!-- Update SQL -->
     <update id="update" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
         UPDATE monthly_attendance_req SET status = #{status} WHERE id = #{id}
     </update>
-
+ 
     <!-- Select SQL with Status -->
     <select id="findAllWithStatus" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
         SELECT
@@ -77,5 +78,5 @@
         JOIN users u ON mar.user_id = u.id
         WHERE mar.user_id = #{userId} AND mar.date = #{firstDate}
     </select>
-     
+
 </mapper>
