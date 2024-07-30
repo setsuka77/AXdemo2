@@ -56,7 +56,7 @@
 			
 				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
 				
-				<button type="submit" th:if="${loginUser.role != '2'}" name="request" class="button">承認申請</button>
+				<button type="submit" th:if="${loginUser.role != '2' && checkAllStatus == true}" name="request" class="button">承認申請</button>
 				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
 				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
 				

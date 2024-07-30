@@ -108,7 +108,9 @@ public class AttendanceController {
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, userId);
 		// 勤怠フォームの生成
 		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
-
+		//承認申請ボタン表示チェック
+		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm);
+		
 		session.setAttribute("calendar", calendar);
 
 		model.addAttribute("year", year);
@@ -116,6 +118,7 @@ public class AttendanceController {
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("calendar", calendar);
 		model.addAttribute("attendanceForm", attendanceForm);
+		model.addAttribute("checkAllStatus", checkAllStatus);
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
@@ -214,8 +217,6 @@ public class AttendanceController {
 		
 		session.setAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
 		
-		System.out.println(monthlyAttendanceReq);
-		
 		model.addAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
 		model.addAttribute("attendanceForm", dailyAttendanceForm);
 		model.addAttribute("calendar", calendar);
@@ -236,7 +237,8 @@ public class AttendanceController {
 		//ステータスを変更
 		String message = attendanceService.approvalAttendance(id, 2); // 承認済みのステータス
 		model.addAttribute("message", message);
-
+		System.out.println(message);
+		
 	    return "redirect:/attendance";
 	}
 

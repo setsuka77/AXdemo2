@@ -97,9 +97,6 @@ public class AttendanceService {
 			LocalDate date = calendarDto.getDate();
 			dailyForm.setDate(dateUtil.localDateToDate(date)); // 日付をDateに変換して設定
 
-			// この時点で日付の数だけリストが出てる
-//			System.out.println("とても眠い");
-
 			AttendanceDto attendanceDto = attendanceMap.getOrDefault(date, new AttendanceDto());
 			dailyForm.setId(attendanceDto.getId());
 			dailyForm.setUserId(userId);
@@ -113,6 +110,20 @@ public class AttendanceService {
 		}
 
 		return attendanceForm;
+	}
+	
+	/*
+	 * ステータスが埋まっているかチェック
+	 */
+	public boolean checkAllStatus(AttendanceForm attendanceForm){
+		// dailyAttendanceListがnullの場合はfalseを返す
+	    if (attendanceForm.getDailyAttendanceList() == null) {
+	        return false;
+	    }
+
+	    // dailyAttendanceList内のすべてのDailyAttendanceFormのstatusがnullでないかチェック
+	    return attendanceForm.getDailyAttendanceList().stream()
+	            .allMatch(dailyForm -> dailyForm.getStatus() != null);
 	}
 	
 	/*
@@ -259,8 +270,11 @@ public class AttendanceService {
         // ステータスを承認済みに設定
         req.setStatus(status);
         monthlyAttendanceReqMapper.updateStatus(req);
+      //メッセージ追加
+        String userName = req.getUserName();
+        LocalDate targetDate = req.getTargetYearMonth().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         
-        return "申請が承認されました";
+        return userName + "の" + targetDate + "における承認申請が承認されました。";
     }
     
     /*
@@ -273,7 +287,13 @@ public class AttendanceService {
         // ステータスを却下済みに設定
         req.setStatus(status);
         monthlyAttendanceReqMapper.updateStatus(req);
+        //メッセージ追加
+        String userName = req.getUserName();
+        LocalDate targetDate = req.getTargetYearMonth().toLocalDate();
+        String formattedDate = targetDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-        return "申請が却下されました";
+        
+        return userName + "の" + targetDate + "における承認申請が却下されました。";
     }
+
 }
