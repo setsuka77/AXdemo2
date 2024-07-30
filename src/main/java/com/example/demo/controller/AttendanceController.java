@@ -64,6 +64,12 @@ public class AttendanceController {
 			List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findAllAttendance();
 			model.addAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
 		}
+		
+		//承認申請ボタンをnullに設定する
+		AttendanceForm attendanceForm = new AttendanceForm();
+		attendanceForm.setDailyAttendanceList(new ArrayList<>());
+		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm);
+		model.addAttribute("checkAllStatus", checkAllStatus);
 
 		// プルダウンの設定
 		setYearMonthList(model);

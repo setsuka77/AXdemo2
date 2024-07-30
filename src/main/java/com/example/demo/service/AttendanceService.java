@@ -116,8 +116,8 @@ public class AttendanceService {
 	 * ステータスが埋まっているかチェック
 	 */
 	public boolean checkAllStatus(AttendanceForm attendanceForm){
-		// dailyAttendanceListがnullの場合はfalseを返す
-	    if (attendanceForm.getDailyAttendanceList() == null) {
+		// dailyAttendanceListが空欄の場合はfalseを返す
+	    if (attendanceForm.getDailyAttendanceList().isEmpty()) {
 	        return false;
 	    }
 
