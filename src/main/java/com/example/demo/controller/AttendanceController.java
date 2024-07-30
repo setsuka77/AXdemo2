@@ -162,6 +162,7 @@ public class AttendanceController {
 				userId);
 
 		model.addAttribute("attendanceForm", dailyAttendanceForm);
+		model.addAttribute("calendar", calendar);
 		model.addAttribute("loginUser", loginUser);
 		// 再度リストを設定する
 		setYearMonthList(model);
@@ -213,8 +214,11 @@ public class AttendanceController {
 		
 		session.setAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
 		
+		System.out.println(monthlyAttendanceReq);
+		
 		model.addAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
 		model.addAttribute("attendanceForm", dailyAttendanceForm);
+		model.addAttribute("calendar", calendar);
 		model.addAttribute("loginUser", loginUser);
 
 	    return "attendance/record";
@@ -248,6 +252,7 @@ public class AttendanceController {
 		//ステータスを変更
 		String message = attendanceService.rejectAttendance(id, 3); // 却下済みのステータス
 		model.addAttribute("message", message);
+		System.out.println(message);
 
 	    return "redirect:/attendance";
 	}

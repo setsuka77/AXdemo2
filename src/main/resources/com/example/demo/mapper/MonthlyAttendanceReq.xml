@@ -3,40 +3,26 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper
 	namespace="com.example.demo.mapper.MonthlyAttendanceReqMapper">
-
-	<!-- MonthlyAttendanceReqとUsersをマッピング -->
-    <resultMap id="MonthlyAttendanceReqWithUserMap" type="com.example.demo.entity.MonthlyAttendanceReq">
-        <result property="id" column="reqId" />
-        <result property="userId" column="userId" />
-        <result property="targetYearMonth" column="targetYearMonth" />
-        <result property="date" column="reqDate" />
-        <result property="status" column="reqStatus" />
-        <association property="user" javaType="com.example.demo.entity.Users">
-            <result property="name" column="name" />
-        </association>
-    </resultMap>
-    
-    <!-- ユーザ情報と月次勤怠申請情報を取得 -->
-    <select id="getMonthlyAttendanceReqWithUser" resultMap="MonthlyAttendanceReqWithUserMap">
-        SELECT
-            mar.id AS reqId,
-            mar.user_id AS userId,
-            mar.target_year_month AS targetYearMonth,
-            mar.date AS reqDate,
-            mar.status AS reqStatus,
-            u.name AS name
-        FROM
-            monthly_attendance_req mar
-        INNER JOIN users u ON mar.user_id = u.id
-        WHERE
-            mar.status = #{status}
-    </select>
     
     <!-- Insert SQL -->
     <insert id="insert" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
         INSERT INTO monthly_attendance_req (user_id, target_year_month, date, status)
         VALUES (#{userId}, #{targetYearMonth}, #{date}, #{status})
     </insert>
+    
+     <!-- Select SQL with Status -->
+    <select id="findAllWithStatus" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
+        SELECT
+            u.name AS userName,
+            u.id AS userId,
+            mar.*
+        FROM
+            monthly_attendance_req mar
+        JOIN
+            users u ON mar.user_id = u.id
+        WHERE
+            mar.status = 1
+    </select>
     
     <!--  申請IDで情報を取得 -->
     <select id="findById" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
@@ -57,19 +43,7 @@
         UPDATE monthly_attendance_req SET status = #{status} WHERE id = #{id}
     </update>
  
-    <!-- Select SQL with Status -->
-    <select id="findAllWithStatus" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
-        SELECT
-            u.name AS userName,
-            u.id AS userId,
-            mar.*
-        FROM
-            monthly_attendance_req mar
-        JOIN
-            users u ON mar.user_id = u.id
-        WHERE
-            mar.status = 1
-    </select>
+   
     
 
 </mapper>
