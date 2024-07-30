@@ -183,7 +183,7 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 
 		// 月次勤怠申請の登録処理
-		String message = attendanceService.registerMonthlyAttendanceReq(year, month, loginUser);
+		String message = attendanceService.registerOrUpdateMonthlyAttendanceReq(year, month, loginUser);
 
 		redirectAttributes.addFlashAttribute("message", message);
 		return "redirect:/attendance";
@@ -229,7 +229,7 @@ public class AttendanceController {
 	 * 承認申請の承認
 	 */
 	@PostMapping(path = "/attendance", params = "approval")
-	public String approvalMontAttendance(MonthlyAttendanceReq monthlyAttendanceReq, Model model,HttpSession session) {
+	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq, Model model,HttpSession session) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
@@ -246,7 +246,7 @@ public class AttendanceController {
 	 * 承認申請の却下
 	 */
 	@PostMapping(path = "/attendance", params = "rejected")
-	public String rejectMontAttendance(AttendanceForm attendanceForm, Model model,HttpSession session) {
+	public String rejectMonthAttendance(AttendanceForm attendanceForm, Model model,HttpSession session) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得

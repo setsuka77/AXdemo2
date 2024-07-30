@@ -3,47 +3,76 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper
 	namespace="com.example.demo.mapper.MonthlyAttendanceReqMapper">
-    
-    <!-- Insert SQL -->
-    <insert id="insert" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
-        INSERT INTO monthly_attendance_req (user_id, target_year_month, date, status)
-        VALUES (#{userId}, #{targetYearMonth}, #{date}, #{status})
-    </insert>
-    
-     <!-- Select SQL with Status -->
-    <select id="findAllWithStatus" resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
-        SELECT
-            u.name AS userName,
-            u.id AS userId,
-            mar.*
-        FROM
-            monthly_attendance_req mar
-        JOIN
-            users u ON mar.user_id = u.id
-        WHERE
-            mar.status = 1
-    </select>
-    
-    <!--  申請IDで情報を取得 -->
-    <select id="findById" parameterType="Integer" resultType="com.example.demo.entity.MonthlyAttendanceReq">
-        SELECT
-            u.name AS userName,
-            u.id AS userId,
-            mar.*
-        FROM
-            monthly_attendance_req mar
-        JOIN
-            users u ON mar.user_id = u.id
-        WHERE
-            mar.id = #{id}
-    </select>
- 
-    <!-- Update SQL -->
-    <update id="updateStatus" parameterType="com.example.demo.entity.MonthlyAttendanceReq">
-        UPDATE monthly_attendance_req SET status = #{status} WHERE id = #{id}
-    </update>
- 
-   
-    
+
+	<!-- 承認申請ボタン押下時　承認申請新規登録 -->
+	<insert id="insert"
+		parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+		INSERT INTO monthly_attendance_req (user_id,
+		target_year_month, date,
+		status)
+		VALUES (#{userId}, #{targetYearMonth},
+		#{date}, #{status})
+	</insert>
+
+
+	<!-- 承認申請ボタン押下時 却下後承認申請更新 -->
+	<update id="update"
+		parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+		UPDATE monthly_attendance_req
+		SET user_id = #{userId},
+		target_year_month = #{targetYearMonth},
+		date = #{date},
+		status = #{status}
+		WHERE id = #{id}
+	</update>
+
+	<!-- ユーザーと年月で申請を検索 -->
+	<select id="findByUserAndYearMonth" parameterType="map"
+		resultType="com.example.demo.entity.MonthlyAttendanceReq">
+		SELECT * FROM monthly_attendance_req
+		WHERE user_id =
+		#{userId}
+		AND target_year_month = #{targetYearMonth}
+	</select>
+
+	<!-- Select SQL with Status -->
+	<select id="findAllWithStatus"
+		resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
+		SELECT
+		u.name AS userName,
+		u.id AS userId,
+		mar.*
+		FROM
+		monthly_attendance_req mar
+		JOIN
+		users u ON mar.user_id = u.id
+		WHERE
+		mar.status = 1
+	</select>
+
+	<!-- 申請IDで情報を取得 -->
+	<select id="findById" parameterType="Integer"
+		resultType="com.example.demo.entity.MonthlyAttendanceReq">
+		SELECT
+		u.name AS userName,
+		u.id AS userId,
+		mar.*
+		FROM
+		monthly_attendance_req mar
+		JOIN
+		users u ON mar.user_id = u.id
+		WHERE
+		mar.id = #{id}
+	</select>
+
+	<!-- 却下、承認ボタン押下時ステータス更新 -->
+	<update id="updateStatus"
+		parameterType="com.example.demo.entity.MonthlyAttendanceReq">
+		UPDATE monthly_attendance_req SET status = #{status}
+		WHERE id = #{id}
+	</update>
+
+
+
 
 </mapper>

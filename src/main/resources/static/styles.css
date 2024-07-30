@@ -244,3 +244,13 @@ th {
 	padding: 10px;
 	white-space: nowrap; /* テキストの折り返しを防ぐ */
 }
+
+.disabled-form {
+    pointer-events: none; /* フォーム全体を非活性にする */
+    opacity: 0.5; /* 非活性状態を視覚的に表示 */
+}
+.disabled-form input,
+.disabled-form select,
+.disabled-form button {
+    cursor: not-allowed; /* カーソルを「禁止」に変更 */
+}
