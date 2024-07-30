@@ -22,7 +22,8 @@
 		SET user_id = #{userId},
 		target_year_month = #{targetYearMonth},
 		date = #{date},
-		status = #{status}
+		status =
+		#{status}
 		WHERE id = #{id}
 	</update>
 
@@ -48,6 +49,23 @@
 		users u ON mar.user_id = u.id
 		WHERE
 		mar.status = 1
+	</select>
+
+	<!-- 指定した年月のステータスを取得 -->
+	<select id="findByYearMonth" parameterType="map"
+		resultType="com.example.demo.dto.MonthlyAttendanceReqDto">
+		SELECT
+		u.name AS userName,
+		u.id AS userId,
+		mar.*
+		FROM
+		monthly_attendance_req mar
+		JOIN
+		users u ON mar.user_id = u.id
+		WHERE
+		mar.user_id = #{userId}
+		AND
+		mar.target_year_month = #{targetYearMonth}
 	</select>
 
 	<!-- 申請IDで情報を取得 -->

@@ -32,6 +32,12 @@ public interface MonthlyAttendanceReqMapper {
 	// ユーザーと年月で申請を検索
     MonthlyAttendanceReq findByUserAndYearMonth(@Param("userId") Integer userId, @Param("targetYearMonth") java.sql.Date targetYearMonth);
     
+    /**
+     * 上部ステータス表示
+     * 指定した年月のステータスを取得
+     */
+    List<MonthlyAttendanceReqDto> findByYearMonth(@Param("userId") Integer userId, @Param("targetYearMonth") java.sql.Date targetYearMonth);
+    
     /*
      * 承認待ちの情報をすべて取得
      */

@@ -126,6 +126,13 @@ public class AttendanceService {
 	            .allMatch(dailyForm -> dailyForm.getStatus() != null);
 	}
 	
+	/**
+     * 指定した年月のステータスを取得
+     */
+	public List<MonthlyAttendanceReqDto> findByYearMonth(Integer userId, java.sql.Date targetYearMonth) {
+        return monthlyAttendanceReqMapper.findByYearMonth(userId, targetYearMonth);
+    }
+	
 	/*
 	 * 入力チェックエラーメッセージ表示用
 	 * 日付をFormに詰める
