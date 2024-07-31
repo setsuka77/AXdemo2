@@ -113,17 +113,29 @@ public class AttendanceService {
 	}
 	
 	/*
-	 * ステータスが埋まっているかチェック
+	 * 勤務状況がすべて埋まっているかチェック
 	 */
-	public boolean checkAllStatus(AttendanceForm attendanceForm){
-		// dailyAttendanceListが空欄の場合はfalseを返す
-	    if (attendanceForm.getDailyAttendanceList().isEmpty()) {
-	        return false;
-	    }
-
+	public boolean checkAllStatus(AttendanceForm attendanceForm,String status){
+		// statusが却下以外の場合はfalseを返す
+		if ("承認待ち".equals(status) || "承認済み".equals(status)) {
+			return false;
+		}
+		
 	    // dailyAttendanceList内のすべてのDailyAttendanceFormのstatusがnullでないかチェック
 	    return attendanceForm.getDailyAttendanceList().stream()
 	            .allMatch(dailyForm -> dailyForm.getStatus() != null);
+	}
+	
+	/*
+	 * 登録ボタンの活性非活性チェック
+	 */
+	public boolean checkRegister(String status) {
+	    // statusが「却下」または「未申請」の場合はtrueを返す
+	    if ("却下".equals(status) || "未申請".equals(status)) {
+	        return true;
+	    }
+	    
+	    return false;
 	}
 	
 	/**
@@ -206,34 +218,41 @@ public class AttendanceService {
 	    Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
 
 	    for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
-	        // 出勤時間チェック
+	    	// すべての項目が未入力の場合はスキップ
 	        String startTime = dailyForm.getStartTime();
+	        String endTime = dailyForm.getEndTime();
+	        String remarks = dailyForm.getRemarks();
+	        Integer status = dailyForm.getStatus();
+
+	        if ((startTime == null || startTime.isEmpty()) &&
+	            (endTime == null || endTime.isEmpty()) &&
+	            (remarks == null || remarks.isEmpty()) &&
+	            (status == null)) {
+	            continue;
+	        }
+
+	        // 出勤時間チェック
 	        if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
 	            errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
 	            hasErrors = true;
 	        }
 
 	        // 退勤時間チェック
-	        String endTime = dailyForm.getEndTime();
 	        if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
 	            errorMessage.append(dailyForm.getFormattedDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
 	            hasErrors = true;
 	        }
 
 	        // 備考欄文字数チェック
-	        String remarks = dailyForm.getRemarks();
 	        if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
 	            errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
 	            hasErrors = true;
 	        }
 
-	        // ステータス必須チェック (承認申請時のみ)
-	        if (isApprovalRequest) {
-	            Integer status = dailyForm.getStatus();
-	            if (status == null) {
-	                errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 必ず選択してください。<br>");
-	                hasErrors = true;
-	            }
+	        // ステータス必須チェック
+	        if (status == null) {
+	            errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
+	            hasErrors = true;
 	        }
 	    }
 
@@ -248,7 +267,6 @@ public class AttendanceService {
     public String registerOrUpdateMonthlyAttendanceReq(Integer year, Integer month, Users user) {
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
-        LocalDate endDate = yearMonth.atEndOfMonth();
 
         MonthlyAttendanceReq existingReq = monthlyAttendanceReqMapper.findByUserAndYearMonth(user.getId(), java.sql.Date.valueOf(startDate));
         MonthlyAttendanceReq req = new MonthlyAttendanceReq();

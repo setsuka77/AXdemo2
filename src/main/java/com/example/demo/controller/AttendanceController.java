@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -66,10 +67,12 @@ public class AttendanceController {
 		}
 
 		// 承認申請ボタンをnullに設定する
-		AttendanceForm attendanceForm = new AttendanceForm();
-		attendanceForm.setDailyAttendanceList(new ArrayList<>());
-		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm);
+		boolean checkAllStatus = false;
 		model.addAttribute("checkAllStatus", checkAllStatus);
+		
+		//登録ボタンをnullに設定する
+		boolean checkRegister = false;
+		model.addAttribute("checkRegister",checkRegister);
 
 		// プルダウンの設定
 		setYearMonthList(model);
@@ -114,16 +117,25 @@ public class AttendanceController {
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, userId);
 		// 勤怠フォームの生成
 		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
-		// 承認申請ボタン表示チェック
-		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm);
 
 		// 年月をDate型に変換
 	    java.sql.Date targetYearMonth = java.sql.Date.valueOf(year + "-" + month + "-01");
 
 	    // ステータス表示用のテキストを設定
 	    List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
-	    model.addAttribute("statusText", getStatusText(monthlyAttendanceReq));
-
+	    String status = getStatusText(monthlyAttendanceReq);
+	    model.addAttribute("statusText", status);
+	    
+	    //ステータスに応じて入力可否を設定する(trueだと非活性化する)
+	    boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
+	    model.addAttribute("isFormEditable", isFormEditable);
+	    
+	    // 承認申請ボタン表示チェック(True時:活性化する)
+	 	boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm,status);
+	 	
+	 	//登録ボタン表示チェック(True時:活性化する)
+	 	boolean checkRegister = attendanceService.checkRegister(status);
+	 	
 		session.setAttribute("calendar", calendar);
 
 		model.addAttribute("year", year);
@@ -132,6 +144,7 @@ public class AttendanceController {
 		model.addAttribute("calendar", calendar);
 		model.addAttribute("attendanceForm", attendanceForm);
 		model.addAttribute("checkAllStatus", checkAllStatus);
+		model.addAttribute("checkRegister",checkRegister);
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
@@ -180,7 +193,7 @@ public class AttendanceController {
 
 		// AttendanceForm に date を詰める
 		attendanceService.fillDatesInAttendanceForm(attendanceForm, calendar);
-
+		
 		// バリデーションエラー表示
 		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
@@ -198,10 +211,32 @@ public class AttendanceController {
 		// DBから一覧を再取得して、再度フォームに表示させる
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, userId);
 		AttendanceForm dailyAttendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
+		
+		// 月初めの日にちを取得
+	    LocalDate firstDayOfMonth = calendar.get(0).getDate();
+	    java.sql.Date targetYearMonth = java.sql.Date.valueOf(firstDayOfMonth);
 
+	    // ステータス表示用のテキストを設定
+	    List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
+	    String status = getStatusText(monthlyAttendanceReq);
+	    model.addAttribute("statusText", status);
+	    
+	    //ステータスに応じて入力可否を設定する(trueだと非活性化する)
+	    boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
+	    model.addAttribute("isFormEditable", isFormEditable);
+	    
+	    // 承認申請ボタン表示チェック(True時:活性化する)
+	 	boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm,status);
+	 	
+	 	//登録ボタン表示チェック(True時:活性化する)
+	 	boolean checkRegister = attendanceService.checkRegister(status);
+	 	
 		model.addAttribute("attendanceForm", dailyAttendanceForm);
 		model.addAttribute("calendar", calendar);
 		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("checkAllStatus", checkAllStatus);
+		model.addAttribute("checkRegister",checkRegister);
+		
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";

@@ -60,7 +60,7 @@
 				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
 				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
 				
-				<button type="submit" th:if="${loginUser.role != '2'}" name="regist" class="button">登録</button>
+				<button type="submit" th:if="${loginUser.role != '2'}" name="regist" class="button" th:attr="disabled=${checkRegister == false}" th:classappend="${checkRegister == false ? 'disabled-form' : ''}">登録</button>
 			</div>
 
 			<!-- 申請一覧 マネージャのみ表示 -->
@@ -108,8 +108,9 @@
 						</td>
 						<td th:text="${calendar.dayOfWeek}"></td>
 						<td>
+							<!-- null,falseだと入力可能、trueは入力不可 -->
 							<select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'"
-								class="form-control">
+								class="form-control" th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
 								<option value="" hidden> </option>
 								<option value="0"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">通常出勤
@@ -133,8 +134,7 @@
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 6}">早退
 								</option>
 								<option value="7"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 7}">
-									時間外勤務
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 7}">時間外勤務
 								</option>
 								<option value="8"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 8}">振替出勤
@@ -143,29 +143,27 @@
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 9}">振替休日
 								</option>
 								<option value="10"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 10}">
-									代替出勤
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 10}">代替出勤
 								</option>
 								<option value="11"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 11}">
-									代替休日
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 11}">代替休日
 								</option>
 							</select>
 						</td>
 						<td>
 							<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].startTime'"
 								th:value="${attendanceForm.dailyAttendanceList[iterStat.index].startTime}"
-								class="form-control input-time">
+								class="form-control input-time" th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
 						</td>
 						<td>
 							<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].endTime'"
 								th:value="${attendanceForm.dailyAttendanceList[iterStat.index].endTime}"
-								class="form-control input-time">
+								class="form-control input-time" th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
 						</td>
 						<td>
 							<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].remarks'"
 								th:value="${attendanceForm.dailyAttendanceList[iterStat.index].remarks}"
-								class="form-control note">
+								class="form-control note" th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
 						</td>
 					</tr>
 				</tbody>
