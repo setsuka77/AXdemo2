@@ -244,18 +244,22 @@ public class AttendanceService {
 	        }
 
 	        // 備考欄文字数チェック
-	        if (remarks != null && !remarks.isEmpty() && remarks.length() > 20) {
+	        if (remarks != null && !remarks.isEmpty()){
+	        	if(remarks.matches("^[-~｡-ﾟ]*$")) {
+	        		errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角文字で入力してください。<br>");
+	        		hasErrors = true;
+	        	}
+	        	if(remarks.length() > 20) {
 	            errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
 	            hasErrors = true;
+	        	}
 	        }
 
 	        // ステータス必須チェック
-	        if (status == null) {
+	        if (status == null)
 	            errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
 	            hasErrors = true;
 	        }
-	    }
-
 	    return hasErrors ? errorMessage.toString() : null;
 	}
 

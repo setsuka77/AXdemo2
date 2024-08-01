@@ -197,11 +197,13 @@ public class AttendanceController {
 		// バリデーションエラー表示
 		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
+			System.out.println(errorMessage);
 			redirectAttributes.addFlashAttribute("registerError", errorMessage);
 			redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
 			redirectAttributes.addFlashAttribute("calendar", calendar);
 			redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
 			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
+			
 			return "redirect:/attendance";
 		}
 

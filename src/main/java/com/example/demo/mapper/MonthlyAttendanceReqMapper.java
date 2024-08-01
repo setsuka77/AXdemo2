@@ -29,7 +29,7 @@ public interface MonthlyAttendanceReqMapper {
 	 */
     void update(MonthlyAttendanceReq req);
 	
-	// ユーザーと年月で申請を検索
+	// ユーザーと年月で申請IDを検索
     MonthlyAttendanceReq findByUserAndYearMonth(@Param("userId") Integer userId, @Param("targetYearMonth") java.sql.Date targetYearMonth);
     
     /**
