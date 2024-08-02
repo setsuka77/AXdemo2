@@ -125,7 +125,6 @@ public class AttendanceService {
 	    return attendanceForm.getDailyAttendanceList().stream()
 	            .allMatch(dailyForm -> dailyForm.getStatus() != null);
 	}
-	
 	/*
 	 * 登録ボタンの活性非活性チェック
 	 */
@@ -245,21 +244,24 @@ public class AttendanceService {
 
 	        // 備考欄文字数チェック
 	        if (remarks != null && !remarks.isEmpty()){
-	        	if(remarks.matches("^[-~｡-ﾟ]*$")) {
+	        	if(remarks.matches(".*[\\x00-\\x7F].*")) {
 	        		errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角文字で入力してください。<br>");
 	        		hasErrors = true;
 	        	}
 	        	if(remarks.length() > 20) {
-	            errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
-	            hasErrors = true;
+	        		errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
+	        		hasErrors = true;
 	        	}
 	        }
 
 	        // ステータス必須チェック
-	        if (status == null)
+	        if (status == null) {
 	            errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
 	            hasErrors = true;
 	        }
+	    }
+	
+	    System.out.println("serviceチェック"+hasErrors);
 	    return hasErrors ? errorMessage.toString() : null;
 	}
 

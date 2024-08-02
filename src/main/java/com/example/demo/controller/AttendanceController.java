@@ -193,18 +193,27 @@ public class AttendanceController {
 
 		// AttendanceForm に date を詰める
 		attendanceService.fillDatesInAttendanceForm(attendanceForm, calendar);
+		System.out.println(attendanceForm);
 		
 		// バリデーションエラー表示
 		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
 			System.out.println(errorMessage);
-			redirectAttributes.addFlashAttribute("registerError", errorMessage);
-			redirectAttributes.addFlashAttribute("attendanceForm", attendanceForm);
-			redirectAttributes.addFlashAttribute("calendar", calendar);
-			redirectAttributes.addFlashAttribute("year", calendar.get(0).getDate().getYear());
-			redirectAttributes.addFlashAttribute("month", calendar.get(0).getDate().getMonthValue());
 			
-			return "redirect:/attendance";
+			model.addAttribute("registerError", errorMessage);
+			model.addAttribute("attendanceForm", attendanceForm);
+			model.addAttribute("calendar", calendar);
+			model.addAttribute("year", calendar.get(0).getDate().getYear());
+			model.addAttribute("month", calendar.get(0).getDate().getMonthValue());
+			model.addAttribute("loginUser", loginUser);
+			
+			// 承認申請ボタンをnullに設定する
+			boolean checkAllStatus = false;
+			model.addAttribute("checkAllStatus", checkAllStatus);
+			// 再度リストを設定する
+			setYearMonthList(model);
+			
+			return "attendance/record";
 		}
 
 		// 登録処理
