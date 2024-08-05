@@ -25,11 +25,11 @@
 				<div class="input-group input-with-button">
 					<label for="name">ユーザ名</label>
 					<input type="text" class="input-wide" id="name" name="name" th:field="*{name}">
-					<div class="error-message" id="username-error">ユーザ名を入力してください。</div>
 					<div class="button-group input-with-button">
 						<button type="submit">検索</button>
 					</div>
 				</div>
+				<div class="error-message" id="username-error">ユーザ名を入力してください。</div>
 				<!-- エラーメッセージ表示 -->
 				<div th:if="${searchError}" class="alert alert-danger" role="alert">
 					<p th:utext="${searchError}"></p>

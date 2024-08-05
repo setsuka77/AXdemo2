@@ -95,7 +95,6 @@ body {
 	display: flex; /* フレックスボックスを使う */
 	justify-content: flex-end; /* 右寄せ */
 	gap: 10px; /* ボタン間の隙間を設定 */
-	/* margin-top: 10px;  *//* 上部マージンを設定 */
 }
 
 /* ログインボタングループスタイル */
@@ -240,6 +239,7 @@ th, td {
 
 th {
 	background: #f2f2f2;
+	text-align: center; /* テキストを中央寄せ */
 }
 
 /* フォームスタイル */
