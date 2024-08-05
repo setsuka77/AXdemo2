@@ -28,7 +28,7 @@ public class LoginService {
 	/*
 	 * 入力エラーチェック機能
 	 */
-	public Boolean validateLogin(LoginForm loginForm) {
+	public boolean validateLogin(LoginForm loginForm) {
 	    boolean hasErrors = false;
 	    
 	    String id = String.valueOf(loginForm.getId());

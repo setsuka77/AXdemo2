@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -34,13 +33,13 @@ public class LoginController {
      * ログインボタン押下
      */
     @PostMapping("/login")
-    public String login(LoginForm loginForm,Model model,HttpSession session,RedirectAttributes redirectAttributes) {
+    public String login(LoginForm loginForm,HttpSession session,RedirectAttributes redirectAttributes) {
     	Integer id = loginForm.getId();
     	String password = loginForm.getPassword();
     
         //入力チェック
-        Boolean errorMessage = loginService.validateLogin(loginForm);
-        if (errorMessage != false) {
+        Boolean hasErrors = loginService.validateLogin(loginForm);
+        if (hasErrors != false) {
         	redirectAttributes.addFlashAttribute("error", "桁数おかしいです");
         	//redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
         	return "redirect:/";
@@ -50,33 +49,31 @@ public class LoginController {
         session.setAttribute("user",user);
         System.out.println("user"+user);
         
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
+            return "redirect:/";
+        }
+        
         //利用開始日より前かチェック
         // 現在の日付を取得
 	       Date currentDate = new Date();
 	       Date startDate = user.getStartDate();
 	       // 利用開始日前の場合
 	       if (startDate != null && startDate.after(currentDate)) {
-	           redirectAttributes.addFlashAttribute("error", "利用開始日前です");
-	           //redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
+	           redirectAttributes.addFlashAttribute("error", "利用開始日前です。");
 	           return "redirect:/";
 	       } 
         
         //遷移のあれそれ
-        if (user != null) {
-	        String role = user.getRole();
-	        System.out.println("ロール: " + user.getRole());
-	        if ("1".equals(role)) {
-	            return "redirect:/userManagement/manage";
-	        } else if ("2".equals(role) || "3".equals(role) || "4".equals(role)) {
-	            return "redirect:/attendance";
-	        } else {
-	            redirectAttributes.addFlashAttribute("error", "不明なロールです。");
-	            return "redirect:/";
-	        }
-	    } else {
-	        redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
-	        return "redirect:/";
-	    }
+	       String role = user.getRole();
+	       if ("1".equals(role)) {
+	           return "redirect:/userManagement/manage";
+	       } else if ("2".equals(role) || "3".equals(role) || "4".equals(role)) {
+	           return "redirect:/attendance";
+	       } else {
+	           redirectAttributes.addFlashAttribute("error", "不明なロールです。");
+	           return "redirect:/";
+	       }
     }
     
 }
