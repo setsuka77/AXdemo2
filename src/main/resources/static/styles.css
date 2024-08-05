@@ -32,6 +32,19 @@ body {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* フォームのタイトルのスタイル */
+.login-form{
+	text-align: center;
+	width: 80%; /* 幅を80%に設定 */
+	margin:2% 7%;
+}
+
+/* エラーメッセージのレイアウト修正 */
+.error-message.loginError{
+	width: 100%;
+	margin-top: -20px; 
+}
+
 .login-form h2 {
 	margin-bottom: 20px;
 	text-align: center;

@@ -193,12 +193,10 @@ public class AttendanceController {
 
 		// AttendanceForm に date を詰める
 		attendanceService.fillDatesInAttendanceForm(attendanceForm, calendar);
-		System.out.println(attendanceForm);
 		
 		// バリデーションエラー表示
 		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
-			System.out.println(errorMessage);
 			
 			model.addAttribute("registerError", errorMessage);
 			model.addAttribute("attendanceForm", attendanceForm);

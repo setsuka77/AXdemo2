@@ -11,19 +11,19 @@
 <body>
 
 	<div class="login-container">
-		<form class="login-form" id="loginForm" th:action="@{/login}" method="post" autoComplete='new-off'>
+		<form class="login-form" id="loginForm" th:action="@{/login}" method="post" autocomplete="off">
 
-			<div class="input-group">
+			<div class="input-group login-form">
 				<label for="id">ユーザID</label>
 				<input type="text" id="id" name="id">
 			</div>
-			<span class="error-message" id="idError"></span>
+			<span class="error-message loginError" id="idError"></span>
 
-			<div class="input-group">
+			<div class="input-group login-form">
 				<label for="password">パスワード</label>
 				<input type="password" id="password" name="password">
 			</div>
-			<span class="error-message" id="passwordError"></span>
+			<span class="error-message loginError" id="passwordError"></span>
 
 			<div th:if="${error}" class="alert alert-danger" role="alert">
 				<p th:text="${error}"></p>
