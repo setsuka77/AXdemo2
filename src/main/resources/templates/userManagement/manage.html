@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8"/>
+	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>ユーザ管理 | Analix社内管理システム</title>
 	<link rel="stylesheet" href="/login/styles.css">
@@ -16,12 +16,12 @@
 			<form id="search-form" method="post" th:action="@{/userManagement/search}" th:object="${userForm}"
 				onsubmit="return validateSearch()">
 				<h2>ユーザ管理</h2>
-				
+
 				<!-- 成功メッセージ表示 -->
 				<div th:if="${successMessage}" class="alert alert-success" role="alert">
 					<p th:utext="${successMessage}"></p>
 				</div>
-				
+
 				<div class="input-group">
 					<label for="name">ユーザ名</label>
 					<input type="text" id="name" name="name" th:field="*{name}">
@@ -34,7 +34,7 @@
 						<button type="submit">検索</button>
 					</div>
 				</div>
-				
+
 			</form>
 
 			<!-- 登録用フォーム -->
@@ -42,7 +42,7 @@
 				onsubmit="return validateRegister()">
 				<input type="hidden" id="hidden-name" name="name">
 				<input type="hidden" id="hidden-id" name="id">
-				
+
 				<div class="input-group">
 					<label for="id">ユーザID</label>
 					<input type="text" id="id" name="id" th:field="*{id}" disabled>
@@ -73,7 +73,7 @@
 				<div th:if="${registerError}" class="alert alert-danger" role="alert">
 					<p th:utext="${registerError}"></p>
 				</div>
-				
+
 				<div class="button-group">
 					<button type="submit">登録</button>
 				</div>
@@ -109,47 +109,6 @@
 				event.preventDefault(); // フォームの送信をキャンセル
 			}
 		};
-
-
-		// 登録・更新時必須チェック
-		function validateRegister() {
-			const username = document.getElementById('hidden-name').value;
-			const password = document.getElementById('password').value;
-			const role = document.getElementById('role').value;
-			const startDate = document.getElementById('start-date').value;
-
-			let isValid = true;
-
-			// 各項目のエラーメッセージの非表示
-			document.getElementById('username-error').style.display = 'none';
-			document.getElementById('password-error').style.display = 'none';
-			document.getElementById('role-error').style.display = 'none';
-			document.getElementById('start-date-error').style.display = 'none';
-
-			// 各項目の入力チェック
-			if (!username) {
-				document.getElementById('username-error').style.display = 'block';
-				isValid = false;
-			}
-			if (!password) {
-				document.getElementById('password-error').style.display = 'block';
-				isValid = false;
-			}
-			if (!role) {
-				document.getElementById('role-error').style.display = 'block';
-				isValid = false;
-			}
-			if (!startDate) {
-				document.getElementById('start-date-error').style.display = 'block';
-				isValid = false;
-			}
-
-			if (!isValid) {
-				alert('全ての項目を入力してください。');
-			}
-
-			return isValid; // フォームの送信を許可またはキャンセル
-		}
 	</script>
 
 </body>

@@ -89,20 +89,25 @@ body {
 	margin-top: 30px; /* 上部マージンを設定 */
 }
 
+/* ログインボタングループスタイル */
+.login-button-group {
+	justify-content: center; /* 中央寄せ */
+}
+
 /* ボタンスタイル */
 button {
 	width: 100px; /* 幅を100pxに設定 */
 	padding: 10px; /* 内部パディングを設定 */
 	border: none; /* ボーダーを削除 */
 	border-radius: 4px; /* 角を丸くする */
-	background: #007BFF; /* 背景色を設定 */
-	color: white; /* テキスト色を白に設定 */
+	background: #FED813; /* 背景色を設定 */
+	color: black; /* テキスト色を白に設定 */
 	font-size: 16px; /* フォントサイズを設定 */
 	cursor: pointer; /* カーソルをポインタに設定 */
 }
 
 button:hover {
-	background: #0056b3; /* ホバー時の背景色を設定 */
+	background: #FFA41D; /* ホバー時の背景色を設定 */
 }
 
 /* メディアクエリ (768px以下のスクリーン) */
