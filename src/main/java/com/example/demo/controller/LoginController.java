@@ -36,18 +36,9 @@ public class LoginController {
     public String login(LoginForm loginForm,HttpSession session,RedirectAttributes redirectAttributes) {
     	Integer id = loginForm.getId();
     	String password = loginForm.getPassword();
-    
-        //入力チェック
-        Boolean hasErrors = loginService.validateLogin(loginForm);
-        if (hasErrors != false) {
-        	redirectAttributes.addFlashAttribute("error", "桁数おかしいです");
-        	//redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
-        	return "redirect:/";
-        }
-        
+      
         Users user = loginService.login(id, password);
         session.setAttribute("user",user);
-        System.out.println("user"+user);
         
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
@@ -64,7 +55,7 @@ public class LoginController {
 	           return "redirect:/";
 	       } 
         
-        //遷移のあれそれ
+        //画面遷移
 	       String role = user.getRole();
 	       if ("1".equals(role)) {
 	           return "redirect:/userManagement/manage";
