@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,53 +29,37 @@ public class LoginController {
         return "login/login";
     }
 
-    /*
-     * ログインボタン押下
-     */
-	/*@PostMapping("/login")
-	public String login(@RequestParam Integer id, @RequestParam String password, RedirectAttributes redirectAttributes,HttpSession session) {
-	    Users user = loginService.login(id, password);
-	    session.setAttribute("user",user);
-	    if (user != null) {
-	        String role = user.getRole();
-	        System.out.println("ロール: " + user.getRole());
-	        if ("1".equals(role)) {
-	            return "redirect:/userManagement/manage";
-	        } else if ("2".equals(role) || "3".equals(role) || "4".equals(role)) {
-	            return "redirect:/attendance";
-	        } else {
-	            redirectAttributes.addFlashAttribute("error", "不明なロールです。");
-	            return "redirect:/";
-	        }
-	    } else {
-	        redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
-	        return "redirect:/";
-	    }
-	}*/
-    
-    
-    
     
     /*
      * ログインボタン押下
      */
     @PostMapping("/login")
     public String login(LoginForm loginForm,Model model,HttpSession session,RedirectAttributes redirectAttributes) {
-    	System.out.println("メソッドつながってるかこれ");
     	Integer id = loginForm.getId();
     	String password = loginForm.getPassword();
-    	
-    	Users user = loginService.login(id, password);
-        session.setAttribute("user",user);
-        
+    
         //入力チェック
-        String errorMessage = loginService.validateLogin(loginForm);
-        if (errorMessage != null) {
-        	redirectAttributes.addFlashAttribute("error", errorMessage);
+        Boolean errorMessage = loginService.validateLogin(loginForm);
+        if (errorMessage != false) {
+        	redirectAttributes.addFlashAttribute("error", "桁数おかしいです");
+        	//redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
+        	return "redirect:/";
         }
         
-        //文字カウントは正常に動いてない
-        System.out.println("入力チェック後これ");
+        Users user = loginService.login(id, password);
+        session.setAttribute("user",user);
+        System.out.println("user"+user);
+        
+        //利用開始日より前かチェック
+        // 現在の日付を取得
+	       Date currentDate = new Date();
+	       Date startDate = user.getStartDate();
+	       // 利用開始日前の場合
+	       if (startDate != null && startDate.after(currentDate)) {
+	           redirectAttributes.addFlashAttribute("error", "利用開始日前です");
+	           //redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
+	           return "redirect:/";
+	       } 
         
         //遷移のあれそれ
         if (user != null) {
