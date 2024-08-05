@@ -45,11 +45,6 @@ body {
 	margin-top: -20px; 
 }
 
-.login-form h2 {
-	margin-bottom: 20px;
-	text-align: center;
-}
-
 /* フォームコンテナスタイル */
 .form-container {
 	width: 100%; /* 幅を100%に設定 */
