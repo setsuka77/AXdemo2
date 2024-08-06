@@ -57,7 +57,7 @@ public class LoginController {
 		Date startDate = user.getStartDate();
 		// 利用開始日前の場合
 		if (startDate != null && startDate.after(currentDate)) {
-			redirectAttributes.addFlashAttribute("error", "利用開始日前です。");
+			redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
 			return "redirect:/";
 		}
 

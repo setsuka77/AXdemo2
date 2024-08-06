@@ -54,10 +54,5 @@
 		start_date =
 		#{startDate} WHERE id = #{id}
 	</update>
-	
-	<delete id="deleteUser" 
-		parameterType="com.example.demo.dto.UserManagementDto">
-		DELETE FROM users WHERE id = #{id}
-	</delete>
 
 </mapper>

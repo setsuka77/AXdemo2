@@ -81,11 +81,4 @@ public interface UsersMapper {
 	 */
 	void updateUser(UserManagementDto user);
 
-	/**
-	 * ユーザ管理画面 既存ユーザ情報削除
-	 * 
-	 * @param id 削除するユーザのID
-	 */
-	void deleteUser(@Param("id") Integer id);
-
 }

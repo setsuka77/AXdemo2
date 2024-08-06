@@ -5,7 +5,6 @@ import com.example.demo.form.UserManagementForm;
 import com.example.demo.mapper.UsersMapper;
 
 import java.time.LocalDate;
-import java.sql.Date;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
@@ -57,8 +56,9 @@ public class UserManagementService {
 	 * @param userForm ユーザ管理フォーム
 	 * @param id       ユーザID
 	 */
-	public void registerOrUpdateUser(UserManagementForm userForm, Integer id) {
+	public boolean registerOrUpdateUser(UserManagementForm userForm, Integer id) {
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+	    boolean isDeleted = false;
 
 	    // 入力内容取得
 	    UserManagementDto user = new UserManagementDto();
@@ -66,12 +66,14 @@ public class UserManagementService {
 	    user.setPassword(userForm.getPassword());
 	    user.setRole(userForm.getRole());
 
+	    // 9999/99/99が入力された時の論理削除
 	    // startDateをStringからLocalDateに変換
 	    if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
 	        if ("9999/99/99".equals(userForm.getStartDate())) {
 	            // 特殊な未来日として設定
 	            LocalDate futureDate = LocalDate.of(9999, 12, 31); // 9999年12月31日
 	            user.setStartDate(futureDate); // LocalDateとして設定
+	            isDeleted = true; // 削除フラグを立てる
 	        } else {
 	            // 通常の日付として処理
 	            LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
@@ -99,17 +101,8 @@ public class UserManagementService {
 	        user.setId(userId);
 	        usersMapper.updateUser(user);
 	    }
-	}
-
-	/**
-	 * ユーザ管理画面 既存ユーザ削除機能
-	 * 
-	 * @param id ユーザID
-	 */
-	public void deleteUser(Integer id) {
-		if (id != null) {
-			usersMapper.deleteUser(id);
-		}
+	    
+	    return isDeleted;
 	}
 
 	/**
@@ -169,10 +162,5 @@ public class UserManagementService {
 
 		return hasErrors ? errorMessage.toString() : null;
 	}
-	
-	// 既存ユーザかどうかを判断するメソッド
-    public boolean isExistingUser(Integer userId) {
-        return userId != null && usersMapper.identifyUserId(userId) != null;
-    }
 
 }
