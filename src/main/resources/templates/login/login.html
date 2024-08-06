@@ -25,6 +25,7 @@
 			</div>
 			<span class="error-message" id="passwordError"></span>
 
+			<!-- エラーメッセージ表示 -->
 			<div th:if="${error}" class="alert alert-danger" role="alert">
 				<p th:utext="${error}"></p>
 			</div>
@@ -37,6 +38,7 @@
 	</div>
 
 	<script>
+		// 必須、入力形式チェック
 		document.addEventListener("DOMContentLoaded", function () {
 			const loginForm = document.getElementById("loginForm");
 

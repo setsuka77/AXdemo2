@@ -29,7 +29,7 @@
 						<button type="submit">検索</button>
 					</div>
 				</div>
-				<div class="error-message" id="username-error">ユーザ名を入力してください。</div>
+				<div class="error-message manageError" id="username-error">ユーザ名を入力してください。</div>
 				<!-- エラーメッセージ表示 -->
 				<div th:if="${searchError}" class="alert alert-danger" role="alert">
 					<p th:utext="${searchError}"></p>
@@ -50,7 +50,6 @@
 				<div class="input-group">
 					<label for="password">パスワード</label>
 					<input type="password" id="password" name="password" th:field="*{password}">
-					<div class="error-message" id="password-error">パスワードを入力してください。</div>
 				</div>
 				<div class="input-group">
 					<label for="role">権限</label>
@@ -61,13 +60,11 @@
 						<option value="3" th:selected="${userForm.role == '3'}">UM</option>
 						<option value="4" th:selected="${userForm.role == '4'}">メンバー</option>
 					</select>
-					<div class="error-message" id="role-error">権限を選択してください。</div>
 				</div>
 				<div class="input-group">
 					<label for="start-date">利用開始日</label>
 					<input type="text" id="start-date" name="startDate" th:field="*{startDate}"
 						placeholder="YYYY/MM/DD">
-					<div class="error-message" id="start-date-error">利用開始日を入力してください。</div>
 				</div>
 				<!-- エラーメッセージ表示 -->
 				<div th:if="${registerError}" class="alert alert-danger" role="alert">

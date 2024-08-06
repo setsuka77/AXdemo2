@@ -23,8 +23,13 @@ public class UserManagementController {
 	@Autowired
 	private UserManagementService userManagementService;
 
-	/*
+	/**
 	 * ユーザ管理画面 初期表示
+	 * 
+	 * @param session
+	 * @param model
+	 * @param redirectAttributes
+	 * @return ユーザ管理画面
 	 */
 	@GetMapping("/manage")
 	public String userManage(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
@@ -43,8 +48,14 @@ public class UserManagementController {
 		return "userManagement/manage";
 	}
 
-	/*
+	/**
 	 * ユーザ管理画面 検索ボタン押下時 検索機能
+	 * 
+	 * @param userForm           ユーザ管理フォーム
+	 * @param session
+	 * @param model
+	 * @param redirectAttributes
+	 * @return ユーザ管理画面
 	 */
 	@PostMapping("/search")
 	public String searchUser(@ModelAttribute UserManagementForm userForm, HttpSession session, Model model,
@@ -77,8 +88,15 @@ public class UserManagementController {
 		return "userManagement/manage";
 	}
 
-	/*
+	/**
 	 * ユーザ管理画面 登録ボタン押下時 登録/更新機能
+	 * 
+	 * @param userForm           ユーザ管理フォーム
+	 * @param session
+	 * @param model
+	 * @param redirectAttributes
+	 * @return リダイレクト先のURL /userManagement/manage
+	 * @throws ParseException
 	 */
 	@PostMapping("/register")
 	public String registerOrUpdateUser(@ModelAttribute UserManagementForm userForm, HttpSession session, Model model,

@@ -33,16 +33,10 @@ body {
 }
 
 /* フォームのタイトルのスタイル */
-.login-form{
+.login-form {
 	text-align: center;
 	width: 80%; /* 幅を80%に設定 */
-	margin:5% 10%;
-}
-
-/* エラーメッセージのレイアウト修正 */
-.error-message.loginError{
-	width: 100%;
-	margin-top: -20px; 
+	margin: 5% 10%;
 }
 
 /* フォームコンテナスタイル */
@@ -70,7 +64,7 @@ body {
 	display: block; /* ブロック要素として表示 */
 	margin-bottom: 5px; /* 下部マージンを設定 */
 	font-weight: bold; /* 太字に設定 */
-	min-width: 100px; 
+	min-width: 100px;
 }
 
 /* 入力フィールドスタイル */
@@ -84,18 +78,30 @@ body {
 }
 
 /* 入力フィールドの幅を80%に設定 */
-.input-group.input-wide input[type="text"], 
-.input-group.input-wide input[type="password"], 
-.input-group.input-wide input[type="date"] {
-    width: 80%; /* 幅を80%に設定 */
+.input-group.input-wide input[type="text"], .input-group.input-wide input[type="password"],
+	.input-group.input-wide input[type="date"] {
+	width: 80%; /* 幅を80%に設定 */
 }
 
-/* エラーメッセージスタイル */
-.error-message {
-	display: none; /* デフォルトで非表示 */
-	color: red; /* テキスト色を赤に設定 */
-	font-size: 0.9em; /* フォントサイズを設定 */
-	margin-top: -20px; /* 上部マージンを設定 */
+/* 入力フィールドとボタンを横に並べる */
+.input-with-button {
+	display: flex; /* フレックスボックスを使用して横に並べる */
+	align-items: center; /* 垂直方向に中央寄せ */
+}
+
+.input-with-button input[type="text"] {
+	flex: 1; /* 入力フィールドが可能な限りの幅を占める */
+	margin-right: 10px; /* ボタンと入力フィールドの間の隙間を設定 */
+}
+
+.input-with-button button {
+	flex-shrink: 0; /* ボタンのサイズが縮まないように設定 */
+}
+
+/* フォーム非活性時スタイル */
+.disabled-form {
+	pointer-events: none; /* フォーム全体を非活性にする */
+	opacity: 0.5; /* 非活性状態を視覚的に表示 */
 }
 
 /* ボタングループスタイル */
@@ -126,40 +132,27 @@ button:hover {
 	background: #FFA41D; /* ホバー時の背景色を設定 */
 }
 
-/* メディアクエリ (768px以下のスクリーン) */
-@media ( max-width : 768px) {
-	.container {
-		flex-direction: column; /* 縦方向のレイアウトに変更 */
-	}
-	.form-container {
-		max-width: 100%; /* 最大幅を100%に設定 */
-	}
-	.button-group {
-		flex-direction: column; /* 縦方向のレイアウトに変更 */
-		gap: 10px; /* ボタン間の隙間を設定 */
-		justify-content: center; /* 中央寄せ */
-	}
-	button {
-		width: 100%; /* 幅を100%に設定 */
-	}
+/* エラーメッセージスタイル */
+.error-message {
+	display: none; /* デフォルトで非表示 */
+	color: red; /* テキスト色を赤に設定 */
+	font-size: 0.9em; /* フォントサイズを設定 */
+	margin-top: -20px; /* 上部マージンを設定 */
 }
 
-/* メディアクエリ (480px以下のスクリーン) */
-@media ( max-width : 480px) {
-	.form-container {
-		padding: 15px;
-	}
-	.form-container h2 {
-		font-size: 1.5em;
-	}
-	.button-group {
-		flex-direction: column;
-		gap: 10px;
-		justify-content: center;
-	}
-	button {
-		width: 100%;
-	}
+/* ログイン画面 エラーメッセージ */
+.error-message.loginError {
+	margin-top: -20px;
+}
+
+/* ユーザ管理画面 エラーメッセージ */
+.error-message.manageError {
+	margin-left: 100px;
+}
+
+/* 勤怠管理画面 表示年月必須エラーメッセージ */
+.error-message.attendanceError {
+	margin-top: -10px; /* 上部マージンを設定 */
 }
 
 /* アラートスタイル */
@@ -189,28 +182,17 @@ button:hover {
 }
 
 /* 勤怠管理画面 */
-/* 出勤時間と退勤時間の入力フォームの横幅調整 */
-.input-time {
-	width: 80px;
-	/* 横幅を短く設定 */
+
+/*上部ユーザ情報表示*/
+.info-container {
+	display: flex;
+	margin-bottom: 20px; /* 下部マージンを設定 */
 }
 
-/* 出勤時間と退勤時間のカラムの横幅調整 */
-th.time-column, td.time-column {
-	width: 90px;
-	/* カラムの横幅を短く設定 */
-}
-
-/* 勤務状況のカラムの横幅調整 */
-th.status-column, td.status-column {
-	width: 150px;
-	/* プルダウンの横幅に合わせて設定 */
-}
-
-/* 備考欄の入力フォームの横幅調整 */
-input.note {
-	width: 450px;
-	/* 勤務状況カラムに合わせた横幅設定 */
+.info-item {
+	flex: 1; /* アイテムが均等に広がる */
+	padding: 10px;
+	white-space: nowrap; /* テキストの折り返しを防ぐ */
 }
 
 /* 勤怠管理画面コンテナ */
@@ -225,7 +207,7 @@ input.note {
 	overflow-x: auto; /* 横スクロールを許可 */
 }
 
-/* テーブルスタイル */
+/* テーブル一覧スタイル */
 table {
 	width: 100%;
 	border-collapse: collapse;
@@ -265,39 +247,62 @@ th {
 	width: 100%; /* テーブル自体は親要素に合わせる */
 }
 
-/*上部ユーザ情報表示*/
-.info-container {
-	display: flex;
-	margin-bottom: 20px; /* 下部マージンを設定 */
+/* 出勤時間と退勤時間の入力フォームの横幅調整 */
+.input-time {
+	width: 80px;
+	/* 横幅を短く設定 */
 }
 
-.info-item {
-	flex: 1; /* アイテムが均等に広がる */
-	padding: 10px;
-	white-space: nowrap; /* テキストの折り返しを防ぐ */
+/* 出勤時間と退勤時間のカラムの横幅調整 */
+th.time-column, td.time-column {
+	width: 90px;
+	/* カラムの横幅を短く設定 */
 }
 
-.disabled-form {
-    pointer-events: none; /* フォーム全体を非活性にする */
-    opacity: 0.5; /* 非活性状態を視覚的に表示 */
-}
-.disabled-form input,
-.disabled-form select,
-.disabled-form button {
-    cursor: not-allowed; /* カーソルを「禁止」に変更 */
+/* 勤務状況のカラムの横幅調整 */
+th.status-column, td.status-column {
+	width: 150px;
+	/* プルダウンの横幅に合わせて設定 */
 }
 
-/* 入力フィールドとボタンを横に並べる */
-.input-with-button {
-    display: flex; /* フレックスボックスを使用して横に並べる */
-    align-items: center; /* 垂直方向に中央寄せ */
+/* 備考欄の入力フォームの横幅調整 */
+input.note {
+	width: 450px;
+	/* 勤務状況カラムに合わせた横幅設定 */
 }
 
-.input-with-button input[type="text"] {
-    flex: 1; /* 入力フィールドが可能な限りの幅を占める */
-    margin-right: 10px; /* ボタンと入力フィールドの間の隙間を設定 */
+/* メディアクエリ (768px以下のスクリーン) */
+@media ( max-width : 768px) {
+	.container {
+		flex-direction: column; /* 縦方向のレイアウトに変更 */
+	}
+	.form-container {
+		max-width: 100%; /* 最大幅を100%に設定 */
+	}
+	.button-group {
+		flex-direction: column; /* 縦方向のレイアウトに変更 */
+		gap: 10px; /* ボタン間の隙間を設定 */
+		justify-content: center; /* 中央寄せ */
+	}
+	button {
+		width: 100%; /* 幅を100%に設定 */
+	}
 }
 
-.input-with-button button {
-    flex-shrink: 0; /* ボタンのサイズが縮まないように設定 */
+/* メディアクエリ (480px以下のスクリーン) */
+@media ( max-width : 480px) {
+	.form-container {
+		padding: 15px;
+	}
+	.form-container h2 {
+		font-size: 1.5em;
+	}
+	.button-group {
+		flex-direction: column;
+		gap: 10px;
+		justify-content: center;
+	}
+	button {
+		width: 100%;
+	}
 }

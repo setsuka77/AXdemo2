@@ -35,11 +35,11 @@ public class AttendanceController {
 	 * 勤怠登録画面 初期表示
 	 *
 	 * @param model
+	 * @param session
 	 * @return 勤怠登録画面
 	 */
 	@GetMapping("/attendance")
 	public String showAttendanceForm(Model model, HttpSession session) {
-
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 
@@ -60,21 +60,19 @@ public class AttendanceController {
 			model.addAttribute("month", model.getAttribute("month"));
 		}
 
-		// roleが２の時、申請一覧を表示させる
+		// roleが2の時、申請一覧を表示
 		if (loginUser != null && "2".equals(loginUser.getRole())) {
 			List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findAllAttendance();
 			model.addAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
 		}
 
-		// 承認申請ボタンをnullに設定する
+		// 承認申請ボタンと登録ボタンを非活性に設定
 		boolean checkAllStatus = false;
 		model.addAttribute("checkAllStatus", checkAllStatus);
-		
-		//登録ボタンをnullに設定する
 		boolean checkRegister = false;
-		model.addAttribute("checkRegister",checkRegister);
+		model.addAttribute("checkRegister", checkRegister);
 
-		// プルダウンの設定
+		// 年月プルダウンリストを設定
 		setYearMonthList(model);
 		model.addAttribute("loginUser", loginUser);
 		return "attendance/record";
@@ -101,7 +99,10 @@ public class AttendanceController {
 	/**
 	 * 「表示」ボタン押下
 	 * 
+	 * @param year
+	 * @param month
 	 * @param model
+	 * @param session
 	 * @return 勤怠登録画面
 	 */
 	@RequestMapping(path = "/attendance", params = "display", method = RequestMethod.POST)
@@ -111,7 +112,7 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 		Integer userId = loginUser.getId();
 
-		// 日付リスト作成
+		// カレンダーの日付リストを作成
 		List<CalendarDto> calendar = attendanceService.generateCalendar(year, month);
 		// DBから勤怠情報取得
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, userId);
@@ -119,23 +120,21 @@ public class AttendanceController {
 		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
 
 		// 年月をDate型に変換
-	    java.sql.Date targetYearMonth = java.sql.Date.valueOf(year + "-" + month + "-01");
+		java.sql.Date targetYearMonth = java.sql.Date.valueOf(year + "-" + month + "-01");
 
-	    // ステータス表示用のテキストを設定
-	    List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
-	    String status = getStatusText(monthlyAttendanceReq);
-	    model.addAttribute("statusText", status);
-	    
-	    //ステータスに応じて入力可否を設定する(trueだと非活性化する)
-	    boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
-	    model.addAttribute("isFormEditable", isFormEditable);
-	    
-	    // 承認申請ボタン表示チェック(True時:活性化する)
-	 	boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm,status);
-	 	
-	 	//登録ボタン表示チェック(True時:活性化する)
-	 	boolean checkRegister = attendanceService.checkRegister(status);
-	 	
+		// ステータス表示用のテキストを設定
+		List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
+		String status = getStatusText(monthlyAttendanceReq);
+		model.addAttribute("statusText", status);
+
+		// ステータスに応じて入力可否を設定する(trueだと非活性化する)
+		boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
+		model.addAttribute("isFormEditable", isFormEditable);
+
+		// 承認申請ボタンと登録ボタンの表示チェック (True時:活性化)
+		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm, status);
+		boolean checkRegister = attendanceService.checkRegister(status);
+
 		session.setAttribute("calendar", calendar);
 
 		model.addAttribute("year", year);
@@ -144,8 +143,9 @@ public class AttendanceController {
 		model.addAttribute("calendar", calendar);
 		model.addAttribute("attendanceForm", attendanceForm);
 		model.addAttribute("checkAllStatus", checkAllStatus);
-		model.addAttribute("checkRegister",checkRegister);
-		// 再度リストを設定する
+		model.addAttribute("checkRegister", checkRegister);
+
+		// 年月リストを再度設定
 		setYearMonthList(model);
 		return "attendance/record";
 	}
@@ -154,30 +154,32 @@ public class AttendanceController {
 	 * 上部ステータス表示の設定
 	 */
 	private String getStatusText(List<MonthlyAttendanceReqDto> monthlyAttendanceReq) {
-	    if (monthlyAttendanceReq.isEmpty()) {
-	        return "未申請";
-	    }
+		if (monthlyAttendanceReq.isEmpty()) {
+			return "未申請";
+		}
 
-	    MonthlyAttendanceReqDto reqDto = monthlyAttendanceReq.get(0);
-	    Integer status = reqDto.getStatus();
+		MonthlyAttendanceReqDto reqDto = monthlyAttendanceReq.get(0);
+		Integer status = reqDto.getStatus();
 
-	    switch (status) {
-	        case 1:
-	            return "承認待ち";
-	        case 2:
-	            return "承認済み";
-	        case 3:
-	            return "却下";
-	        default:
-	            return "未申請";
-	    }
+		switch (status) {
+		case 1:
+			return "承認待ち";
+		case 2:
+			return "承認済み";
+		case 3:
+			return "却下";
+		default:
+			return "未申請";
+		}
 	}
 
-	/*
+	/**
 	 * 「登録」ボタン押下
 	 * 
+	 * @param attendanceForm     勤怠フォーム
 	 * @param model
-	 * 
+	 * @param session
+	 * @param redirectAttributes
 	 * @return 勤怠登録画面
 	 */
 	@SuppressWarnings("unchecked")
@@ -186,66 +188,60 @@ public class AttendanceController {
 			RedirectAttributes redirectAttributes) {
 
 		List<CalendarDto> calendar = (List<CalendarDto>) session.getAttribute("calendar");
-
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		Integer userId = loginUser.getId();
 
-		// AttendanceForm に date を詰める
+		// AttendanceForm に日付を設定
 		attendanceService.fillDatesInAttendanceForm(attendanceForm, calendar);
-		
+
 		// バリデーションエラー表示
 		String errorMessage = attendanceService.validateAttendanceForm(attendanceForm, false);
 		if (errorMessage != null) {
-			
 			model.addAttribute("registerError", errorMessage);
 			model.addAttribute("attendanceForm", attendanceForm);
 			model.addAttribute("calendar", calendar);
 			model.addAttribute("year", calendar.get(0).getDate().getYear());
 			model.addAttribute("month", calendar.get(0).getDate().getMonthValue());
 			model.addAttribute("loginUser", loginUser);
-			
-			// 承認申請ボタンをnullに設定する
-			boolean checkAllStatus = false;
-			model.addAttribute("checkAllStatus", checkAllStatus);
+			model.addAttribute("checkAllStatus", false);
+
 			// 再度リストを設定する
 			setYearMonthList(model);
-			
 			return "attendance/record";
 		}
 
 		// 登録処理
 		String message = attendanceService.registAttendance(attendanceForm, loginUser);
 		model.addAttribute("message", message);
-		// DBから一覧を再取得して、再度フォームに表示させる
+
+		// DBから勤怠情報を再取得し、フォームに表示
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, userId);
 		AttendanceForm dailyAttendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
-		
-		// 月初めの日にちを取得
-	    LocalDate firstDayOfMonth = calendar.get(0).getDate();
-	    java.sql.Date targetYearMonth = java.sql.Date.valueOf(firstDayOfMonth);
 
-	    // ステータス表示用のテキストを設定
-	    List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
-	    String status = getStatusText(monthlyAttendanceReq);
-	    model.addAttribute("statusText", status);
-	    
-	    //ステータスに応じて入力可否を設定する(trueだと非活性化する)
-	    boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
-	    model.addAttribute("isFormEditable", isFormEditable);
-	    
-	    // 承認申請ボタン表示チェック(True時:活性化する)
-	 	boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm,status);
-	 	
-	 	//登録ボタン表示チェック(True時:活性化する)
-	 	boolean checkRegister = attendanceService.checkRegister(status);
-	 	
+		// 月初めの日にちを取得
+		LocalDate firstDayOfMonth = calendar.get(0).getDate();
+		java.sql.Date targetYearMonth = java.sql.Date.valueOf(firstDayOfMonth);
+
+		// ステータス表示用のテキストを設定
+		List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
+		String status = getStatusText(monthlyAttendanceReq);
+		model.addAttribute("statusText", status);
+
+		// ステータスに応じて入力可否を設定する(trueだと非活性化する)
+		boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
+		model.addAttribute("isFormEditable", isFormEditable);
+
+		// 承認申請ボタンと登録ボタンの表示チェック (True時:活性化)
+		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm, status);
+		boolean checkRegister = attendanceService.checkRegister(status);
+
 		model.addAttribute("attendanceForm", dailyAttendanceForm);
 		model.addAttribute("calendar", calendar);
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("checkAllStatus", checkAllStatus);
-		model.addAttribute("checkRegister",checkRegister);
-		
+		model.addAttribute("checkRegister", checkRegister);
+
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
@@ -253,6 +249,12 @@ public class AttendanceController {
 
 	/**
 	 * 勤怠管理画面 メンバー、UM権限 承認申請を登録 承認申請ボタンを押下
+	 * 
+	 * @param year
+	 * @param month
+	 * @param session
+	 * @param redirectAttributes
+	 * @return 勤怠管理画面のリダイレクトURL
 	 */
 	@PostMapping(path = "/attendance", params = "request")
 	public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
@@ -268,6 +270,11 @@ public class AttendanceController {
 
 	/**
 	 * 勤怠管理画面 マネージャ権限 月次勤怠申請の詳細表示
+	 * 
+	 * @param id      申請ID
+	 * @param model
+	 * @param session
+	 * @return 勤怠管理画面
 	 */
 	@GetMapping(path = "/attendance/detail")
 	public String getMonthlyAttendanceDetail(@RequestParam("id") Integer id, Model model, HttpSession session) {
@@ -303,33 +310,45 @@ public class AttendanceController {
 
 	/**
 	 * 承認申請の承認
+	 * 
+	 * @param monthlyAttendanceReq 月次勤怠申請情報
+	 * @param session
+	 * @param redirectAttributes
+	 * @return 勤怠管理画面のリダイレクトURL
 	 */
 	@PostMapping(path = "/attendance", params = "approval")
-	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq,HttpSession session,RedirectAttributes redirectAttributes) {
+	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq, HttpSession session,
+			RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
 		Integer id = req.getId();
-		//ステータスを変更
+		// ステータスを変更
 		String message = attendanceService.approvalAttendance(id, 2); // 承認済みのステータス
 		redirectAttributes.addFlashAttribute("message", message);
-		
-	    return "redirect:/attendance";
+
+		return "redirect:/attendance";
 	}
 
 	/**
 	 * 承認申請の却下
+	 * 
+	 * @param attendanceForm     勤怠フォーム
+	 * @param session
+	 * @param redirectAttributes
+	 * @return 勤怠管理画面のリダイレクトURL
 	 */
 	@PostMapping(path = "/attendance", params = "rejected")
-	public String rejectMonthAttendance(AttendanceForm attendanceForm,HttpSession session,RedirectAttributes redirectAttributes) {
+	public String rejectMonthAttendance(AttendanceForm attendanceForm, HttpSession session,
+			RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
 		Integer id = req.getId();
-		//ステータスを変更
+		// ステータスを変更
 		String message = attendanceService.rejectAttendance(id, 3); // 却下済みのステータス
 		redirectAttributes.addFlashAttribute("message", message);
 
-	    return "redirect:/attendance";
+		return "redirect:/attendance";
 	}
 }

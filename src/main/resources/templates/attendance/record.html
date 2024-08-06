@@ -22,13 +22,8 @@
 			</td>
 		</tr>
 
-
-		<div th:if="${error}" class="alert alert-danger" role="alert">
-			<p th:text="${error}"></p>
-		</div>
-
+		<!-- 表示年月を指定して表示 メンバー/UM -->
 		<div class="row">
-
 			<form id="attendance-form" th:action="@{/attendance}" method="post" onsubmit="return validateDisplay();"
 				th:if="${loginUser.role != '2'}">
 				<div class="form-group">
@@ -45,7 +40,7 @@
 					</select>
 					<span>月</span>
 					<button type="submit" name="display" class="button">表示</button>
-					<span id="year-error" class="error-message">表示させたい年月を指定してください。</span>
+					<span id="year-error" class="error-message attendanceError">表示させたい年月を指定してください。</span>
 
 				</div>
 			</form>
@@ -68,7 +63,7 @@
 					th:classappend="${checkRegister == false ? 'disabled-form' : ''}">登録</button>
 			</div>
 
-			<!-- 申請一覧 マネージャのみ表示 -->
+			<!-- 申請一覧 マネージャのみ -->
 			<div class="manager-table-container">
 				<table class="table table-hover manager-table" border="1" cellspacing="0"
 					th:if="${loginUser.role == '2'}">
@@ -185,6 +180,7 @@
 			</table>
 		</form>
 	</div>
+
 	<script>
 		//表示時必須チェック
 		function validateDisplay() {
@@ -209,11 +205,6 @@
 		document.getElementById('month').addEventListener('change', function () {
 			document.getElementById('hidden-month').value = this.value;
 		});
-
-		//全角文字入力チェック
-
-
-
 	</script>
 
 </body>

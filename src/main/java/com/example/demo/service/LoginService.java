@@ -12,9 +12,12 @@ public class LoginService {
 	@Autowired
 	private UsersMapper usersMapper;
 
-	/*
-	 * ログイン画面
-	 * ユーザ検索、パスワード判定ログイン機能
+	/**
+	 * ログイン画面 ユーザ検索、パスワード判定ログイン機能
+	 * 
+	 * @param id ユーザーID
+	 * @param password パスワード
+	 * @return ログインに成功したユーザー情報、失敗した場合はnull
 	 */
 	public Users login(Integer id, String password) {
 		Users user = usersMapper.findByUserId(id);

@@ -36,19 +36,23 @@ public class AttendanceService {
 	@Autowired
 	private DateUtil dateUtil;
 	@Autowired
-    private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
-	
-	
+	private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
 
-	/*
-	 *ステータスが1の申請一覧を取得する 
+	/**
+	 * ステータスが1の申請一覧を取得する
+	 *
+	 * @return ステータスが1の月次勤怠申請のリスト
 	 */
 	public List<MonthlyAttendanceReqDto> findAllAttendance() {
-	    return monthlyAttendanceReqMapper.findAllWithStatus();
+		return monthlyAttendanceReqMapper.findAllWithStatus();
 	}
 
-	/*
+	/**
 	 * 勤怠管理画面 日付リスト作成
+	 * 
+	 * @param year
+	 * @param month
+	 * @return 指定された年月の日付リスト
 	 */
 	public List<CalendarDto> generateCalendar(int year, int month) {
 		List<CalendarDto> calendar = new ArrayList<>();
@@ -65,8 +69,12 @@ public class AttendanceService {
 		return calendar;
 	}
 
-	/*
+	/**
 	 * 勤怠管理画面 DBから勤怠情報取得
+	 * 
+	 * @param calendar カレンダーの日付リスト
+	 * @param userId
+	 * @return 指定されたユーザーと日付範囲の勤怠情報リスト
 	 */
 	public List<AttendanceDto> checkAttendance(List<CalendarDto> calendar, Integer userId) {
 		LocalDate startDate = calendar.get(0).getDate();
@@ -79,8 +87,13 @@ public class AttendanceService {
 		return attendanceDtoList;
 	}
 
-	/*
+	/**
 	 * 勤怠管理画面 勤怠フォームの生成
+	 * 
+	 * @param calendarList      カレンダーの日付リスト
+	 * @param attendanceDtoList 勤怠情報リスト
+	 * @param userId
+	 * @return 勤怠フォーム
 	 */
 	public AttendanceForm setAttendanceForm(List<CalendarDto> calendarList, List<AttendanceDto> attendanceDtoList,
 			Integer userId) {
@@ -111,228 +124,260 @@ public class AttendanceService {
 
 		return attendanceForm;
 	}
-	
-	/*
+
+	/**
 	 * 勤務状況がすべて埋まっているかチェック
+	 * 
+	 * @param attendanceForm 勤怠フォーム
+	 * @param status
+	 * @return 勤怠状況がすべて埋まっている場合は true、それ以外は false
 	 */
-	public boolean checkAllStatus(AttendanceForm attendanceForm,String status){
+	public boolean checkAllStatus(AttendanceForm attendanceForm, String status) {
 		// statusが却下以外の場合はfalseを返す
 		if ("承認待ち".equals(status) || "承認済み".equals(status)) {
 			return false;
 		}
-		
-	    // dailyAttendanceList内のすべてのDailyAttendanceFormのstatusがnullでないかチェック
-	    return attendanceForm.getDailyAttendanceList().stream()
-	            .allMatch(dailyForm -> dailyForm.getStatus() != null);
-	}
-	/*
-	 * 登録ボタンの活性非活性チェック
-	 */
-	public boolean checkRegister(String status) {
-	    // statusが「却下」または「未申請」の場合はtrueを返す
-	    if ("却下".equals(status) || "未申請".equals(status)) {
-	        return true;
-	    }
-	    
-	    return false;
-	}
-	
-	/**
-     * 指定した年月のステータスを取得
-     */
-	public List<MonthlyAttendanceReqDto> findByYearMonth(Integer userId, java.sql.Date targetYearMonth) {
-        return monthlyAttendanceReqMapper.findByYearMonth(userId, targetYearMonth);
-    }
-	
-	/*
-	 * 入力チェックエラーメッセージ表示用
-	 * 日付をFormに詰める
-	 */
-	public void fillDatesInAttendanceForm(AttendanceForm attendanceForm, List<CalendarDto> calendar) {
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d");
-	    
-	    for (int i = 0; i < calendar.size(); i++) {
-	        // LocalDate を Date に変換
-	        LocalDate localDate = calendar.get(i).getDate();
-	        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-	        
-	        // 日付をフォーマットしてセット
-	        String formattedDate = localDate.format(formatter);
-	        
-	        // 各 CalendarDto の日付を AttendanceForm にセット
-	        attendanceForm.getDailyAttendanceList().get(i).setDate(date);
-	        attendanceForm.getDailyAttendanceList().get(i).setFormattedDate(formattedDate);
-	    }
+
+		// dailyAttendanceList内のすべてのDailyAttendanceFormのstatusがnullでないかチェック
+		return attendanceForm.getDailyAttendanceList().stream().allMatch(dailyForm -> dailyForm.getStatus() != null);
 	}
 
-	/*
+	/**
+	 * 登録ボタンの活性非活性チェック
+	 * 
+	 * @param status
+	 * @return ステータスが「却下」または「未申請」の場合は true、それ以外は false
+	 */
+	public boolean checkRegister(String status) {
+		// statusが「却下」または「未申請」の場合はtrueを返す
+		if ("却下".equals(status) || "未申請".equals(status)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * 指定した年月のステータスを取得
+	 * 
+	 * @param userId
+	 * @param targetYearMonth
+	 * @return 指定された年月の月次勤怠申請のリスト
+	 */
+	public List<MonthlyAttendanceReqDto> findByYearMonth(Integer userId, java.sql.Date targetYearMonth) {
+		return monthlyAttendanceReqMapper.findByYearMonth(userId, targetYearMonth);
+	}
+
+	/**
+	 * 入力チェックエラーメッセージ表示用 日付をFormに詰める
+	 * 
+	 * @param attendanceForm 勤怠フォーム
+	 * @param calendar       カレンダーの日付リスト
+	 */
+	public void fillDatesInAttendanceForm(AttendanceForm attendanceForm, List<CalendarDto> calendar) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d");
+
+		for (int i = 0; i < calendar.size(); i++) {
+			// LocalDate を Date に変換
+			LocalDate localDate = calendar.get(i).getDate();
+			Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+			// 日付をフォーマットしてセット
+			String formattedDate = localDate.format(formatter);
+
+			// 各 CalendarDto の日付を AttendanceForm にセット
+			attendanceForm.getDailyAttendanceList().get(i).setDate(date);
+			attendanceForm.getDailyAttendanceList().get(i).setFormattedDate(formattedDate);
+		}
+	}
+
+	/**
 	 * 勤怠管理画面 勤怠情報登録処理
+	 * 
+	 * @param attendanceForm 勤怠フォーム
+	 * @param loginUser
+	 * @return 登録結果のメッセージ
 	 */
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser) {
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-		Integer userId = loginUser.getId(); 
+		Integer userId = loginUser.getId();
 
 		for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
-	        // 出勤簿から日付とユーザーIDを取得
-	        Date date = dailyForm.getDate();
-	        
-	        if (dailyForm.getStatus() != null) {
-	        
-		        // 勤怠情報を検索してIDを取得
-		        Attendance searchAttendance = attendanceMapper.findByDateAndUserId(date, userId);
-		
-		        // 新しい勤怠オブジェクトを作成
-		        Attendance attendance = new Attendance();
-		        attendance.setId(searchAttendance != null ? searchAttendance.getId() : null);
-		        attendance.setUserId(userId);
-		        attendance.setDate(dailyForm.getDate()); 
-		        attendance.setStatus(dailyForm.getStatus());
-		        attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
-		        attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
-		        attendance.setRemarks(dailyForm.getRemarks());
-		        
-		        // IDが存在しない場合は新規登録、それ以外は更新
-		        if (attendance.getId() == null) {
-		            // 勤怠情報を登録
-		            attendanceMapper.insert(attendance);
-		        } else {
-		            // 勤怠情報を更新
-		            attendanceMapper.update(attendance);
-		        }
-	        }
-	    }
-	    return "勤怠情報が登録されました";
-	}
+			// 出勤簿から日付とユーザーIDを取得
+			Date date = dailyForm.getDate();
 
-	/*
-	 * ユーザ管理画面 文字数制限・日付形式チェック
-	 */
-	public String validateAttendanceForm(AttendanceForm attendanceForm, boolean isApprovalRequest) {
-	    
-	    StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
+			if (dailyForm.getStatus() != null) {
 
-	    boolean hasErrors = false;
+				// 勤怠情報を検索してIDを取得
+				Attendance searchAttendance = attendanceMapper.findByDateAndUserId(date, userId);
 
-	    // 出退勤時間形式チェック
-	    Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
+				// 新しい勤怠オブジェクトを作成
+				Attendance attendance = new Attendance();
+				attendance.setId(searchAttendance != null ? searchAttendance.getId() : null);
+				attendance.setUserId(userId);
+				attendance.setDate(dailyForm.getDate());
+				attendance.setStatus(dailyForm.getStatus());
+				attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
+				attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
+				attendance.setRemarks(dailyForm.getRemarks());
 
-	    for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
-	    	// すべての項目が未入力の場合はスキップ
-	        String startTime = dailyForm.getStartTime();
-	        String endTime = dailyForm.getEndTime();
-	        String remarks = dailyForm.getRemarks();
-	        Integer status = dailyForm.getStatus();
-
-	        if ((startTime == null || startTime.isEmpty()) &&
-	            (endTime == null || endTime.isEmpty()) &&
-	            (remarks == null || remarks.isEmpty()) &&
-	            (status == null)) {
-	            continue;
-	        }
-
-	        // 出勤時間チェック
-	        if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
-	            errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
-	            hasErrors = true;
-	        }
-
-	        // 退勤時間チェック
-	        if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
-	            errorMessage.append(dailyForm.getFormattedDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
-	            hasErrors = true;
-	        }
-
-	        // 備考欄文字数チェック
-	        if (remarks != null && !remarks.isEmpty()){
-	        	if(remarks.matches(".*[\\x00-\\x7F].*")) {
-	        		errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角文字で入力してください。<br>");
-	        		hasErrors = true;
-	        	}
-	        	if(remarks.length() > 20) {
-	        		errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
-	        		hasErrors = true;
-	        	}
-	        }
-
-	        // ステータス必須チェック
-	        if (status == null) {
-	            errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
-	            hasErrors = true;
-	        }
-	    }
-	    return hasErrors ? errorMessage.toString() : null;
+				// IDが存在しない場合は新規登録、それ以外は更新
+				if (attendance.getId() == null) {
+					// 勤怠情報を登録
+					attendanceMapper.insert(attendance);
+				} else {
+					// 勤怠情報を更新
+					attendanceMapper.update(attendance);
+				}
+			}
+		}
+		return "勤怠情報が登録されました";
 	}
 
 	/**
-     * 承認申請ボタン押下
-     * 月次勤怠申請を登録する
-     * 却下後承認申請更新
-     */
-    public String registerOrUpdateMonthlyAttendanceReq(Integer year, Integer month, Users user) {
-        YearMonth yearMonth = YearMonth.of(year, month);
-        LocalDate startDate = yearMonth.atDay(1);
+	 * 勤怠管理画面 文字数制限・日付形式チェック
+	 * 
+	 * @param attendanceForm    勤怠フォーム
+	 * @param isApprovalRequest 承認申請かどうかを示すフラグ
+	 * @return バリデーションエラーメッセージ,エラーがなければ null を返す
+	 */
+	public String validateAttendanceForm(AttendanceForm attendanceForm, boolean isApprovalRequest) {
 
-        MonthlyAttendanceReq existingReq = monthlyAttendanceReqMapper.findByUserAndYearMonth(user.getId(), java.sql.Date.valueOf(startDate));
-        MonthlyAttendanceReq req = new MonthlyAttendanceReq();
-        req.setUserId(user.getId());
-        req.setTargetYearMonth(java.sql.Date.valueOf(startDate.withDayOfMonth(1)));
-        req.setDate(java.sql.Date.valueOf(LocalDate.now()));
-        req.setStatus(1); // 承認待ち
+		StringBuilder errorMessage = new StringBuilder("勤怠登録に失敗しました。<br>");
 
-        if (existingReq != null) {
-            req.setId(existingReq.getId()); // 更新するためにIDを設定
-            monthlyAttendanceReqMapper.update(req); // 却下後申請更新処理
-            return "承認申請が更新されました。";
-        } else {
-            monthlyAttendanceReqMapper.insert(req); // 新規申請登録処理
-            return "承認申請が完了しました。";
-        }
-        
-    }
+		boolean hasErrors = false;
 
-    /**
-     * 月次勤怠申請のIDで取得
-     */
-    public MonthlyAttendanceReq getMonthlyAttendanceReqById(Integer id) {        
-    	return monthlyAttendanceReqMapper.findById(id);
-    }
-    
-    /*
-     * 承認ボタン押下
-     * ステータスを更新する
-     */
-    public String approvalAttendance(Integer id, int status) {
-    	//申請IDで申請内容を取得
-        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
-        // ステータスを承認済みに設定
-        req.setStatus(status);
-        monthlyAttendanceReqMapper.updateStatus(req);
-      //メッセージ追加
-        String userName = req.getUserName();
-        Date targetDate = req.getTargetYearMonth();
-        LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
+		// 出退勤時間形式チェック
+		Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
+
+		for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
+			// すべての項目が未入力の場合はスキップ
+			String startTime = dailyForm.getStartTime();
+			String endTime = dailyForm.getEndTime();
+			String remarks = dailyForm.getRemarks();
+			Integer status = dailyForm.getStatus();
+
+			if ((startTime == null || startTime.isEmpty()) && (endTime == null || endTime.isEmpty())
+					&& (remarks == null || remarks.isEmpty()) && (status == null)) {
+				continue;
+			}
+
+			// 出勤時間チェック
+			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
+				errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
+				hasErrors = true;
+			}
+
+			// 退勤時間チェック
+			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
+				errorMessage.append(dailyForm.getFormattedDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
+				hasErrors = true;
+			}
+
+			// 備考欄文字数チェック
+			if (remarks != null && !remarks.isEmpty()) {
+				if (remarks.matches(".*[\\x00-\\x7F].*")) {
+					errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角文字で入力してください。<br>");
+					hasErrors = true;
+				}
+				if (remarks.length() > 20) {
+					errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
+					hasErrors = true;
+				}
+			}
+
+			// ステータス必須チェック
+			if (status == null) {
+				errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
+				hasErrors = true;
+			}
+		}
+		return hasErrors ? errorMessage.toString() : null;
+	}
+
+	/**
+	 * 承認申請ボタン押下 月次勤怠申請を登録する 却下後承認申請更新
+	 * 
+	 * @param year
+	 * @param month
+	 * @param user
+	 * @return 処理結果メッセージ
+	 */
+	public String registerOrUpdateMonthlyAttendanceReq(Integer year, Integer month, Users user) {
+		YearMonth yearMonth = YearMonth.of(year, month);
+		LocalDate startDate = yearMonth.atDay(1);
+
+		MonthlyAttendanceReq existingReq = monthlyAttendanceReqMapper.findByUserAndYearMonth(user.getId(),
+				java.sql.Date.valueOf(startDate));
+		MonthlyAttendanceReq req = new MonthlyAttendanceReq();
+		req.setUserId(user.getId());
+		req.setTargetYearMonth(java.sql.Date.valueOf(startDate.withDayOfMonth(1)));
+		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
+		req.setStatus(1); // 承認待ち
+
+		if (existingReq != null) {
+			req.setId(existingReq.getId()); // 更新するためにIDを設定
+			monthlyAttendanceReqMapper.update(req); // 却下後申請更新処理
+			return "承認申請が更新されました。";
+		} else {
+			monthlyAttendanceReqMapper.insert(req); // 新規申請登録処理
+			return "承認申請が完了しました。";
+		}
+
+	}
+
+	/**
+	 * 月次勤怠申請のIDで取得
+	 * 
+	 * @param id 月次勤怠申請ID
+	 * @return 指定されたIDの月次勤怠申請
+	 */
+	public MonthlyAttendanceReq getMonthlyAttendanceReqById(Integer id) {
+		return monthlyAttendanceReqMapper.findById(id);
+	}
+
+	/**
+	 * 承認ボタン押下 ステータスを更新する
+	 * 
+	 * @param id     月次勤怠申請ID
+	 * @param status 承認ステータス
+	 * @return 承認結果メッセージ
+	 */
+	public String approvalAttendance(Integer id, int status) {
+		// 申請IDで申請内容を取得
+		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
+		// ステータスを承認済みに設定
+		req.setStatus(status);
+		monthlyAttendanceReqMapper.updateStatus(req);
+		// メッセージ追加
+		String userName = req.getUserName();
+		Date targetDate = req.getTargetYearMonth();
+		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 
 		return userName + "の" + formattedDate + "における承認申請が承認されました。";
-    }
-    
-    /*
-     * 却下ボタン押下
-     * ステータスを更新する
-     */
-    public String rejectAttendance(Integer id, int status) {
-    	//申請IDで申請内容を取得
-        MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
-        // ステータスを却下済みに設定
-        req.setStatus(status);
-        monthlyAttendanceReqMapper.updateStatus(req);
-      //メッセージ追加
-        String userName = req.getUserName();
-        Date targetDate = req.getTargetYearMonth();
-        LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
+	}
+
+	/**
+	 * 却下ボタン押下 ステータスを更新する
+	 * 
+	 * @param id 月次勤怠申請ID
+	 * @param status 却下ステータス
+	 * @return 却下結果メッセージ
+	 */
+	public String rejectAttendance(Integer id, int status) {
+		// 申請IDで申請内容を取得
+		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
+		// ステータスを却下済みに設定
+		req.setStatus(status);
+		monthlyAttendanceReqMapper.updateStatus(req);
+		// メッセージ追加
+		String userName = req.getUserName();
+		Date targetDate = req.getTargetYearMonth();
+		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 
 		return userName + "の" + formattedDate + "における承認申請が却下されました。";
-    }
+	}
 
 }
