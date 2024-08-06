@@ -64,6 +64,11 @@ public class AttendanceController {
 		if (loginUser != null && "2".equals(loginUser.getRole())) {
 			List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findAllAttendance();
 			model.addAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
+			//却下と承認ボタンを非活性に設定
+			boolean checkReject = false;
+			model.addAttribute("checkReject", checkReject);
+			boolean checkApproval = false;
+			model.addAttribute("checkApproval", checkApproval);
 		}
 
 		// 承認申請ボタンと登録ボタンを非活性に設定

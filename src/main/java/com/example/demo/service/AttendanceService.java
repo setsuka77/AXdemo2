@@ -126,7 +126,7 @@ public class AttendanceService {
 	}
 
 	/**
-	 * 勤務状況がすべて埋まっているかチェック
+	 * 承認申請ボタンの活性非活性チェック
 	 * 
 	 * @param attendanceForm 勤怠フォーム
 	 * @param status

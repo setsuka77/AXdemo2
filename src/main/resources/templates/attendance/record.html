@@ -48,9 +48,13 @@
 
 		<form id="register-form" th:action="@{/attendance}" method="post">
 			<div class="button-group">
-				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" class="button">却下</button>
+				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected"
+					th:attr="disabled=${checkReject == false}" class="button" 
+					th:classappend="${checkReject == false ? 'disabled-form' : ''}">却下</button>
 
-				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" class="button">承認</button>
+				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" 
+					th:attr="disabled=${checkApproval == false}" class="button" 
+					th:classappend="${checkApproval == false ? 'disabled-form' : ''}">承認</button>
 
 				<button type="submit" th:if="${loginUser.role != '2'}" th:attr="disabled=${checkAllStatus == false}"
 					name="request" class="button"
