@@ -73,12 +73,10 @@ public class UserManagementService {
 
 		if (existingUser == null) {
 			// 新規登録実行
-			System.out.println("新規登録レーン");
 			user.setId(userId);
 			usersMapper.insertUser(user);
 		} else {
 			// 既存更新実行
-			System.out.println("既存更新レーン");
 			user.setId(userId);
 			usersMapper.updateUser(user);
 		}
@@ -89,7 +87,6 @@ public class UserManagementService {
 	 */
 	public void deleteUser(Integer id) {
 		if (id != null) {
-			System.out.println("既存削除レーン");
 			usersMapper.deleteUser(id);
 		}
 	}

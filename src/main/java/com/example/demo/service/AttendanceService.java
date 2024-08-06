@@ -260,8 +260,6 @@ public class AttendanceService {
 	            hasErrors = true;
 	        }
 	    }
-	
-	    System.out.println("serviceチェック"+hasErrors);
 	    return hasErrors ? errorMessage.toString() : null;
 	}
 
