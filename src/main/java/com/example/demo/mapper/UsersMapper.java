@@ -29,7 +29,6 @@ public interface UsersMapper {
 	 * @param id ユーザID
 	 * @return ユーザ情報
 	 */
-	@Select(value = "SELECT * FROM users WHERE id = #{id}")
 	Users findByUserId(@Param("id") Integer id);
 
 	/**
@@ -51,7 +50,6 @@ public interface UsersMapper {
 
 	@Results({
 			@Result(property = "startDate", column = "start_date", javaType = LocalDate.class, jdbcType = JdbcType.DATE, typeHandler = LocalDateTypeHandler.class) })
-	@Select("SELECT * FROM users WHERE name = #{name}")
 	UserManagementDto findByName(@Param("name") String name);
 
 	/**
@@ -59,7 +57,6 @@ public interface UsersMapper {
 	 * 
 	 * @return DB内の最大ID
 	 */
-	@Select("SELECT MAX(id) FROM users")
 	Integer findMaxId();
 
 	/**
@@ -68,7 +65,6 @@ public interface UsersMapper {
 	 * @param id ユーザID
 	 * @return ユーザ情報
 	 */
-	@Select("SELECT * FROM users WHERE id = #{id}")
 	UserManagementDto identifyUserId(@Param("id") Integer id);
 
 	/**
@@ -76,7 +72,6 @@ public interface UsersMapper {
 	 * 
 	 * @param user ユーザ情報
 	 */
-	@Insert("INSERT INTO users (id, name, password, role, start_date) VALUES (#{id}, #{name}, #{password}, #{role}, #{startDate})")
 	void insertUser(UserManagementDto user);
 
 	/**
@@ -84,7 +79,6 @@ public interface UsersMapper {
 	 * 
 	 * @param user 更新するユーザ情報
 	 */
-	@Update("UPDATE users SET password = #{password}, role = #{role}, start_date = #{startDate} WHERE id = #{id}")
 	void updateUser(UserManagementDto user);
 
 	/**
@@ -92,7 +86,6 @@ public interface UsersMapper {
 	 * 
 	 * @param id 削除するユーザのID
 	 */
-    @Delete("DELETE FROM users WHERE id = #{id}")
 	void deleteUser(@Param("id") Integer id);
 
 }

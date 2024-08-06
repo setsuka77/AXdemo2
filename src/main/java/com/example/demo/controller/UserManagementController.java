@@ -110,16 +110,26 @@ public class UserManagementController {
 			return "redirect:/userManagement/manage";
 		}
 
-		// startDateが「9999/99/99」の場合にユーザーを削除する
-		if ("9999/99/99".equals(userForm.getStartDate())) {
-			userManagementService.deleteUser(userForm.getId());
-			redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "を削除しました。");
-		} else {
-			// サービスメソッドを呼び出してユーザ情報を登録/更新
-			userManagementService.registerOrUpdateUser(userForm, null);
-			redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "を登録/更新しました。");
-		}
+		// startDateが「9999/99/99」の場合の処理
+	    boolean isExistingUser = userManagementService.isExistingUser(userForm.getId());
 
+	    if ("9999/99/99".equals(userForm.getStartDate())) {
+	        if (isExistingUser) {
+	            // 既存ユーザの更新時は削除
+	            userManagementService.deleteUser(userForm.getId());
+	            redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "を削除しました。");
+	        } else {
+	            // 新規登録時は特別扱いし、9999/12/31として登録はするが削除は行わない
+	        	userManagementService.registerOrUpdateUser(userForm, null);
+	            redirectAttributes.addFlashAttribute("successMessage", "ユーザ情報が登録されましたが、利用開始日は特別な値です。");
+	        }
+	        return "redirect:/userManagement/manage";
+	    }
+
+	    // 通常の登録/更新処理を行う
+	    userManagementService.registerOrUpdateUser(userForm, null);
+	    redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "を登録/更新しました。");
+	    
 		redirectAttributes.addFlashAttribute("userForm", new UserManagementForm());
 		return "redirect:/userManagement/manage";
 	}

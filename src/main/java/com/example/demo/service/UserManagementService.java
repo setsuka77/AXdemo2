@@ -5,6 +5,7 @@ import com.example.demo.form.UserManagementForm;
 import com.example.demo.mapper.UsersMapper;
 
 import java.time.LocalDate;
+import java.sql.Date;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
@@ -57,37 +58,47 @@ public class UserManagementService {
 	 * @param id       ユーザID
 	 */
 	public void registerOrUpdateUser(UserManagementForm userForm, Integer id) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-		// 入力内容取得
-		UserManagementDto user = new UserManagementDto();
-		user.setName(userForm.getName());
-		user.setPassword(userForm.getPassword());
-		user.setRole(userForm.getRole());
+	    // 入力内容取得
+	    UserManagementDto user = new UserManagementDto();
+	    user.setName(userForm.getName());
+	    user.setPassword(userForm.getPassword());
+	    user.setRole(userForm.getRole());
 
-		// startDateをStringからLocalDateに変換
-		if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
-			LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
-			user.setStartDate(startDate);
-		}
+	    // startDateをStringからLocalDateに変換
+	    if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
+	        if ("9999/99/99".equals(userForm.getStartDate())) {
+	            // 特殊な未来日として設定
+	            LocalDate futureDate = LocalDate.of(9999, 12, 31); // 9999年12月31日
+	            user.setStartDate(futureDate); // LocalDateとして設定
+	        } else {
+	            // 通常の日付として処理
+	            LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
+	            user.setStartDate(startDate); // LocalDateとして設定
+	        }
+	    } else {
+	        // startDateがnullまたは空の場合はnullに設定
+	        user.setStartDate(null);
+	    }
 
-		// フォームのIDが存在するか確認
-		Integer userId = userForm.getId();
-		UserManagementDto existingUser = null;
+	    // フォームのIDが存在するか確認
+	    Integer userId = userForm.getId();
+	    UserManagementDto existingUser = null;
 
-		if (userId != null) {
-			existingUser = usersMapper.identifyUserId(userId);
-		}
+	    if (userId != null) {
+	        existingUser = usersMapper.identifyUserId(userId);
+	    }
 
-		if (existingUser == null) {
-			// 新規登録実行
-			user.setId(userId);
-			usersMapper.insertUser(user);
-		} else {
-			// 既存更新実行
-			user.setId(userId);
-			usersMapper.updateUser(user);
-		}
+	    if (existingUser == null) {
+	        // 新規登録実行
+	        user.setId(userId);
+	        usersMapper.insertUser(user);
+	    } else {
+	        // 既存更新実行
+	        user.setId(userId);
+	        usersMapper.updateUser(user);
+	    }
 	}
 
 	/**
@@ -158,5 +169,10 @@ public class UserManagementService {
 
 		return hasErrors ? errorMessage.toString() : null;
 	}
+	
+	// 既存ユーザかどうかを判断するメソッド
+    public boolean isExistingUser(Integer userId) {
+        return userId != null && usersMapper.identifyUserId(userId) != null;
+    }
 
 }
