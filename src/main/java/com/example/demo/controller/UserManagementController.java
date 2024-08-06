@@ -117,7 +117,7 @@ public class UserManagementController {
 			return "redirect:/userManagement/manage";
 		}
 
-		// 通常の登録/更新処理を行う
+		// 通常の登録/更新、論理削除処理を行う
         boolean isDeleted = userManagementService.registerOrUpdateUser(userForm, null);
         if (isDeleted) {
             redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "は削除されました。");
