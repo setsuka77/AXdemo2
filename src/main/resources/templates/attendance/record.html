@@ -29,16 +29,14 @@
 				<div class="form-group">
 					表示年月:
 					<select id="year" name="year">
-						<option value="" th:if="${year == null}">年を選択</option>
-						<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"></option>
+						<option value="" th:selected="${year == null}">年を選択</option>
+						<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}" th:selected="${year == selectYear}"></option>
 					</select>
 					<span>年</span>
 
 					<select id="month" name="month">
 						<option value=""  th:if="${month == null}">月を選択</option>
-						<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"
-						th:classappend="${month != null ? '${month}' : ''}"
-						></option>
+						<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}" th:selected="${month == selectMonth}"></option>
 					</select>
 					<span>月</span>
 					<button type="submit" name="display" class="button">表示</button>
