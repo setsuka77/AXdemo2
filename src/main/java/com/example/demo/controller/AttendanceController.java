@@ -141,6 +141,8 @@ public class AttendanceController {
 		boolean checkRegister = attendanceService.checkRegister(status);
 
 		session.setAttribute("calendar", calendar);
+		session.setAttribute("year", year);
+		session.setAttribute("month", month);
 
 		model.addAttribute("year", year);
 		model.addAttribute("month", month);
@@ -246,6 +248,11 @@ public class AttendanceController {
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("checkAllStatus", checkAllStatus);
 		model.addAttribute("checkRegister", checkRegister);
+		
+		Integer year = (Integer) session.getAttribute("year");
+		Integer month = (Integer) session.getAttribute("month");
+		model.addAttribute("year", year);
+		model.addAttribute("month", month);
 
 		// 再度リストを設定する
 		setYearMonthList(model);
