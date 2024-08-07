@@ -136,8 +136,9 @@ public class AttendanceController {
 		boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
 		model.addAttribute("isFormEditable", isFormEditable);
 
-		// 承認申請ボタンと登録ボタンの表示チェック (True時:活性化)
-		boolean checkAllStatus = attendanceService.checkAllStatus(attendanceForm, status);
+		// 承認申請ボタンは非活性に
+		boolean checkAllStatus = false;
+		//登録ボタンの表示チェック (True時:活性化)
 		boolean checkRegister = attendanceService.checkRegister(status);
 
 		session.setAttribute("calendar", calendar);
