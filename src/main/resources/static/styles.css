@@ -34,7 +34,7 @@ body {
 
 /* フォームのタイトルのスタイル */
 .login-form {
-	text-align: center;
+	text-align: auto;
 	width: 80%; /* 幅を80%に設定 */
 	margin: 5% 10%;
 }
@@ -143,7 +143,7 @@ button:hover {
 /* ログイン画面 エラーメッセージ */
 .error-message.loginError {
 	margin-top: -20px;
-	margin-left: -40px;
+	margin-left: 100px;
 }
 
 /* ユーザ管理画面 エラーメッセージ */
