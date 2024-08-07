@@ -123,7 +123,7 @@ button {
 	border: none; /* ボーダーを削除 */
 	border-radius: 4px; /* 角を丸くする */
 	background: #FED813; /* 背景色を設定 */
-	color: black; /* テキスト色を白に設定 */
+	color: black; /* テキスト色を黒に設定 */
 	font-size: 16px; /* フォントサイズを設定 */
 	cursor: pointer; /* カーソルをポインタに設定 */
 }
@@ -143,11 +143,12 @@ button:hover {
 /* ログイン画面 エラーメッセージ */
 .error-message.loginError {
 	margin-top: -20px;
+	margin-left: -40px;
 }
 
 /* ユーザ管理画面 エラーメッセージ */
 .error-message.manageError {
-	margin-left: 50px;
+	margin-left: 100px;
 }
 
 /* 勤怠管理画面 表示年月必須エラーメッセージ */
@@ -271,7 +272,7 @@ input.note {
 	/* 勤務状況カラムに合わせた横幅設定 */
 }
 
-/* メディアクエリ (768px以下のスクリーン) */
+/* メディアクエリ (1200px以下のスクリーン) */
 @media ( max-width : 1200px) {
 	.container {
 		flex-direction: column; /* 縦方向のレイアウトに変更*/ 
@@ -334,6 +335,9 @@ input.note {
 	input.note {
 		width: 100%; /* 幅を100%に設定 */
 	}
+	.error-message.attendanceError {
+	margin-top: auto; /* 上部マージンを設定 */
+	}
 }
 
 /* メディアクエリ (480px以下のスクリーン) */
@@ -369,5 +373,8 @@ input.note {
 	}
 	input.note {
 		width: 100%; /* 幅を100%に設定 */
+	}
+	.error-message.attendanceError {
+	margin-top: auto; /* 上部マージンを設定 */
 	}
 }

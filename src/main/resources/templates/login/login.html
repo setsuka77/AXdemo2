@@ -17,13 +17,13 @@
 				<label for="id">ユーザID</label>
 				<input type="text" id="id" name="id">
 			</div>
-			<span class="error-message" id="idError"></span>
+			<span class="error-message loginError" id="idError"></span>
 
 			<div class="input-group">
 				<label for="password">パスワード</label>
 				<input type="password" id="password" name="password">
 			</div>
-			<span class="error-message" id="passwordError"></span>
+			<span class="error-message loginError" id="passwordError"></span>
 
 			<!-- エラーメッセージ表示 -->
 			<div th:if="${error}" class="alert alert-danger" role="alert">
