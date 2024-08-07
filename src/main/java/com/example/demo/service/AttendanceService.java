@@ -231,7 +231,7 @@ public class AttendanceService {
 				}
 			}
 		}
-		return "勤怠情報が登録されました";
+		return "勤怠情報が登録されました。";
 	}
 
 	/**
@@ -274,16 +274,12 @@ public class AttendanceService {
 				hasErrors = true;
 			}
 
-			// 備考欄文字数チェック
+			// 備考欄文字種、文字数チェック
 			if (remarks != null && !remarks.isEmpty()) {
-				if (remarks.matches(".*[\\x00-\\x7F].*")) {
-					errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角文字で入力してください。<br>");
-					hasErrors = true;
-				}
-				if (remarks.length() > 20) {
-					errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 全角20文字以内で入力してください。<br>");
-					hasErrors = true;
-				}
+			    if (remarks.matches(".*[\\x00-\\x7F].*") || remarks.length() > 20) {
+			        errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 20文字以内の全角文字のみで入力してください。<br>");
+			        hasErrors = true;
+			    }
 			}
 
 			// ステータス必須チェック
