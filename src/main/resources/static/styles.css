@@ -1,17 +1,20 @@
 /* メディアクエリ (768px以下のスクリーン) */
 @media ( max-width : 768px) {
 	.container {
-		flex-direction: column; /* 縦方向のレイアウトに変更 */
+		flex-direction: column; /* 縦方向のレイアウトに変更*/ 
 	}
 	.form-container {
-		max-width: 100%; /* 最大幅を100%に設定 */
+		max-width: 100%;  /*最大幅を100%に設定 */
 	}
 	.button-group {
-		flex-direction: column; /* 縦方向のレイアウトに変更 */
-		gap: 10px; /* ボタン間の隙間を設定 */
-		justify-content: center; /* 中央寄せ */
+		flex-direction: column;  /*縦方向のレイアウトに変更*/ 
+		gap: 10px;  /*ボタン間の隙間を設定 */
+		justify-content: center;  /*中央寄せ*/ 
 	}
 	button {
+		width: 100%;  /*幅を100%に設定*/ 
+	}
+	.attendance-container {
 		width: 100%; /* 幅を100%に設定 */
 	}
 }
@@ -31,6 +34,9 @@
 	}
 	button {
 		width: 100%;
+	}
+	.attendance-container {
+		width: 100%; 
 	}
 }
 
@@ -240,7 +246,7 @@ button:hover {
 	background-color: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	overflow-x: auto; /* 横スクロールを許可 */
+	overflow-x: auto;  /*横スクロールを許可 */
 }
 
 /* テーブル一覧スタイル */
