@@ -290,6 +290,21 @@ input.note {
 	.attendance-container {
 		width: 100%; /* 幅を100%に設定 */
 	}
+	
+	/* テーブルカラムのレスポンシブ対応 */
+	th, td {
+		padding: 8px;
+		font-size: 12px;
+	}
+	th.time-column, td.time-column {
+		width: auto; /* 自動調整 */
+	}
+	th.status-column, td.status-column {
+		width: auto; /* 自動調整 */
+	}
+	input.note {
+		width: 100%; /* 幅を100%に設定 */
+	}
 }
 
 /* メディアクエリ (480px以下のスクリーン) */
@@ -310,5 +325,20 @@ input.note {
 	}
 	.attendance-container {
 		width: 100%; 
+	}
+	
+	/* テーブルカラムのレスポンシブ対応 */
+	th, td {
+		padding: 6px;
+		font-size: 10px;
+	}
+	th.time-column, td.time-column {
+		width: auto; /* 自動調整 */
+	}
+	th.status-column, td.status-column {
+		width: auto; /* 自動調整 */
+	}
+	input.note {
+		width: 100%; /* 幅を100%に設定 */
 	}
 }
