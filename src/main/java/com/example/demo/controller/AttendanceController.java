@@ -88,7 +88,7 @@ public class AttendanceController {
 	 * 
 	 * @param model
 	 */
-	private void setYearMonthList(Model model) {
+	public void setYearMonthList(Model model) {
 		List<Integer> yearList = new ArrayList<>();
 		for (int year = 2000; year <= 2100; year++) {
 			yearList.add(year);
@@ -161,7 +161,7 @@ public class AttendanceController {
 	/*
 	 * 上部ステータス表示の設定
 	 */
-	private String getStatusText(List<MonthlyAttendanceReqDto> monthlyAttendanceReq) {
+	public String getStatusText(List<MonthlyAttendanceReqDto> monthlyAttendanceReq) {
 		if (monthlyAttendanceReq.isEmpty()) {
 			return "未申請";
 		}

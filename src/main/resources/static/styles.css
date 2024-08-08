@@ -137,6 +137,12 @@ button:hover {
 	background: #FFA41D; /* ホバー時の背景色を設定 */
 }
 
+.button-group .button.disabled-form {
+    background-color: #d3d3d3; /* 灰色に設定 */
+    color: #6c757d; /* 文字色を暗い灰色に設定 */
+    cursor: not-allowed; /* 非活性時のカーソルを設定 */
+}
+
 /* エラーメッセージスタイル */
 .error-message {
 	display: none; /* デフォルトで非表示 */
