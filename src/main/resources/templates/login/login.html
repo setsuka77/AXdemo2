@@ -40,6 +40,7 @@
 
 	<script>
 		// 必須、入力形式チェック
+		// サーバー側で形式チェックのみエラーメッセージを表示させたい、フラグを予定
 		document.addEventListener("DOMContentLoaded", function () {
 			const loginForm = document.getElementById("loginForm");
 
@@ -53,11 +54,12 @@
 
 				// エラーメッセージを設定
 				const idErrorMessageEmpty = "ユーザIDを入力してください。";
-				const idErrorMessageInvalid = "ユーザIDは半角数字のみで入力してください。";
-				const idErrorMessageNumber = "半角16文字以内で入力してください。";
+				//const idErrorMessageInvalid = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
+				//const idErrorMessageNumber = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
 				const passwordErrorMessageEmpty = "パスワードを入力してください。";
-				const passwordErrorMessageInvalid = "パスワードは半角英数字のみで入力してください。";
-				const passwordErrorMessageNumber = "半角16文字以内で入力してください。";
+				//const passwordErrorMessageInvalid = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
+				//const passwordErrorMessageNumber = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
+				const inputErrorMessage = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
 
 				// 初期状態を設定
 				idError.style.display = "none";
@@ -69,11 +71,11 @@
 					idError.style.display = "block";
 					valid = false;
 				} else if (!/^[0-9]+$/.test(idValue)) {
-					idError.textContent = idErrorMessageInvalid;
+					idError.textContent = inputErrorMessage;
 					idError.style.display = "block";
 					valid = false;
 				} else if (/.{17,}/.test(idValue)) {
-					idError.textContent = idErrorMessageNumber;
+					idError.textContent = inputErrorMessage;
 					idError.style.display = "block";
 					valid = false;
 				} else {
@@ -85,11 +87,11 @@
 					passwordError.style.display = "block";
 					valid = false;
 				} else if (/[^a-zA-Z0-9]/.test(passwordInput.value.trim())) {
-					passwordError.textContent = passwordErrorMessageInvalid;
+					passwordError.textContent = inputErrorMessage;
 					passwordError.style.display = "block";
 					valid = false;
 				} else if (/.{17,}/.test(passwordInput.value.trim())) {
-					passwordError.textContent = passwordErrorMessageNumber;
+					passwordError.textContent = inputErrorMessage;
 					passwordError.style.display = "block";
 					valid = false;
 				} else {
