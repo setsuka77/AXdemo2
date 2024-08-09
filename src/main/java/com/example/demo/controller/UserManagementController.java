@@ -40,6 +40,10 @@ public class UserManagementController {
 			redirectAttributes.addFlashAttribute("error", "アクセス権限がありません。");
 			return "redirect:/";
 		}
+		
+		// 登録ボタンを非活性に設定
+		boolean checkRegister = false;
+		model.addAttribute("checkRegister", checkRegister);
 
 		// バリデーションエラー時入力保持
 		if (!model.containsAttribute("userForm")) {

@@ -72,7 +72,8 @@
 				</div>
 
 				<div class="button-group">
-					<button type="submit">登録</button>
+					<button type="submit" class="button" th:attr="disabled=${checkRegister == false}"
+					th:classappend="${checkRegister == false ? 'disabled-form' : ''}">登録</button>
 				</div>
 
 			</form>
