@@ -66,7 +66,6 @@ public class AttendanceService {
 			CalendarDto calendarDto = new CalendarDto(date, dayOfWeek);
 			calendar.add(calendarDto);
 		}
-
 		return calendar;
 	}
 

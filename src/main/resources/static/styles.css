@@ -186,6 +186,15 @@ button:hover {
 	margin-top: -10px; /* 上部マージンを設定 */
 }
 
+/* 勤怠登録画面 土日祝日時の文字 */
+.sunday {
+    color: red;
+}
+.saturday {
+    color: #ccc;
+}
+
+
 /* アラートスタイル */
 .alert {
 	padding: 15px; /* 内部パディングを設定 */

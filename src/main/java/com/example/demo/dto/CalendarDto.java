@@ -22,5 +22,8 @@ public class CalendarDto {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d");
         return date.format(formatter);
     }
-	
+    
+    //土日祝日のメソッドを追加
+    private boolean isSaturday;
+    private boolean isSunday;
 }
