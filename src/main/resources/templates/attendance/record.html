@@ -81,8 +81,8 @@
 					<tbody>
 						<tr th:each="req : ${monthlyAttendanceReq}">
 							<td><a th:href="@{/attendance/detail(id=${req.id})}" th:text="${req.userName}">申請者</a></td>
-							<td th:text="${#dates.format(req.targetYearMonth, 'yyyy/MM')}">申請対象年月</td>
-							<td th:text="${#dates.format(req.date, 'yyyy/M/dd')}">申請日</td>
+							<td th:text="${#dates.format(req.targetYearMonth, 'yyyy年M月')}">申請対象年月</td>
+							<td th:text="${#dates.format(req.date, 'yyyy年M月dd日')}">申請日</td>
 						</tr>
 					</tbody>
 				</table>

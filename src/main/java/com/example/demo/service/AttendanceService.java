@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -261,6 +262,14 @@ public class AttendanceService {
 					&& (remarks == null || remarks.isEmpty()) && (status == null)) {
 				continue;
 			}
+			
+			// 勤務状況に応じた出退勤時間のチェック
+	        if (status != null && (status == 0 || status == 3 || status == 6 || status == 7 || status == 8 || status == 10)) {
+	            if ((startTime == null || startTime.isEmpty()) && (endTime == null || endTime.isEmpty())) {
+	                errorMessage.append(dailyForm.getFormattedDate()).append(" の勤務時間を入力してください。<br>");
+	                hasErrors = true;
+	            }
+	        }
 
 			// 出勤時間チェック
 			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
@@ -272,6 +281,18 @@ public class AttendanceService {
 			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
 				errorMessage.append(dailyForm.getFormattedDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
 				hasErrors = true;
+			}
+			
+			//出勤時間<退勤時間チェック
+			if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+	            LocalTime startTimeDate = dateUtil.stringToLocalTime(startTime);
+	            LocalTime endTimeDate = dateUtil.stringToLocalTime(endTime);
+
+	            if (endTimeDate.isBefore(startTimeDate)) {
+	                errorMessage.append(dailyForm.getFormattedDate())
+	                            .append(" の勤務時間 : 出勤時間より退勤時間の方が早いです<br>");
+	                hasErrors = true;
+	            }
 			}
 
 			// 備考欄文字種、文字数チェック
