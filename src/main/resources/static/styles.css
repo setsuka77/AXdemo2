@@ -44,6 +44,25 @@ body {
 	text-align: center;
 }
 
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 30px; /* アイコン用のスペースを確保 */
+}
+
+.password-wrapper #eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888; /* アイコンの色 */
+}
+
 /* フォームコンテナスタイル */
 .form-container {
 	width: 100%; /* 幅を100%に設定 */
@@ -138,9 +157,9 @@ button:hover {
 }
 
 .button-group .button.disabled-form {
-    background-color: #d3d3d3; /* 灰色に設定 */
-    color: #6c757d; /* 文字色を暗い灰色に設定 */
-    cursor: not-allowed; /* 非活性時のカーソルを設定 */
+	background-color: #d3d3d3; /* 灰色に設定 */
+	color: #6c757d; /* 文字色を暗い灰色に設定 */
+	cursor: not-allowed; /* 非活性時のカーソルを設定 */
 }
 
 /* エラーメッセージスタイル */
@@ -216,7 +235,7 @@ button:hover {
 	background-color: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	overflow-x: auto;  /*横スクロールを許可 */
+	overflow-x: auto; /*横スクロールを許可 */
 }
 
 /* テーブル一覧スタイル */
@@ -286,16 +305,15 @@ input.note {
 /* メディアクエリ (1200px以下のスクリーン) */
 @media ( max-width : 1200px) {
 	.container {
-		flex-direction: column; /* 縦方向のレイアウトに変更*/ 
+		flex-direction: column; /* 縦方向のレイアウトに変更*/
 	}
 	.form-container {
-		max-width: 100%;  /*最大幅を100%に設定 */
+		max-width: 100%; /*最大幅を100%に設定 */
 	}
-
 	.attendance-container {
 		width: 100%; /* 幅を100%に設定 */
 	}
-	
+
 	/* テーブルカラムのレスポンシブ対応 */
 	th, td {
 		padding: 8px;
@@ -315,23 +333,23 @@ input.note {
 /* メディアクエリ (768px以下のスクリーン) */
 @media ( max-width : 768px) {
 	.container {
-		flex-direction: column; /* 縦方向のレイアウトに変更*/ 
+		flex-direction: column; /* 縦方向のレイアウトに変更*/
 	}
 	.form-container {
-		max-width: 100%;  /*最大幅を100%に設定 */
+		max-width: 100%; /*最大幅を100%に設定 */
 	}
 	.button-group {
-		flex-direction: column;  /*縦方向のレイアウトに変更*/ 
-		gap: 10px;  /*ボタン間の隙間を設定 */
-		justify-content: center;  /*中央寄せ*/ 
+		flex-direction: column; /*縦方向のレイアウトに変更*/
+		gap: 10px; /*ボタン間の隙間を設定 */
+		justify-content: center; /*中央寄せ*/
 	}
 	button {
-		width: 100%;  /*幅を100%に設定*/ 
+		width: 100%; /*幅を100%に設定*/
 	}
 	.attendance-container {
 		width: 100%; /* 幅を100%に設定 */
 	}
-	
+
 	/* テーブルカラムのレスポンシブ対応 */
 	th, td {
 		padding: 8px;
@@ -347,7 +365,7 @@ input.note {
 		width: 100%; /* 幅を100%に設定 */
 	}
 	.error-message.attendanceError {
-	margin-top: auto; /* 上部マージンを設定 */
+		margin-top: auto; /* 上部マージンを設定 */
 	}
 }
 
@@ -368,9 +386,9 @@ input.note {
 		width: 100%;
 	}
 	.attendance-container {
-		width: 100%; 
+		width: 100%;
 	}
-	
+
 	/* テーブルカラムのレスポンシブ対応 */
 	th, td {
 		padding: 6px;
@@ -386,6 +404,6 @@ input.note {
 		width: 100%; /* 幅を100%に設定 */
 	}
 	.error-message.attendanceError {
-	margin-top: auto; /* 上部マージンを設定 */
+		margin-top: auto; /* 上部マージンを設定 */
 	}
 }
