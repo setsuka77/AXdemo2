@@ -337,6 +337,9 @@ public class AttendanceController {
 		model.addAttribute("attendanceForm", dailyAttendanceForm);
 		model.addAttribute("calendar", calendar);
 		model.addAttribute("loginUser", loginUser);
+		//本日の日付を渡す
+		LocalDate nowDate = LocalDate.now();
+		model.addAttribute("today", nowDate);
 
 		return "attendance/record";
 	}
