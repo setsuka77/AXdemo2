@@ -6,53 +6,79 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>処理メニュー | Analix社内管理システム</title>
 	<link rel="stylesheet" href="/login/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-	<div class="container">
+	<div class="index-content">
 		<a th:href="@{/logout}"><button>ログオフ</button></a>
-		<div class="form-container">
-			<h2>処理メニュー</h2>
+		<div class="container">
+			<div class="form-container">
+				<h2>処理メニュー</h2>
 
-			<tr>
-				<td>
-					<div class="info-container">
-						<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
-						<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					</div>
-				</td>
-			</tr>
+				<tr>
+					<td>
+						<div class="info-container">
+							<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+							<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+						</div>
+					</td>
+				</tr>
 
-			<!-- 管理者用のメニュー -->
-			<div th:if="${role} == 'admin'">
-				
-				<ul>
-					<a th:href="@{/attendance/record}"><button>勤怠承認</button></a>
-					<a th:href="@{/userManagement/manage}"><button>ユーザ情報登録・変更</button></a>
-				</ul>
+				<!-- 管理者用のメニュー -->
+				<div th:if="${role} == 'admin'">
+					<ul>
+						<li>
+							<a th:href="@{/attendance/record}" class="card">
+								<i class="fa-solid fa-clock"></i>
+								<span>勤怠承認</span>
+							</a>
+						</li>
+						<li>
+							<a th:href="@{/userManagement/manage}" class="card">
+								<i class="fa-solid fa-user"></i>
+								<span>ユーザ情報<br>登録・変更</br></span>
+							</a>
+						</li>
+					</ul>
+				</div>
+
+				<!-- マネージャ用のメニュー -->
+				<div th:if="${role} == 'manager'">
+
+					<ul>
+						<li>
+							<a th:href="@{/attendance/record}" class="card">
+								<i class="fa-solid fa-clock"></i>
+								<span>勤怠承認</span>
+							</a>
+						</li>
+					</ul>
+
+				</div>
+
+				<!-- UM・社員用のメニュー -->
+				<div th:if="${role} == 'regular'">
+
+					<ul>
+						<li>
+							<a th:href="@{/attendance/record}" class="card">
+								<i class="fa-solid fa-clock"></i>
+								<span>勤怠登録</span>
+							</a>
+						</li>
+						<li>
+							<a class="card">
+								<i class="fa-solid fa-file-alt"></i>
+								<span>日報登録</span>
+							</a>
+						</li>
+					</ul>
+
+				</div>
+
 
 			</div>
-
-			<!-- マネージャ用のメニュー -->
-			<div th:if="${role} == 'manager'">
-				
-				<ul>
-					<a th:href="@{/attendance/record}"><button>勤怠承認</button></a>
-				</ul>
-
-			</div>
-
-			<!-- UM・社員用のメニュー -->
-			<div th:if="${role} == 'regular'">
-
-				<ul>
-					<a th:href="@{/attendance/record}"><button>勤怠登録</button></a>
-					<button>日報登録</button>
-				</ul>
-
-			</div>
-
-
 		</div>
 	</div>
 </body>
