@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -76,6 +77,13 @@ public class AttendanceController {
 		model.addAttribute("checkAllStatus", checkAllStatus);
 		boolean checkRegister = false;
 		model.addAttribute("checkRegister", checkRegister);
+		
+		// 表示年月に現在の年月を表示
+		LocalDateTime nowDate = LocalDateTime.now();
+		Integer year = nowDate.getYear();
+		Integer month = nowDate.getMonthValue(); 
+		model.addAttribute("selectYear", year);
+		model.addAttribute("selectMonth", month);
 
 		// 年月プルダウンリストを設定
 		setYearMonthList(model);
@@ -140,6 +148,10 @@ public class AttendanceController {
 		boolean checkAllStatus = false;
 		//登録ボタンの表示チェック (True時:活性化)
 		boolean checkRegister = attendanceService.checkRegister(status);
+		
+		//本日の日付を渡す
+		LocalDate nowDate = LocalDate.now();
+		model.addAttribute("today", nowDate);
 
 		session.setAttribute("calendar", calendar);
 		session.setAttribute("selectYear", year);
@@ -213,6 +225,10 @@ public class AttendanceController {
 			model.addAttribute("month", calendar.get(0).getDate().getMonthValue());
 			model.addAttribute("loginUser", loginUser);
 			model.addAttribute("checkAllStatus", false);
+			
+			//本日の日付を渡す
+			LocalDate nowDate = LocalDate.now();
+			model.addAttribute("today", nowDate);
 
 			// 再度リストを設定する
 			setYearMonthList(model);
@@ -254,6 +270,10 @@ public class AttendanceController {
 		Integer month = (Integer) session.getAttribute("selectMonth");
 		model.addAttribute("selectYear", year);
 		model.addAttribute("selectMonth", month);
+		
+		//本日の日付を渡す
+		LocalDate nowDate = LocalDate.now();
+		model.addAttribute("today", nowDate);
 
 		// 再度リストを設定する
 		setYearMonthList(model);

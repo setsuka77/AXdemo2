@@ -191,9 +191,13 @@ button:hover {
     color: red;
 }
 .saturday {
-    color: #ccc;
+    color: rgb(0, 128, 255);
 }
 
+/* 現在の日付時の背景色 */
+.highlight {
+    background-color: rgb(230, 242, 255); /* 背景色を指定 */
+}
 
 /* アラートスタイル */
 .alert {

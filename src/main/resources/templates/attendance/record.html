@@ -109,11 +109,13 @@
 					</tr>
 				</thead>
 				<tbody id="attendance-details">
-					<tr th:each="calendar, iterStat : ${calendar}">
+					<tr th:each="calendar, iterStat : ${calendar}"   th:classappend="${calendar.date.isEqual(today)} ? 'highlight' : ''">
 						<td th:text="${calendar.getFormattedDate()}">
 							<input type="hidden" name="date" th:value="${calendar.date}" />
 						</td>
-						<td th:text="${calendar.dayOfWeek}"></td>
+						<td th:text="${calendar.dayOfWeek}"
+							 th:classappend="${calendar.isSaturday} ? 'saturday' : (${calendar.isSunday} ? 'sunday' : '')">
+						</td>
 						<td>
 							<!-- null,falseだと入力可能、trueは入力不可 -->
 							<select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'"

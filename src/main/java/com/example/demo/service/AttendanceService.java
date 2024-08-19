@@ -264,7 +264,7 @@ public class AttendanceService {
 			
 			// 勤務状況に応じた出退勤時間のチェック
 	        if (status != null && (status == 0 || status == 3 || status == 6 || status == 7 || status == 8 || status == 10)) {
-	            if ((startTime == null || startTime.isEmpty()) && (endTime == null || endTime.isEmpty())) {
+	            if ((startTime == null || startTime.isEmpty()) || (endTime == null || endTime.isEmpty())) {
 	                errorMessage.append(dailyForm.getFormattedDate()).append(" の勤務時間を入力してください。<br>");
 	                hasErrors = true;
 	            }
