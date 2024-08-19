@@ -63,10 +63,8 @@ public class LoginController {
 
 		// 権限に応じた画面遷移
 		String role = user.getRole();
-		if ("1".equals(role)) {
-			return "redirect:/userManagement/manage";
-		} else if ("2".equals(role) || "3".equals(role) || "4".equals(role)) {
-			return "redirect:/attendance";
+		if ("1".equals(role) || "2".equals(role) || "3".equals(role) || "4".equals(role)) {
+			return "redirect:/index";
 		} else {
 			redirectAttributes.addFlashAttribute("error", "不明なロールです。");
 			return "redirect:/";

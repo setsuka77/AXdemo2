@@ -10,21 +10,53 @@
 
 <body>
 	<div class="container">
-		処理メニュー画面
-		
-<!--		<tr>
-			<td>
-				<div class="info-container">
-					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
-					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+		<div class="form-container">
+			<h2>処理メニュー</h2>
+
+			<tr>
+				<td>
+					<div class="info-container">
+						<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+						<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
 					</div>
-				</div>
-			</td>
-		</tr>-->
-		
-		
-		
-		
+				</td>
+			</tr>
+
+			<!-- 管理者用のメニュー -->
+			<div th:if="${role} == 'admin'">
+				これは管理者
+				
+				<ul>
+				<a th:href="@{/attendance}"><button>勤怠承認</button></a>
+				<a th:href="@{/userManagement/manage}"><button>ユーザ情報登録・変更</button></a>
+				</ul>
+
+			</div>
+
+			<!-- マネージャ用のメニュー -->
+			<div th:if="${role} == 'manager'">
+				これはマネージャ
+				
+				<ul>
+				<a th:href="@{/attendance}"><button>勤怠承認</button></a>
+				<a th:href="@{/userManagement/manage}"><button>ユーザ情報登録・変更</button></a>
+				</ul>
+				
+			</div>
+
+			<!-- UM・社員用のメニュー -->
+			<div th:if="${role} == 'regular'">
+				これはUM・社員
+				
+				<ul>
+				<a th:href="@{/attendance}"><button>勤怠承認</button></a>
+				<a th:href="@{/userManagement/manage}"><button>ユーザ情報登録・変更</button></a>
+				</ul>
+				
+			</div>
+
+
+		</div>
 	</div>
 </body>
 

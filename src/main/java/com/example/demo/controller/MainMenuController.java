@@ -23,7 +23,19 @@ public class MainMenuController {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		
+		//ログインユーザの権限判定
+		String role = loginUser.getRole();
+		if ("1".equals(role)) {
+			role = "admin";
+		} else if ("2".equals(role)) {
+			role = "manager";
+		} else if ("3".equals(role) || "4".equals(role)) {
+			role = "regular";
+		}
+		
 		model.addAttribute("loginUser", loginUser);
+		// ロールに基づいてModelにメニュー情報を追加
+        model.addAttribute("role", role);
 
 		return "menu/index";
 	}
