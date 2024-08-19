@@ -24,7 +24,7 @@
 
 		<!-- 表示年月を指定して表示 メンバー/UM -->
 		<div class="row">
-			<form id="attendance-form" th:action="@{/attendance}" method="post" onsubmit="return validateDisplay();"
+			<form id="attendance-form" th:action="@{/attendance/record}" method="post" onsubmit="return validateDisplay();"
 				th:if="${loginUser.role != '2'}">
 				<div class="form-group">
 					表示年月:
@@ -46,7 +46,7 @@
 			</form>
 		</div>
 
-		<form id="register-form" th:action="@{/attendance}" method="post">
+		<form id="register-form" th:action="@{/attendance/record}" method="post">
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected"
 					th:attr="disabled=${checkReject == false}" class="button" 
@@ -80,7 +80,7 @@
 					</thead>
 					<tbody>
 						<tr th:each="req : ${monthlyAttendanceReq}">
-							<td><a th:href="@{/attendance/detail(id=${req.id})}" th:text="${req.userName}">申請者</a></td>
+							<td><a th:href="@{/attendance/record/detail(id=${req.id})}" th:text="${req.userName}">申請者</a></td>
 							<td th:text="${#dates.format(req.targetYearMonth, 'yyyy年M月')}">申請対象年月</td>
 							<td th:text="${#dates.format(req.date, 'yyyy年M月dd日')}">申請日</td>
 						</tr>

@@ -39,7 +39,7 @@ public class AttendanceController {
 	 * @param session
 	 * @return 勤怠登録画面
 	 */
-	@GetMapping("/attendance")
+	@GetMapping("/attendance/record")
 	public String showAttendanceForm(Model model, HttpSession session) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
@@ -118,7 +118,7 @@ public class AttendanceController {
 	 * @param session
 	 * @return 勤怠登録画面
 	 */
-	@RequestMapping(path = "/attendance", params = "display", method = RequestMethod.POST)
+	@RequestMapping(path = "/attendance/record", params = "display", method = RequestMethod.POST)
 	public String showAttendance(@RequestParam("year") Integer year, @RequestParam("month") Integer month, Model model,
 			HttpSession session) {
 		// ユーザー情報の取得
@@ -203,7 +203,7 @@ public class AttendanceController {
 	 * @return 勤怠登録画面
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(path = "/attendance", params = "regist", method = RequestMethod.POST)
+	@RequestMapping(path = "/attendance/record", params = "regist", method = RequestMethod.POST)
 	public String registAttendance(AttendanceForm attendanceForm, Model model, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 
@@ -289,7 +289,7 @@ public class AttendanceController {
 	 * @param redirectAttributes
 	 * @return 勤怠管理画面のリダイレクトURL
 	 */
-	@PostMapping(path = "/attendance", params = "request")
+	@PostMapping(path = "/attendance/record", params = "request")
 	public String registerMonthlyAttendanceReq(@RequestParam("year") Integer year, @RequestParam("month") Integer month,
 			HttpSession session, RedirectAttributes redirectAttributes) {
 		Users loginUser = (Users) session.getAttribute("user");
@@ -298,7 +298,7 @@ public class AttendanceController {
 		String message = attendanceService.registerOrUpdateMonthlyAttendanceReq(year, month, loginUser);
 
 		redirectAttributes.addFlashAttribute("message", message);
-		return "redirect:/attendance";
+		return "redirect:/attendance/record";
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class AttendanceController {
 	 * @param session
 	 * @return 勤怠管理画面
 	 */
-	@GetMapping(path = "/attendance/detail")
+	@GetMapping(path = "/attendance/record/detail")
 	public String getMonthlyAttendanceDetail(@RequestParam("id") Integer id, Model model, HttpSession session) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
@@ -352,7 +352,7 @@ public class AttendanceController {
 	 * @param redirectAttributes
 	 * @return 勤怠管理画面のリダイレクトURL
 	 */
-	@PostMapping(path = "/attendance", params = "approval")
+	@PostMapping(path = "/attendance/record", params = "approval")
 	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
@@ -363,7 +363,7 @@ public class AttendanceController {
 		String message = attendanceService.approvalAttendance(id, 2); // 承認済みのステータス
 		redirectAttributes.addFlashAttribute("message", message);
 
-		return "redirect:/attendance";
+		return "redirect:/attendance/record";
 	}
 
 	/**
@@ -374,7 +374,7 @@ public class AttendanceController {
 	 * @param redirectAttributes
 	 * @return 勤怠管理画面のリダイレクトURL
 	 */
-	@PostMapping(path = "/attendance", params = "rejected")
+	@PostMapping(path = "/attendance/record", params = "rejected")
 	public String rejectMonthAttendance(AttendanceForm attendanceForm, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
@@ -385,6 +385,6 @@ public class AttendanceController {
 		String message = attendanceService.rejectAttendance(id, 3); // 却下済みのステータス
 		redirectAttributes.addFlashAttribute("message", message);
 
-		return "redirect:/attendance";
+		return "redirect:/attendance/record";
 	}
 }
