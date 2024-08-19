@@ -253,6 +253,11 @@ ul {
     background-color: rgb(230, 242, 255); /* 背景色を指定 */
 }
 
+/*エラー時の背景色*/
+.error-field{
+	background-color: #f2dede;/* 背景色を指定 */
+}
+
 /* アラートスタイル */
 .alert {
 	padding: 15px; /* 内部パディングを設定 */

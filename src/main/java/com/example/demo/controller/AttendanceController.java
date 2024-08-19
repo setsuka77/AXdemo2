@@ -131,7 +131,7 @@ public class AttendanceController {
 		List<AttendanceDto> attendanceDtoList = attendanceService.checkAttendance(calendar, userId);
 		// 勤怠フォームの生成
 		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
-
+		
 		// 年月をDate型に変換
 		java.sql.Date targetYearMonth = java.sql.Date.valueOf(year + "-" + month + "-01");
 

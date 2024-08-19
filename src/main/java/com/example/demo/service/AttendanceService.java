@@ -118,6 +118,7 @@ public class AttendanceService {
 					.setStartTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getStartTime())));
 			dailyForm.setEndTime(dateUtil.localTimeToString(dateUtil.stringToLocalTime(attendanceDto.getEndTime())));
 			dailyForm.setRemarks(attendanceDto.getRemarks());
+			dailyForm.setErrorFlag(false);
 
 			attendanceForm.getDailyAttendanceList().add(dailyForm);
 		}
@@ -256,6 +257,7 @@ public class AttendanceService {
 			String endTime = dailyForm.getEndTime();
 			String remarks = dailyForm.getRemarks();
 			Integer status = dailyForm.getStatus();
+			Boolean errorFlag = dailyForm.getErrorFlag();
 
 			if ((startTime == null || startTime.isEmpty()) && (endTime == null || endTime.isEmpty())
 					&& (remarks == null || remarks.isEmpty()) && (status == null)) {
@@ -267,6 +269,7 @@ public class AttendanceService {
 	            if ((startTime == null || startTime.isEmpty()) || (endTime == null || endTime.isEmpty())) {
 	                errorMessage.append(dailyForm.getFormattedDate()).append(" の勤務時間を入力してください。<br>");
 	                hasErrors = true;
+	                dailyForm.setErrorFlag(true);
 	            }
 	        }
 
@@ -274,12 +277,14 @@ public class AttendanceService {
 			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
 				errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
 				hasErrors = true;
+				dailyForm.setErrorFlag(true);
 			}
 
 			// 退勤時間チェック
 			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
 				errorMessage.append(dailyForm.getFormattedDate()).append(" の退勤時間 : hh:mm のフォーマットで入力してください。<br>");
 				hasErrors = true;
+				dailyForm.setErrorFlag(true);
 			}
 			
 			//出勤時間<退勤時間チェック
@@ -291,6 +296,7 @@ public class AttendanceService {
 	                errorMessage.append(dailyForm.getFormattedDate())
 	                            .append(" の勤務時間 : 出勤時間より退勤時間の方が早いです<br>");
 	                hasErrors = true;
+	                dailyForm.setErrorFlag(true);
 	            }
 			}
 
@@ -299,6 +305,7 @@ public class AttendanceService {
 			    if (remarks.matches(".*[\\x00-\\x7F].*") || remarks.length() > 20) {
 			        errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 20文字以内の全角文字のみで入力してください。<br>");
 			        hasErrors = true;
+			        dailyForm.setErrorFlag(true);
 			    }
 			}
 
@@ -306,6 +313,7 @@ public class AttendanceService {
 			if (status == null) {
 				errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
 				hasErrors = true;
+				dailyForm.setErrorFlag(true);
 			}
 		}
 		return hasErrors ? errorMessage.toString() : null;

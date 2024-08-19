@@ -50,15 +50,15 @@
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected"
 					th:attr="disabled=${checkReject == false}" class="button" 
-					th:classappend="${checkReject == false ? 'disabled-form' : ''}">却下</button>
+					th:classappend="${checkReject == false ? 'disabled-form' : ''}"　onClick="return confirm('却下します。よろしいですか？')">却下</button>
 
 				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" 
 					th:attr="disabled=${checkApproval == false}" class="button" 
-					th:classappend="${checkApproval == false ? 'disabled-form' : ''}">承認</button>
+					th:classappend="${checkApproval == false ? 'disabled-form' : ''}"　onClick="return confirm('承認します。よろしいですか？')">承認</button>
 
 				<button type="submit" th:if="${loginUser.role != '2'}" th:attr="disabled=${checkAllStatus == false}"
 					name="request" class="button"
-					th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}">承認申請</button>
+					th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}" onClick="return confirm('承認申請します。よろしいですか？')">承認申請</button>
 				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
 				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
 
@@ -110,6 +110,7 @@
 				</thead>
 				<tbody id="attendance-details">
 					<tr th:each="calendar, iterStat : ${calendar}"   th:classappend="${calendar.date.isEqual(today)} ? 'highlight' : ''">
+<!--						th:classappend="${attendanceForm.dailyAttendanceList.errorFlag == true} ? 'error-field':''">-->
 						<td th:text="${calendar.getFormattedDate()}">
 							<input type="hidden" name="date" th:value="${calendar.date}" />
 						</td>
