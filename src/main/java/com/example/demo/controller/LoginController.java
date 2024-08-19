@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -70,5 +71,35 @@ public class LoginController {
 			return "redirect:/";
 		}
 	}
+	
+	/**
+     * ログアウト処理
+     * 
+     * @param session
+     * @return ログイン画面へのリダイレクト
+     */
+    @RequestMapping("/logout")
+    public String logout(HttpSession session) {
+        // セッションを無効化してログアウト
+        session.invalidate();
+        return "redirect:/"; // ログイン画面にリダイレクト
+    }
+    
+    /**
+     * 各リクエスト前にセッションをチェック
+     * 
+     * @param session
+     * @param redirectAttributes
+     * @return セッションが無効ならログイン画面にリダイレクト
+     */
+    @ModelAttribute
+    public String checkSession(HttpSession session, RedirectAttributes redirectAttributes) {
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "セッションが切れました。再度ログインしてください。");
+            return "redirect:/";
+        }
+        return null; // セッションが有効な場合はリダイレクトなし
+    }
 
 }
