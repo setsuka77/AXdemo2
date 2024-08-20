@@ -10,95 +10,95 @@
 </head>
 
 <body>
-	<div class="index-content">
-		<a th:href="@{/logout}" class="logoff-button"><button>ログオフ</button></a>
-		<div class="container">
-			<div class="menu-container">
-				<h2>処理メニュー</h2>
+	<div class="container">
+		<div class="menu-container">
+			<div class="header-button">
+				<a th:href="@{/logout}"><button>ログオフ</button></a>
+			</div>
+			<h2>処理メニュー</h2>
 
-				<tr>
-					<td>
-						<div class="info-container">
-							<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
-							<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-						</div>
-					</td>
-				</tr>
+			<tr>
+				<td>
+					<div class="info-container">
+						<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+						<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+					</div>
+				</td>
+			</tr>
 
-				<!-- 管理者用のメニュー -->
-				<div th:if="${role} == 'admin'">
-					<ul>
-						<li>
-							<a th:href="@{/userManagement/manage}" class="card">
-								<i class="fa-solid fa-user"></i>
-								<span>ユーザ情報<br>登録・変更</br></span>
-							</a>
-						</li>
-						<li>
-							<a class="card">
-								<i class="fas fa-users"></i>
-								<span>部署検索</span>
-							</a>
-						</li>
-						
-					</ul>
-				</div>
+			<!-- 管理者用のメニュー -->
+			<div th:if="${role} == 'admin'">
+				<ul>
+					<li>
+						<a th:href="@{/userManagement/manage}" class="card">
+							<i class="fa-solid fa-user"></i>
+							<span>ユーザ情報<br>登録・変更</br></span>
+						</a>
+					</li>
+					<li>
+						<a class="card">
+							<i class="fas fa-users"></i>
+							<span>部署検索</span>
+						</a>
+					</li>
 
-				<!-- マネージャ用のメニュー -->
-				<div th:if="${role} == 'manager'">
+				</ul>
+			</div>
 
-					<ul>
-						<li>
-							<a th:href="@{/attendance/record}" class="card">
-								<i class="fa-solid fa-clock"></i>
-								<span>勤怠承認</span>
-							</a>
-						</li>
-						<li>
-							<a class="card">
-								<i class="fa-solid fa-file-alt"></i>
-								<span>日報承認</span>
-							</a>
-						</li>
-						<li>
-							<a th:href="@{/userManagement/manage}" class="card">
-								<i class="fa-solid fa-user"></i>
-								<span>ユーザ情報<br>登録・変更</br></span>
-							</a>
-						</li>
-						<li>
-							<a class="card">
-								<i class="fas fa-users"></i>
-								<span>部署登録</span>
-							</a>
-						</li>
-					</ul>
-					
+			<!-- マネージャ用のメニュー -->
+			<div th:if="${role} == 'manager'">
 
-				</div>
-
-				<!-- UM・社員用のメニュー -->
-				<div th:if="${role} == 'regular'">
-
-					<ul>
-						<li>
-							<a th:href="@{/attendance/record}" class="card">
-								<i class="fa-solid fa-clock"></i>
-								<span>勤怠登録</span>
-							</a>
-						</li>
-						<li>
-							<a class="card">
-								<i class="fa-solid fa-file-alt"></i>
-								<span>日報登録</span>
-							</a>
-						</li>
-					</ul>
-
-				</div>
+				<ul>
+					<li>
+						<a th:href="@{/attendance/record}" class="card">
+							<i class="fa-solid fa-clock"></i>
+							<span>勤怠承認</span>
+						</a>
+					</li>
+					<li>
+						<a class="card">
+							<i class="fa-solid fa-file-alt"></i>
+							<span>日報承認</span>
+						</a>
+					</li>
+					<li>
+						<a th:href="@{/userManagement/manage}" class="card">
+							<i class="fa-solid fa-user"></i>
+							<span>ユーザ情報<br>登録・変更</br></span>
+						</a>
+					</li>
+					<li>
+						<a class="card">
+							<i class="fas fa-users"></i>
+							<span>部署登録</span>
+						</a>
+					</li>
+				</ul>
 
 
 			</div>
+
+			<!-- UM・社員用のメニュー -->
+			<div th:if="${role} == 'regular'">
+
+				<ul>
+					<li>
+						<a th:href="@{/attendance/record}" class="card">
+							<i class="fa-solid fa-clock"></i>
+							<span>勤怠登録</span>
+						</a>
+					</li>
+					<li>
+						<a class="card">
+							<i class="fa-solid fa-file-alt"></i>
+							<span>日報登録</span>
+						</a>
+					</li>
+				</ul>
+
+			</div>
+
+
 		</div>
 	</div>
 </body>

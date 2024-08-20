@@ -34,11 +34,6 @@ body {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.index-content {
-	position: relative; /* 相対位置を設定 */
-	padding-top: 50px; /* ボタンの高さ分のパディングを設定 */
-}
-
 /* メニューコンテナスタイル */
 .menu-container {
 	width: 100%; /* 幅を100%に設定 */
@@ -184,16 +179,10 @@ button:hover {
 	cursor: not-allowed; /* 非活性時のカーソルを設定 */
 }
 
-/* ログオフボタンのスタイル */
-.logoff-button {
-	position: absolute; /* 絶対位置を設定 */
-	top: 10px; /* 上からの距離 */
-	right: 20px; /* 右からの距離 */
-}
-/* メニューボタンのスタイル */
-.button-back{
-	position: absolute; /* 絶対位置を設定 */
-	left: 20px;
+.header-button{
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 50px;
 }
 
 /* カード全体のスタイル */
@@ -314,20 +303,6 @@ ul {
 }
 
 /* 勤怠管理画面 */
-
-.attendance-button{
-	display: flex;
-	justify-content: space-between; 
-}
-
-.button-back1 {   
-	left: 10px;
-}
-
-.logoff-button1{
-	right: 10px;
-}
-
 
 /*上部ユーザ情報表示*/
 .info-container {

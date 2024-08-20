@@ -11,16 +11,15 @@
 <body>
 	<div class="attendance-container">
 		<tr>
-			<div class="attendance-button">
-				<div class="button-back1">
-					<form th:action="@{/attendance/record}" method="post">
-						<button type="submit" name="back" class="button">メニュー</button>
-					</form>
-				</div>
-				<a th:href="@{/logout}" class="logoff-button1"><button>ログオフ</button></a>
+			<div class="header-button">
+				<form th:action="@{/attendance/record}" method="post">
+					<button type="submit" name="back" class="button">メニュー</button>
+				</form>
+				<h2>勤怠管理</h2>
+				<a th:href="@{/logout}"><button>ログオフ</button></a>
 			</div>
 		</tr>
-		
+
 		<tr>
 			<td>
 				<div class="info-container">
