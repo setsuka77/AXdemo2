@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>日報管理画面 | Analix社内管理システム</title>
+	<link rel="stylesheet" href="/login/styles.css">
+</head>
+
+<body>
+	<div class="dailyReport-container">
+		<tr>
+			<div class="header-button">
+				<form th:action="@{/report/dailyReport}" method="post">
+					<button type="submit" name="back" class="button">メニュー</button>
+				</form>
+				<h2>日報管理</h2>
+				<a th:href="@{/logout}"><button>ログオフ</button></a>
+			</div>
+		</tr>
+
+		<tr>
+			<td>
+				<div class="info-container">
+					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+<!--					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span>-->
+					</div>
+				</div>
+			</td>
+		</tr>
+
+</body>
+</html>
