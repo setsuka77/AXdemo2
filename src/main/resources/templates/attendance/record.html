@@ -9,16 +9,18 @@
 </head>
 
 <body>
-	<div class="attendance-content">
-	<a th:href="@{/logout}" class="logoff-button"><button>ログオフ</button></a>
-	<div class="button-back">
-	    <form th:action="@{/attendance/record}" method="post">
-	        <button type="submit" name="back" class="button">メニュー</button>
-	    </form>
-	</div>
-
 	<div class="attendance-container">
-	
+		<tr>
+			<div class="attendance-button">
+				<div class="button-back1">
+					<form th:action="@{/attendance/record}" method="post">
+						<button type="submit" name="back" class="button">メニュー</button>
+					</form>
+				</div>
+				<a th:href="@{/logout}" class="logoff-button1"><button>ログオフ</button></a>
+			</div>
+		</tr>
+		
 		<tr>
 			<td>
 				<div class="info-container">
@@ -32,19 +34,21 @@
 
 		<!-- 表示年月を指定して表示 メンバー/UM -->
 		<div class="row">
-			<form id="attendance-form" th:action="@{/attendance/record}" method="post" onsubmit="return validateDisplay();"
-				th:if="${loginUser.role != '2'}">
+			<form id="attendance-form" th:action="@{/attendance/record}" method="post"
+				onsubmit="return validateDisplay();" th:if="${loginUser.role != '2'}">
 				<div class="form-group">
 					表示年月:
 					<select id="year" name="year">
 						<option value="" th:selected="${year == null}">年を選択</option>
-						<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}" th:selected="${year == selectYear}"></option>
+						<option th:each="year : ${yearList}" th:value="${year}" th:text="${year}"
+							th:selected="${year == selectYear}"></option>
 					</select>
 					<span>年</span>
 
 					<select id="month" name="month">
-						<option value=""  th:if="${month == null}">月を選択</option>
-						<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}" th:selected="${month == selectMonth}"></option>
+						<option value="" th:if="${month == null}">月を選択</option>
+						<option th:each="month : ${monthList}" th:value="${month}" th:text="${month}"
+							th:selected="${month == selectMonth}"></option>
 					</select>
 					<span>月</span>
 					<button type="submit" name="display" class="button">表示</button>
@@ -57,16 +61,18 @@
 		<form id="register-form" th:action="@{/attendance/record}" method="post">
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role == '2'}" name="rejected"
-					th:attr="disabled=${checkReject == false}" class="button" 
-					th:classappend="${checkReject == false ? 'disabled-form' : ''}"　onClick="return confirm('却下します。よろしいですか？')">却下</button>
+					th:attr="disabled=${checkReject == false}" class="button"
+					th:classappend="${checkReject == false ? 'disabled-form' : ''}"
+					　onClick="return confirm('却下します。よろしいですか？')">却下</button>
 
-				<button type="submit" th:if="${loginUser.role == '2'}" name="approval" 
-					th:attr="disabled=${checkApproval == false}" class="button" 
-					th:classappend="${checkApproval == false ? 'disabled-form' : ''}"　onClick="return confirm('承認します。よろしいですか？')">承認</button>
+				<button type="submit" th:if="${loginUser.role == '2'}" name="approval"
+					th:attr="disabled=${checkApproval == false}" class="button"
+					th:classappend="${checkApproval == false ? 'disabled-form' : ''}"
+					　onClick="return confirm('承認します。よろしいですか？')">承認</button>
 
 				<button type="submit" th:if="${loginUser.role != '2'}" th:attr="disabled=${checkAllStatus == false}"
-					name="request" class="button"
-					th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}" onClick="return confirm('承認申請します。よろしいですか？')">承認申請</button>
+					name="request" class="button" th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}"
+					onClick="return confirm('承認申請します。よろしいですか？')">承認申請</button>
 				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
 				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
 
@@ -88,7 +94,8 @@
 					</thead>
 					<tbody>
 						<tr th:each="req : ${monthlyAttendanceReq}">
-							<td><a th:href="@{/attendance/record/detail(id=${req.id})}" th:text="${req.userName}">申請者</a></td>
+							<td><a th:href="@{/attendance/record/detail(id=${req.id})}"
+									th:text="${req.userName}">申請者</a></td>
 							<td th:text="${#dates.format(req.targetYearMonth, 'yyyy年M月')}">申請対象年月</td>
 							<td th:text="${#dates.format(req.date, 'yyyy年M月dd日')}">申請日</td>
 						</tr>
@@ -117,12 +124,13 @@
 					</tr>
 				</thead>
 				<tbody id="attendance-details">
-					<tr th:each="calendar, iterStat : ${calendar}"   th:classappend="${(calendar.date.isEqual(today) ? 'highlight' : ' ') + (attendanceForm != null && attendanceForm.dailyAttendanceList[iterStat.index].errorFlag == true ? 'error-field' : ' ')}">
+					<tr th:each="calendar, iterStat : ${calendar}"
+						th:classappend="${(calendar.date.isEqual(today) ? 'highlight' : ' ') + (attendanceForm != null && attendanceForm.dailyAttendanceList[iterStat.index].errorFlag == true ? 'error-field' : ' ')}">
 						<td th:text="${calendar.getFormattedDate()}">
 							<input type="hidden" name="date" th:value="${calendar.date}" />
 						</td>
 						<td th:text="${calendar.dayOfWeek}"
-							 th:classappend="${calendar.isSaturday} ? 'saturday' : (${calendar.isSunday} ? 'sunday' : '')">
+							th:classappend="${calendar.isSaturday} ? 'saturday' : (${calendar.isSunday} ? 'sunday' : '')">
 						</td>
 						<td>
 							<!-- null,falseだと入力可能、trueは入力不可 -->
@@ -131,35 +139,44 @@
 								th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
 								<option value="" hidden> </option>
 								<option value="0"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">通常出勤
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">
+									通常出勤
 								</option>
 								<option value="1"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 1}">休日
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 1}">
+									休日
 								</option>
 								<option value="2"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 2}">祝日
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 2}">
+									祝日
 								</option>
 								<option value="3"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 3}">遅刻
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 3}">
+									遅刻
 								</option>
 								<option value="4"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 4}">有給
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 4}">
+									有給
 								</option>
 								<option value="5"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 5}">欠勤
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 5}">
+									欠勤
 								</option>
 								<option value="6"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 6}">早退
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 6}">
+									早退
 								</option>
 								<option value="7"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 7}">
 									時間外勤務
 								</option>
 								<option value="8"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 8}">振替出勤
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 8}">
+									振替出勤
 								</option>
 								<option value="9"
-									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 9}">振替休日
+									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 9}">
+									振替休日
 								</option>
 								<option value="10"
 									th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 10}">
@@ -220,13 +237,13 @@
 		document.getElementById('month').addEventListener('change', function () {
 			document.getElementById('hidden-month').value = this.value;
 		});
-		
-		
 
-		
+
+
+
 
 	</script>
-	
+
 </body>
 
 </html>
