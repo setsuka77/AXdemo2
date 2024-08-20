@@ -7,85 +7,87 @@
 	<title>ユーザ管理 | Analix社内管理システム</title>
 	<link rel="stylesheet" href="/login/styles.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+		integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
 
-	<div class="container">
-		<a th:href="@{/logout}"><button>ログオフ</button></a>
-		<div class="form-container">
-			<!-- 検索用フォーム -->
-			<form id="search-form" method="post" th:action="@{/userManagement/search}" th:object="${userForm}"
-				onsubmit="return validateSearch()">
-				<h2>ユーザ管理</h2>
+	<div class="index-content">
+		<a th:href="@{/logout}" class="logoff-button"><button>ログオフ</button></a>
+		<div class="container">
+			<div class="form-container">
+				<!-- 検索用フォーム -->
+				<form id="search-form" method="post" th:action="@{/userManagement/search}" th:object="${userForm}"
+					onsubmit="return validateSearch()">
+					<h2>ユーザ管理</h2>
 
-				<!-- 成功メッセージ表示 -->
-				<div th:if="${successMessage}" class="alert alert-success" role="alert">
-					<p th:utext="${successMessage}"></p>
-				</div>
-
-				<div class="input-group input-with-button">
-					<label for="name">ユーザ名</label>
-					<input type="text" class="input-wide" id="name" name="name" th:field="*{name}">
-					<div class="button-group input-with-button">
-						<button type="submit">検索</button>
+					<!-- 成功メッセージ表示 -->
+					<div th:if="${successMessage}" class="alert alert-success" role="alert">
+						<p th:utext="${successMessage}"></p>
 					</div>
-				</div>
-				<div class="error-message manageError" id="username-error">ユーザ名を入力してください。</div>
-				<!-- エラーメッセージ表示 -->
-				<div th:if="${searchError}" class="alert alert-danger" role="alert">
-					<p th:utext="${searchError}"></p>
-				</div>
 
-			</form>
-
-			<!-- 登録用フォーム -->
-			<form id="register-form" method="post" th:action="@{/userManagement/register}" th:object="${userForm}"
-				onsubmit="return validateRegister()">
-				<input type="hidden" id="hidden-name" name="name">
-				<input type="hidden" id="hidden-id" name="id">
-
-				<div class="input-group">
-					<label for="id">ユーザID</label>
-					<input type="text" id="id" name="id" th:field="*{id}" disabled>
-				</div>
-				<div class="input-group">
-					<label for="password">パスワード</label>
-					<div class="password-wrapper">
-					<input type="password" id="password" name="password" th:field="*{password}">
-					<i id="eye" class="fa-solid fa-eye"></i>
+					<div class="input-group input-with-button">
+						<label for="name">ユーザ名</label>
+						<input type="text" class="input-wide" id="name" name="name" th:field="*{name}">
+						<div class="button-group input-with-button">
+							<button type="submit">検索</button>
+						</div>
 					</div>
-				</div>
-				<div class="input-group">
-					<label for="role">権限</label>
-					<select id="role" name="role">
-						<option value="" disabled selected>選択してください</option>
-						<option value="1" th:selected="${userForm.role == '1'}">管理者</option>
-						<option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
-						<option value="3" th:selected="${userForm.role == '3'}">UM</option>
-						<option value="4" th:selected="${userForm.role == '4'}">メンバー</option>
-					</select>
-				</div>
-				<div class="input-group">
-					<label for="start-date">利用開始日</label>
-					<input type="text" id="start-date" name="startDate" th:field="*{startDate}"
-						placeholder="YYYY/MM/DD">
-				</div>
-				<!-- エラーメッセージ表示 -->
-				<div th:if="${registerError}" class="alert alert-danger" role="alert">
-					<p th:utext="${registerError}"></p>
-				</div>
+					<div class="error-message manageError" id="username-error">ユーザ名を入力してください。</div>
+					<!-- エラーメッセージ表示 -->
+					<div th:if="${searchError}" class="alert alert-danger" role="alert">
+						<p th:utext="${searchError}"></p>
+					</div>
 
-				<div class="button-group">
-					<button type="submit" class="button" th:attr="disabled=${checkRegister == false}"
-					th:classappend="${checkRegister == false ? 'disabled-form' : ''}">登録</button>
-				</div>
+				</form>
 
-			</form>
-			<div class="button-back">
-				<button type="submit" onclick="location.href='/login/index'">メニュー</button>
+				<!-- 登録用フォーム -->
+				<form id="register-form" method="post" th:action="@{/userManagement/register}" th:object="${userForm}"
+					onsubmit="return validateRegister()">
+					<input type="hidden" id="hidden-name" name="name">
+					<input type="hidden" id="hidden-id" name="id">
+
+					<div class="input-group">
+						<label for="id">ユーザID</label>
+						<input type="text" id="id" name="id" th:field="*{id}" disabled>
+					</div>
+					<div class="input-group">
+						<label for="password">パスワード</label>
+						<div class="password-wrapper">
+							<input type="password" id="password" name="password" th:field="*{password}">
+							<i id="eye" class="fa-solid fa-eye"></i>
+						</div>
+					</div>
+					<div class="input-group">
+						<label for="role">権限</label>
+						<select id="role" name="role">
+							<option value="" disabled selected>選択してください</option>
+							<option value="1" th:selected="${userForm.role == '1'}">管理者</option>
+							<option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
+							<option value="3" th:selected="${userForm.role == '3'}">UM</option>
+							<option value="4" th:selected="${userForm.role == '4'}">メンバー</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label for="start-date">利用開始日</label>
+						<input type="text" id="start-date" name="startDate" th:field="*{startDate}"
+							placeholder="YYYY/MM/DD">
+					</div>
+					<!-- エラーメッセージ表示 -->
+					<div th:if="${registerError}" class="alert alert-danger" role="alert">
+						<p th:utext="${registerError}"></p>
+					</div>
+
+					<div class="button-group">
+						<button type="submit" class="button" th:attr="disabled=${checkRegister == false}"
+							th:classappend="${checkRegister == false ? 'disabled-form' : ''}">登録</button>
+					</div>
+
+				</form>
+				<div class="button-back">
+					<button type="submit" onclick="location.href='/login/index'">メニュー</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -102,20 +104,20 @@
 				return true; // フォームの送信を許可
 			}
 		}
-		
+
 		//パスワードの表示非表示
 		let eye = document.getElementById("eye");
-          eye.addEventListener('click', function () {
-               if (this.previousElementSibling.getAttribute('type') == 'password') {
-                    this.previousElementSibling.setAttribute('type', 'text');
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
-               } else {
-                    this.previousElementSibling.setAttribute('type', 'password');
-                    this.classList.toggle('fa-eye');
-                    this.classList.toggle('fa-eye-slash');
-               }
-          })
+		eye.addEventListener('click', function () {
+			if (this.previousElementSibling.getAttribute('type') == 'password') {
+				this.previousElementSibling.setAttribute('type', 'text');
+				this.classList.toggle('fa-eye');
+				this.classList.toggle('fa-eye-slash');
+			} else {
+				this.previousElementSibling.setAttribute('type', 'password');
+				this.classList.toggle('fa-eye');
+				this.classList.toggle('fa-eye-slash');
+			}
+		})
 
 		// 登録フォームのhiddenフィールドに値を設定
 		document.getElementById('register-form').onsubmit = function () {

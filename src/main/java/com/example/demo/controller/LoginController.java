@@ -94,8 +94,8 @@ public class LoginController {
      */
     @ModelAttribute
     public String checkSession(HttpSession session, RedirectAttributes redirectAttributes) {
-        Users user = (Users) session.getAttribute("user");
-        if (user == null) {
+        Users loginUser = (Users) session.getAttribute("user");
+        if (loginUser == null) {
             redirectAttributes.addFlashAttribute("error", "セッションが切れました。再度ログインしてください。");
             return "redirect:/";
         }

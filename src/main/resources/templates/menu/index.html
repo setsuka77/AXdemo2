@@ -11,7 +11,7 @@
 
 <body>
 	<div class="index-content">
-		<a th:href="@{/logout}"><button>ログオフ</button></a>
+		<a th:href="@{/logout}" class="logoff-button"><button>ログオフ</button></a>
 		<div class="container">
 			<div class="form-container">
 				<h2>処理メニュー</h2>
@@ -35,11 +35,24 @@
 							</a>
 						</li>
 						<li>
+							<a class="card">
+								<i class="fa-solid fa-file-alt"></i>
+								<span>日報承認</span>
+							</a>
+						</li>
+						<li>
 							<a th:href="@{/userManagement/manage}" class="card">
 								<i class="fa-solid fa-user"></i>
 								<span>ユーザ情報<br>登録・変更</br></span>
 							</a>
 						</li>
+						<li>
+							<a class="card">
+								<i class="fas fa-users"></i>
+								<span>部署登録</span>
+							</a>
+						</li>
+						
 					</ul>
 				</div>
 

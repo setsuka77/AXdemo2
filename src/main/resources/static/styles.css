@@ -34,7 +34,15 @@ body {
 
 .index-content {
 	row-gap: 10px;
-	margin-bottom: 10px;
+	position: relative; /* 相対位置を設定 */
+	padding-top: 50px; /* ボタンの高さ分のパディングを設定 */
+}
+
+/* ログオフボタンのスタイル */
+.logoff-button {
+	position: absolute; /* 絶対位置を設定 */
+	top: 10px; /* 上からの距離 */
+	right: 20px; /* 右からの距離 */
 }
 
 /* フォームのタイトルのスタイル */
@@ -212,7 +220,7 @@ ul {
   list-style: none;
   padding: 0;
   display: flex;
-  justify-content: space-around; /* カードを横並びに配置 */
+  justify-content: space-between; /* 両サイドを端に配置して中のflexを均等に配置 */
   flex-wrap: wrap; /* カードが多い場合に折り返す */
 }
 
@@ -255,7 +263,7 @@ ul {
 
 /*エラー時の背景色*/
 .error-field{
-	background-color: #f2dede;/* 背景色を指定 */
+	background-color: #f2dede !important;/* 背景色を指定 */
 }
 
 /* アラートスタイル */
