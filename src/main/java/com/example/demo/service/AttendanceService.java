@@ -257,7 +257,6 @@ public class AttendanceService {
 			String endTime = dailyForm.getEndTime();
 			String remarks = dailyForm.getRemarks();
 			Integer status = dailyForm.getStatus();
-			Boolean errorFlag = dailyForm.getErrorFlag();
 
 			if ((startTime == null || startTime.isEmpty()) && (endTime == null || endTime.isEmpty())
 					&& (remarks == null || remarks.isEmpty()) && (status == null)) {

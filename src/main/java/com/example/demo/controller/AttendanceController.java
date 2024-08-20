@@ -132,6 +132,8 @@ public class AttendanceController {
 		// 勤怠フォームの生成
 		AttendanceForm attendanceForm = attendanceService.setAttendanceForm(calendar, attendanceDtoList, userId);
 		
+		System.out.println(attendanceForm.getDailyAttendanceList());
+		
 		// 年月をDate型に変換
 		java.sql.Date targetYearMonth = java.sql.Date.valueOf(year + "-" + month + "-01");
 
@@ -226,6 +228,8 @@ public class AttendanceController {
 			model.addAttribute("loginUser", loginUser);
 			model.addAttribute("checkAllStatus", false);
 			
+			System.out.println(attendanceForm.getDailyAttendanceList());
+			
 			//本日の日付を渡す
 			LocalDate nowDate = LocalDate.now();
 			model.addAttribute("today", nowDate);
@@ -278,6 +282,11 @@ public class AttendanceController {
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
+	}
+
+	private Object getErrorFlag() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
 	}
 
 	/**

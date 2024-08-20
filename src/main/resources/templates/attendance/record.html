@@ -109,8 +109,7 @@
 					</tr>
 				</thead>
 				<tbody id="attendance-details">
-					<tr th:each="calendar, iterStat : ${calendar}"   th:classappend="${calendar.date.isEqual(today)} ? 'highlight' : ''">
-<!--						th:classappend="${attendanceForm.dailyAttendanceList.errorFlag == true} ? 'error-field':''">-->
+					<tr th:each="calendar, iterStat : ${calendar}"   th:classappend="${(calendar.date.isEqual(today) ? 'highlight' : ' ') + (attendanceForm != null && attendanceForm.dailyAttendanceList[iterStat.index].errorFlag == true ? 'error-field' : ' ')}">
 						<td th:text="${calendar.getFormattedDate()}">
 							<input type="hidden" name="date" th:value="${calendar.date}" />
 						</td>
@@ -214,6 +213,7 @@
 		});
 		
 		
+
 		
 
 	</script>
