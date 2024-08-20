@@ -34,9 +34,9 @@ public class UserManagementController {
 	@GetMapping("/manage")
 	public String userManage(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
 
-		// アクセス権限確認(管理者のみ)
+		// アクセス権限確認(管理者、マネージャのみ)
 		Users user = (Users) session.getAttribute("user");
-		if (user == null || !"1".equals(user.getRole())) {
+		if (user == null || !"1".equals(user.getRole()) && !"2".equals(user.getRole())) {
 			redirectAttributes.addFlashAttribute("error", "アクセス権限がありません。");
 			return "redirect:/";
 		}

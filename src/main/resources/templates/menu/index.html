@@ -13,7 +13,7 @@
 	<div class="index-content">
 		<a th:href="@{/logout}" class="logoff-button"><button>ログオフ</button></a>
 		<div class="container">
-			<div class="form-container">
+			<div class="menu-container">
 				<h2>処理メニュー</h2>
 
 				<tr>
@@ -27,6 +27,26 @@
 
 				<!-- 管理者用のメニュー -->
 				<div th:if="${role} == 'admin'">
+					<ul>
+						<li>
+							<a th:href="@{/userManagement/manage}" class="card">
+								<i class="fa-solid fa-user"></i>
+								<span>ユーザ情報<br>登録・変更</br></span>
+							</a>
+						</li>
+						<li>
+							<a class="card">
+								<i class="fas fa-users"></i>
+								<span>部署検索</span>
+							</a>
+						</li>
+						
+					</ul>
+				</div>
+
+				<!-- マネージャ用のメニュー -->
+				<div th:if="${role} == 'manager'">
+
 					<ul>
 						<li>
 							<a th:href="@{/attendance/record}" class="card">
@@ -52,21 +72,8 @@
 								<span>部署登録</span>
 							</a>
 						</li>
-						
 					</ul>
-				</div>
-
-				<!-- マネージャ用のメニュー -->
-				<div th:if="${role} == 'manager'">
-
-					<ul>
-						<li>
-							<a th:href="@{/attendance/record}" class="card">
-								<i class="fa-solid fa-clock"></i>
-								<span>勤怠承認</span>
-							</a>
-						</li>
-					</ul>
+					
 
 				</div>
 

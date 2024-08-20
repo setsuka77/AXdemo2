@@ -19,6 +19,7 @@ body {
 	display: flex; /* フレックスボックスを使う */
 	justify-content: center; /* 横方向の中央寄せ */
 	align-items: center; /* 縦方向の中央寄せ */
+	max-width: 1200px; /* 適切な最大幅を指定 */
 	width: 100%; /* 幅を100%に設定 */
 	padding: 20px; /* 内部パディングを設定 */
 }
@@ -33,19 +34,26 @@ body {
 }
 
 .index-content {
-	row-gap: 10px;
 	position: relative; /* 相対位置を設定 */
 	padding-top: 50px; /* ボタンの高さ分のパディングを設定 */
 }
 
-/* ログオフボタンのスタイル */
-.logoff-button {
-	position: absolute; /* 絶対位置を設定 */
-	top: 10px; /* 上からの距離 */
-	right: 20px; /* 右からの距離 */
+/* メニューコンテナスタイル */
+.menu-container {
+	width: 100%; /* 幅を100%に設定 */
+	max-width: 600px; /* 最大幅を600pxに設定 */
+	padding: 20px; /* 内部パディングを設定 */
+	background: #fff; /* 背景色を白に設定 */
+	border-radius: 8px; /* 角を丸くする */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
 }
 
-/* フォームのタイトルのスタイル */
+.menu-container h2 {
+	margin-bottom: 20px; /* 下部マージンを設定 */
+	text-align: center; /* テキストを中央寄せ */
+}
+
+/* ログインフォームのタイトルのスタイル */
 .login-form {
 	text-align: auto;
 	width: 80%; /* 幅を80%に設定 */
@@ -169,10 +177,22 @@ button:hover {
 	background: #FFA41D; /* ホバー時の背景色を設定 */
 }
 
-.button-group .button.disabled-form {
+.button-group button.disabled-form {
 	background-color: #d3d3d3; /* 灰色に設定 */
 	color: #6c757d; /* 文字色を暗い灰色に設定 */
 	cursor: not-allowed; /* 非活性時のカーソルを設定 */
+}
+
+/* ログオフボタンのスタイル */
+.logoff-button {
+	position: absolute; /* 絶対位置を設定 */
+	top: 10px; /* 上からの距離 */
+	right: 20px; /* 右からの距離 */
+}
+/* メニューボタンのスタイル */
+.button-back{
+	position: absolute; /* 絶対位置を設定 */
+	left: 20px;
 }
 
 /* カード全体のスタイル */
@@ -220,7 +240,7 @@ ul {
   list-style: none;
   padding: 0;
   display: flex;
-  justify-content: space-between; /* 両サイドを端に配置して中のflexを均等に配置 */
+  justify-content: space-around; /* 両サイドを端に配置して中のflexを均等に配置 */
   flex-wrap: wrap; /* カードが多い場合に折り返す */
 }
 
@@ -388,7 +408,7 @@ input.note {
 		flex-direction: column; /* 縦方向のレイアウトに変更*/
 	}
 	.form-container {
-		max-width: 100%; /*最大幅を100%に設定 */
+		width: 100%; /*最大幅を100%に設定 */
 	}
 	.attendance-container {
 		width: 100%; /* 幅を100%に設定 */
@@ -416,7 +436,7 @@ input.note {
 		flex-direction: column; /* 縦方向のレイアウトに変更*/
 	}
 	.form-container {
-		max-width: 100%; /*最大幅を100%に設定 */
+		width: 100%; /*最大幅を100%に設定 */
 	}
 	.button-group {
 		flex-direction: column; /*縦方向のレイアウトに変更*/
