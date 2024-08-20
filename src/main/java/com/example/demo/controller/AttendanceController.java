@@ -280,11 +280,6 @@ public class AttendanceController {
 		return "attendance/record";
 	}
 
-	private Object getErrorFlag() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
-	}
-
 	/**
 	 * 勤怠管理画面 メンバー、UM権限 承認申請を登録 承認申請ボタンを押下
 	 * 
@@ -391,5 +386,20 @@ public class AttendanceController {
 		redirectAttributes.addFlashAttribute("message", message);
 
 		return "redirect:/attendance/record";
+	}
+	
+	/*
+	 * 「メニュー」ボタン押下
+	 */
+	@PostMapping(path = "/attendance/record", params = "back")
+	public String backMenu(HttpSession session,RedirectAttributes redirectAttributes) {
+
+		//sessionを削除
+		session.removeAttribute("calendar");
+		session.removeAttribute("selectYear");
+		session.removeAttribute("selectMonth");
+		session.removeAttribute("monthlyAttendanceReq");
+		
+		return "redirect:/index";
 	}
 }

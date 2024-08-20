@@ -9,8 +9,16 @@
 </head>
 
 <body>
-	<div class="attendance-container">
+	<div class="attendance-content">
+	<a th:href="@{/logout}" class="logoff-button"><button>ログオフ</button></a>
+	<div class="button-back">
+	    <form th:action="@{/attendance/record}" method="post">
+	        <button type="submit" name="back" class="button">メニュー</button>
+	    </form>
+	</div>
 
+	<div class="attendance-container">
+	
 		<tr>
 			<td>
 				<div class="info-container">
@@ -186,6 +194,7 @@
 			</table>
 		</form>
 	</div>
+	</div>
 
 	<script>
 		//表示時必須チェック
@@ -217,7 +226,7 @@
 		
 
 	</script>
-
+	
 </body>
 
 </html>
