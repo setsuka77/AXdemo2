@@ -12,10 +12,10 @@
 <body>
 	<div class="container">
 		<div class="menu-container">
-			<div class="header-button">
+			<div class="menu-header-button">
+				<h2>処理メニュー</h2>
 				<a th:href="@{/logout}"><button>ログオフ</button></a>
 			</div>
-			<h2>処理メニュー</h2>
 
 			<tr>
 				<td>
@@ -56,7 +56,7 @@
 						</a>
 					</li>
 					<li>
-						<a class="card">
+						<a th:href="@{/report/dailyReport}" class="card">
 							<i class="fa-solid fa-file-alt"></i>
 							<span>日報承認</span>
 						</a>
