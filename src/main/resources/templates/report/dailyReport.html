@@ -30,6 +30,50 @@
 				</div>
 			</td>
 		</tr>
+		
+		<!-- 対象日付を指定して表示 メンバー/UM -->
+		<div class="row">
+			<form id="report-form" th:action="@{report/dailyReport}" method="post" th:if="${loginUser.role != '2'}">
+				<div class="form-group">
+					対象日付:
+<!--					<input type="date"  th:name="date"  th:value="${dailyReportForm.dailyReportDetailFormList.date}"></input>-->
+				</div>
+			</form>
+		</div>
+		
+		<form id="report-form" th:action="@{/report/dailyReport}" method="post">
+			<div class="button-group">
+				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" class="button">提出</button>
+			</div>
+			
+			<!-- 登録完了メッセージ表示 -->
+			<div th:if="${message}" class="alert alert-success" role="alert">
+				<p th:utext="${message}"></p>
+			</div>
+			
+			<table class="table table-hover" border="1" cellspacing="0" id="attendance">
+				<thead>
+					<tr>
+						<th>作業時間(h)</th>
+						<th>作業内容</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}">
+						<td>
+							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
+								th:value="${detail.time}" min="0" step="1">
+						</td>
+						<td>
+							<textarea th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
+								th:text="${detail.content}"></textarea>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+
 
 </body>
 </html>

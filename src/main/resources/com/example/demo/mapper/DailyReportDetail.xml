@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.DailyReportDetail">
+	
+	<!-- 日報登録 -->
+	<insert id="insert"
+		parameterType="com.example.demo.entity.DailyReportDetail">
+	INSERT INTO daily_report_detail (user_id,date,time,content)
+	VALUES (#{userId},#{date},#{time},#{content})
+	</insert>
+	
+	<!-- 日報更新 -->
+	<update id="update"
+		parameterType="com.example.demo.entity.DailyReportDetail">
+		UPDATE daily_report_detail
+		SET
+		user_id = #{userId},
+		date = #{date},
+		time = #{time},
+		content = #{content}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

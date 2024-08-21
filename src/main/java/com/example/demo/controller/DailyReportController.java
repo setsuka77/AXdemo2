@@ -1,5 +1,9 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,11 +11,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.Users;
+import com.example.demo.form.DailyReportDetailForm;
+import com.example.demo.form.DailyReportForm;
+import com.example.demo.service.DailyReportService;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class DailyReportController {
+	
+	@Autowired
+	private DailyReportService dailyReportService;
 	
 	/**
 	 * 日報登録画面 初期表示
@@ -21,14 +31,42 @@ public class DailyReportController {
 	 * @return 日報登録画面
 	 */
 	@GetMapping("/report/dailyReport")
-	public String showAttendanceForm(Model model, HttpSession session) {
+	public String showDailyReport(Model model, HttpSession session) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		
-		model.addAttribute("loginUser", loginUser);
-		return "report/dailyReport";
+		// 初期表示用に10行の空のフォームを準備する
+	    List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
+	    for (int i = 0; i < 10; i++) {
+	        dailyReportDetailFormList.add(new DailyReportDetailForm());
+	    }
+
+	    // DailyReportForm を初期化してモデルに追加
+	    DailyReportForm dailyReportForm = new DailyReportForm();
+	    dailyReportForm.setDailyReportDetailFormList(dailyReportDetailFormList);
+	    
+	    model.addAttribute("loginUser", loginUser);
+	    model.addAttribute("dailyReportForm", dailyReportForm);
+	    return "report/dailyReport";
 	}
 	
+	/*
+	 * 「提出」ボタン押下
+	 */
+	@PostMapping(path = "/report/dailyReport", params = "submit")
+	public String submitReport(HttpSession session,DailyReportForm dailyReportForm,Model model) {
+		//ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		
+		System.out.println(dailyReportForm);
+
+		//登録処理 
+		String message = dailyReportService.submitDailyReport(dailyReportForm, loginUser);
+		model.addAttribute("message", message);
+		System.out.println(message);
+		
+		return "redirect:/report/dailyReport";
+	}
 	
 	
 	/*
