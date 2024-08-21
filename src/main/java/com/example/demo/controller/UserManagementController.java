@@ -41,9 +41,8 @@ public class UserManagementController {
 			return "redirect:/";
 		}
 		
-		// 登録ボタンを非活性に設定
-		boolean checkRegister = false;
-		model.addAttribute("checkRegister", checkRegister);
+		// 登録ボタンを初期表示時に非活性に設定
+		model.addAttribute("checkRegister", session.getAttribute("checkRegister") != null ? session.getAttribute("checkRegister") : true);
 
 		// バリデーションエラー時入力保持
 		if (!model.containsAttribute("userForm")) {
@@ -73,6 +72,7 @@ public class UserManagementController {
 	        userForm.setId(userDto.getId());
 	        userForm.setPassword(userDto.getPassword());
 	        userForm.setRole(userDto.getRole());
+	        userForm.setDepartmentId(userDto.getDepartmentId());
 	        
 	        // startDate の型変換
 	        if (userDto.getStartDate() != null) {
@@ -86,16 +86,22 @@ public class UserManagementController {
 
 	            userForm.setStartDate(formattedDate);
 	        }
+	     // 検索成功時は登録ボタンを活性に
+	        session.setAttribute("checkRegister", false);
 	    } else {
 	        // 新規、ID生成
 	        userForm.setId(userManagementService.generateNewUserId());
 	        // バリデーションエラー表示
-	        redirectAttributes.addFlashAttribute("searchError", "存在しないユーザーです。");
+	        redirectAttributes.addFlashAttribute("searchError", "存在しないユーザです。");
 	        redirectAttributes.addFlashAttribute("userForm", userForm);
+	     // 検索エラー時は登録ボタンを活性に
+	        session.setAttribute("checkRegister", false);
 	        return "redirect:/userManagement/manage";
 	    }
 
 		model.addAttribute("userForm", userForm);
+		// 検索成功時は登録ボタンを活性に
+		session.setAttribute("checkRegister", false);
 		return "userManagement/manage";
 	}
 
@@ -115,9 +121,12 @@ public class UserManagementController {
 
 		// バリデーションエラー表示
 		String errorMessage = userManagementService.validateUserForm(userForm);
+
 		if (errorMessage != null) {
 			redirectAttributes.addFlashAttribute("registerError", errorMessage);
 			redirectAttributes.addFlashAttribute("userForm", userForm);
+			// バリデーションエラー時は登録ボタンを活性に
+			session.setAttribute("checkRegister", false);
 			return "redirect:/userManagement/manage";
 		}
 
@@ -128,6 +137,8 @@ public class UserManagementController {
         } else {
             redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "を登録/更新しました。");
         }
+        // 登録、更新、削除が成功した場合は登録ボタンを活性に
+        session.setAttribute("checkRegister", true);
 	    
 		redirectAttributes.addFlashAttribute("userForm", new UserManagementForm());
 		return "redirect:/userManagement/manage";

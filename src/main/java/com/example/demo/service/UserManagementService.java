@@ -36,6 +36,7 @@ public class UserManagementService {
 		dto.setName(user.getName());
 		dto.setPassword(user.getPassword());
 		dto.setRole(user.getRole());
+		dto.setDepartmentId(user.getDepartmentId());
 		dto.setStartDate(user.getStartDate());
 		return dto;
 	}
@@ -57,52 +58,53 @@ public class UserManagementService {
 	 * @param id       ユーザID
 	 */
 	public boolean registerOrUpdateUser(UserManagementForm userForm, Integer id) {
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-	    boolean isDeleted = false;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+		boolean isDeleted = false;
 
-	    // 入力内容取得
-	    UserManagementDto user = new UserManagementDto();
-	    user.setName(userForm.getName());
-	    user.setPassword(userForm.getPassword());
-	    user.setRole(userForm.getRole());
+		// 入力内容取得
+		UserManagementDto user = new UserManagementDto();
+		user.setName(userForm.getName());
+		user.setPassword(userForm.getPassword());
+		user.setRole(userForm.getRole());
+		user.setDepartmentId(userForm.getDepartmentId());
 
-	    // 9999/99/99が入力された時の論理削除
-	    // startDateをStringからLocalDateに変換
-	    if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
-	        if ("9999/99/99".equals(userForm.getStartDate())) {
-	            // 特殊な未来日として設定
-	            LocalDate futureDate = LocalDate.of(9999, 12, 31); // 9999年12月31日
-	            user.setStartDate(futureDate); // LocalDateとして設定
-	            isDeleted = true; // 削除フラグを立てる
-	        } else {
-	            // 通常の日付として処理
-	            LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
-	            user.setStartDate(startDate); // LocalDateとして設定
-	        }
-	    } else {
-	        // startDateがnullまたは空の場合はnullに設定
-	        user.setStartDate(null);
-	    }
+		// 9999/99/99が入力された時の論理削除
+		// startDateをStringからLocalDateに変換
+		if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
+			if ("9999/99/99".equals(userForm.getStartDate())) {
+				// 特殊な未来日として設定
+				LocalDate futureDate = LocalDate.of(9999, 12, 31); // 9999年12月31日
+				user.setStartDate(futureDate); // LocalDateとして設定
+				isDeleted = true; // 削除フラグを立てる
+			} else {
+				// 通常の日付として処理
+				LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
+				user.setStartDate(startDate); // LocalDateとして設定
+			}
+		} else {
+			// startDateがnullまたは空の場合はnullに設定
+			user.setStartDate(null);
+		}
 
-	    // フォームのIDが存在するか確認
-	    Integer userId = userForm.getId();
-	    UserManagementDto existingUser = null;
+		// フォームのIDが存在するか確認
+		Integer userId = userForm.getId();
+		UserManagementDto existingUser = null;
 
-	    if (userId != null) {
-	        existingUser = usersMapper.identifyUserId(userId);
-	    }
+		if (userId != null) {
+			existingUser = usersMapper.identifyUserId(userId);
+		}
 
-	    if (existingUser == null) {
-	        // 新規登録実行
-	        user.setId(userId);
-	        usersMapper.insertUser(user);
-	    } else {
-	        // 既存更新実行
-	        user.setId(userId);
-	        usersMapper.updateUser(user);
-	    }
-	    
-	    return isDeleted;
+		if (existingUser == null) {
+			// 新規登録実行
+			user.setId(userId);
+			usersMapper.insertUser(user);
+		} else {
+			// 既存更新実行
+			user.setId(userId);
+			usersMapper.updateUser(user);
+		}
+
+		return isDeleted;
 	}
 
 	/**
@@ -129,8 +131,8 @@ public class UserManagementService {
 		String password = userForm.getPassword();
 		String halfWidthRegex = "^[a-zA-Z0-9]{1,16}$";
 		if (password == null || !password.matches(halfWidthRegex)) {
-		    errorMessage.append("パスワード : 16桁以下の半角英数字のみで入力してください。<br>");
-		    hasErrors = true;
+			errorMessage.append("パスワード : 16桁以下の半角英数字のみで入力してください。<br>");
+			hasErrors = true;
 		}
 
 		// 権限チェック
@@ -140,12 +142,19 @@ public class UserManagementService {
 			hasErrors = true;
 		}
 
+		// 所属部署 必須チェック
+		Integer departmentId = userForm.getDepartmentId();
+		if (departmentId == null) {
+			errorMessage.append("所属部署 : 所属部署を選択してください。<br>");
+			hasErrors = true;
+		}
+
 		// 利用開始日 形式チェック
 		String startDate = userForm.getStartDate();
 		Pattern datePattern = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$");
 		if (startDate == null || !datePattern.matcher(startDate).matches()) {
-		    errorMessage.append("利用開始日 : yyyy/mm/dd のフォーマットで入力してください。<br>");
-		    hasErrors = true;
+			errorMessage.append("利用開始日 : yyyy/mm/dd のフォーマットで入力してください。<br>");
+			hasErrors = true;
 		}
 
 		return hasErrors ? errorMessage.toString() : null;

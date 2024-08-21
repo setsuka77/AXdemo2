@@ -76,6 +76,15 @@
 					</select>
 				</div>
 				<div class="input-group">
+					<label for="departmentId">所属部署</label>
+					<select id="departmentId" name="departmentId">
+						<option value="" disabled selected>選択してください</option>
+						<option value="1" th:selected="${userForm.departmentId == 1}">管理部</option>
+						<option value="2" th:selected="${userForm.departmentId == 2}">ソリューション事業部</option>
+						<option value="3" th:selected="${userForm.departmentId == 3}">システム開発事業部</option>
+					</select>
+				</div>
+				<div class="input-group">
 					<label for="start-date">利用開始日</label>
 					<input type="text" id="start-date" name="startDate" th:field="*{startDate}"
 						placeholder="YYYY/MM/DD">
@@ -86,8 +95,8 @@
 				</div>
 
 				<div class="button-group">
-					<button type="submit" class="button" th:attr="disabled=${checkRegister == false}"
-						th:classappend="${checkRegister == false ? 'disabled-form' : ''}">登録</button>
+					<button type="submit" class="button" id="register-button" th:classappend="${checkRegister} ? 'disabled-form' : ''"
+        th:disabled="${checkRegister}">登録</button>
 				</div>
 
 			</form>
@@ -101,9 +110,13 @@
 			const username = document.getElementById('name').value;
 			if (!username) {
 				document.getElementById('username-error').style.display = 'block';
+				// 登録ボタンを非活性にする
+				document.getElementById('register-button').disabled = true;
 				return false; // フォームの送信をキャンセル
 			} else {
 				document.getElementById('username-error').style.display = 'none';
+				// 検索成功時に登録ボタンを活性にする
+				document.getElementById('register-button').disabled = false;
 				return true; // フォームの送信を許可
 			}
 		}

@@ -15,6 +15,8 @@ public class UserManagementForm {
 	private String password;
 	/** 役職 */
 	private String role;
+	/** 部署ID */
+	private Integer departmentId;
 	/** 有効開始日 */
 	@DateTimeFormat(pattern = "yyyy/MM/dd") // 入力フォームのフォーマットに合わせる
 	private String startDate;

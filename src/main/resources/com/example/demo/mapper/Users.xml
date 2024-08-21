@@ -44,15 +44,18 @@
 
 	<insert id="insertUser"
 		parameterType="com.example.demo.dto.UserManagementDto">
-		INSERT INTO users (id, name, password, role, start_date)
-		VALUES (#{id}, #{name}, #{password}, #{role}, #{startDate})
+		INSERT INTO users (id, name, password, role,
+		department_id, start_date)
+		VALUES (#{id}, #{name}, #{password},
+		#{role}, #{departmentId}, #{startDate})
 	</insert>
 
 	<update id="updateUser"
 		parameterType="com.example.demo.dto.UserManagementDto">
 		UPDATE users SET password = #{password}, role = #{role},
-		start_date =
-		#{startDate} WHERE id = #{id}
+		department_id = #{departmentId},
+		start_date =#{startDate}
+		WHERE id = #{id}
 	</update>
 
 </mapper>
