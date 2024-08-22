@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +18,25 @@ public class DailyReportService {
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
 	
-	/*
-	 * 日報登録画面　日報登録処理
-	 */
-	public String submitDailyReport(DailyReportForm dailyReportForm, Users loginUser) {
+   /**
+	* 日報登録画面　日報登録処理
+	* 
+	* @param dailyReportForm 
+	* @param loginUser 
+	* @param selectDate 
+	* @return 処理結果のメッセージ
+	*/
+	public String submitDailyReport(DailyReportForm dailyReportForm, Users loginUser,String selectDate) {
 		List<DailyReportDetailForm> dailyReportDetailFormList = dailyReportForm.getDailyReportDetailFormList();
 		Integer userId = loginUser.getId();
+		Date submitDate= Date.valueOf(selectDate);
 		
 		for(DailyReportDetailForm dailyForm : dailyReportDetailFormList) {
 			if(dailyForm.getTime() != null && dailyForm.getContent() != null) {
 				DailyReportDetail dailyReportDetail = new DailyReportDetail();
 				dailyReportDetail.setId(null);
 				dailyReportDetail.setUserId(userId);
-				dailyReportDetail.setDate(dailyForm.getDate());
+				dailyReportDetail.setDate(submitDate);
 				dailyReportDetail.setTime(dailyForm.getTime());
 				dailyReportDetail.setContent(dailyForm.getContent());
 				
@@ -43,8 +50,6 @@ public class DailyReportService {
 				}
 			}
 		}
-		
-		
 		return "日報が提出されました。";
 	}
 
