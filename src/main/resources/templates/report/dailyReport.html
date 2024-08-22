@@ -57,17 +57,55 @@
 					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}">
 						<td>
 							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
-								th:value="${detail.time}" min="0" step="1">
+								th:value="${detail.time}" class="input-time" min="0" step="1">
 						</td>
-						<td>
+						<td class="textarea-wrapper">
 							<textarea th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
-								th:text="${detail.content}"></textarea>
+								th:text="${detail.content}" class="textarea note" rows="2" cols="60"></textarea>
+							<div class="char-counter" id="charCounter">0 / 50</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</form>
 	</div>
+
+	<script>
+
+		// テキストエリアの高さ調整と文字数カウンター
+		const textareas = document.querySelectorAll(".textarea");
+
+		const adjustHeight = (textarea) => {
+			textarea.style.height = 'auto';
+			textarea.style.height = `${textarea.scrollHeight}px`;
+		};
+
+		textareas.forEach(textarea => {
+			const maxLength = 50;
+			const charCounter = textarea.nextElementSibling;
+
+			// 初期カウント表示
+			charCounter.textContent = `${textarea.value.length} / ${maxLength}`;
+
+			// 初期の高さ調整
+			adjustHeight(textarea);
+
+			// textareaに文字が入力されるたびに
+			textarea.addEventListener("input", () => {
+				// その時点での文字数を取得する 
+				const currentLength = textarea.value.length;
+				// 「現在文字数 / 最大文字数」というテキストを作って文字数カウンター要素に入れる
+				charCounter.textContent = `${currentLength} / ${maxLength}`;
+
+				// 高さを調整する
+				adjustHeight(textarea);
+			});
+
+			// ウィンドウサイズが変わったときに高さを再調整
+			window.addEventListener("resize", () => adjustHeight(textarea));
+		});
+
+	</script>
 
 
 </body>

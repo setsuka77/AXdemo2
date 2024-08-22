@@ -143,4 +143,17 @@ public class UserManagementController {
 		redirectAttributes.addFlashAttribute("userForm", new UserManagementForm());
 		return "redirect:/userManagement/manage";
 	}
+	
+	/*
+	 * ユーザ管理画面
+	 * 「メニュー」ボタン押下時 セッション切断処理
+	 */
+	@PostMapping(path = "/manage", params = "back")
+	public String backMenu(HttpSession session,RedirectAttributes redirectAttributes) {
+
+		//sessionを削除
+		session.removeAttribute("checkRegister");
+		
+		return "redirect:/index";
+	}
 }

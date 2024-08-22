@@ -176,6 +176,35 @@ body {
 	flex-shrink: 0; /* ボタンのサイズが縮まないように設定 */
 }
 
+/* テキストエリアスタイル */
+textarea {
+	resize:none;
+	width: 100%; /* 幅を100%に設定 */
+	padding: 10px; /* 内部パディングを設定 */
+	margin-bottom: 10px; /* 文字数カウント用の余白 */
+	border: 1px solid #ccc; /* ボーダーを設定 */
+	border-radius: 4px; /* 角を丸くする */
+	font-size: 14px; /* フォントサイズを設定 */
+	overflow: hidden; /* 縦スクロールを無効 */
+    white-space: pre-wrap; /* 改行と折り返しを考慮 */
+    word-wrap: break-word; /* 長い単語を折り返す */
+}
+
+/* テキストエリア文字数カウンター */
+.textarea-wrapper {
+  position: relative; 
+  width: 100%;
+  max-width: 400px;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: 5px;
+  right: 15px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
 /* フォーム非活性時スタイル */
 .disabled-form {
 	pointer-events: none; /* フォーム全体を非活性にする */
