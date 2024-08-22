@@ -25,7 +25,7 @@
 				<div class="info-container">
 					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span>
+					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span></div>
 				</div>
 			</td>
 		</tr>
