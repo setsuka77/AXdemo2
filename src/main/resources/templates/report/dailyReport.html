@@ -25,7 +25,7 @@
 				<div class="info-container">
 					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<!--					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span>-->
+					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span>
 				</div>
 			</td>
 		</tr>
@@ -41,6 +41,10 @@
 				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" class="button">提出</button>
 			</div>
 
+			<!-- 登録時入力エラーメッセージ表示 -->
+			<div th:if="${registerError}" class="alert alert-danger" role="alert">
+				<p th:utext="${registerError}"></p>
+			</div>
 			<!-- 登録完了メッセージ表示 -->
 			<div th:if="${message}" class="alert alert-success" role="alert">
 				<p th:utext="${message}"></p>
@@ -57,7 +61,7 @@
 					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}">
 						<td>
 							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
-								th:value="${detail.time}" class="input-time" min="0" step="1">
+								th:value="${detail.time}" min="0" step="1"> h
 						</td>
 						<td class="textarea-wrapper">
 							<textarea th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"

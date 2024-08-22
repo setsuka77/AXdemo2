@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.DailyReportMapper">
+
+	<!-- 日報申請情報を取得 -->
+    <select id="findByUserIdAndDate" resultType="com.example.demo.entity.DailyReport">
+        SELECT * FROM daily_report
+        WHERE user_id = #{userId}
+        AND date = #{date}
+    </select>
+
+    <!-- 提出ボタン押下　日報申請 -->
+    <insert id="insert" parameterType="com.example.demo.entity.DailyReport">
+        INSERT INTO daily_report (user_id, date, status)
+        VALUES (#{userId}, #{date}, #{status})
+    </insert>
+
+    <!-- 提出ボタン押下　日報申請更新 -->
+    <update id="update" parameterType="com.example.demo.entity.DailyReport">
+        UPDATE daily_report
+        SET date = #{date}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

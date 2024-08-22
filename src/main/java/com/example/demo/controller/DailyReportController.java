@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -45,12 +47,19 @@ public class DailyReportController {
 	    DailyReportForm dailyReportForm = new DailyReportForm();
 	    dailyReportForm.setDailyReportDetailFormList(dailyReportDetailFormList);
 	    
+	    //上部にステータスを表示
+	    //dailyReportService.getStatusText(loginUser);
+	    model.addAttribute("statusText", "未提出");
+	    
 	    model.addAttribute("loginUser", loginUser);
 	    model.addAttribute("dailyReportForm", dailyReportForm);
 	    return "report/dailyReport";
 	}
 	
-	/*
+	
+	
+	
+	/**
 	 * 「提出」ボタン押下
 	 * 
 	 * @param session 
@@ -60,20 +69,43 @@ public class DailyReportController {
 	 * @return 日報登録画面
 	 */
 	@PostMapping(path = "/report/dailyReport", params = "submit")
-	public String submitReport(HttpSession session,DailyReportForm dailyReportForm,Model model,String selectDate) {
+	public String submitReport(HttpSession session,@Validated DailyReportForm dailyReportForm,BindingResult bindingResult,Model model,String selectDate) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		
+		//入力チェック
+	    StringBuilder errorMessages = new StringBuilder();
+	    if (bindingResult.hasErrors()) {
+	        bindingResult.getAllErrors().forEach(error -> {
+	            errorMessages.append(error.getDefaultMessage());
+	        });
+	    }
+	    String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);
+	    if (!validationErrors.isEmpty()) {
+	        errorMessages.append(validationErrors);
+	    }
 
+	    // エラーが存在する場合
+	    if (errorMessages != null) {
+	        model.addAttribute("registerError", errorMessages.toString());
+	        model.addAttribute("loginUser", loginUser);
+	        model.addAttribute("dailyReportForm", dailyReportForm);
+	        return "report/dailyReport";
+	    }
+	    
 		//登録処理 
 		String message = dailyReportService.submitDailyReport(dailyReportForm, loginUser,selectDate);
 		model.addAttribute("message", message);
 		System.out.println(message);
 		
-		return "redirect:/report/dailyReport";
+		//status変更
+		dailyReportService.changeStatus(loginUser,selectDate,1);
+		
+		return "report/dailyReport";
 	}
 	
 	
-	/*
+	/**
 	 * 「メニュー」ボタン押下
 	 * 
 	 * @param redirectAttributes

@@ -1,20 +1,35 @@
 package com.example.demo.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
+import java.sql.Date;
 
-import com.example.demo.entity.DailyReportDetail;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.example.demo.entity.DailyReport;
 
 @Mapper
 public interface DailyReportMapper {
 	
-	/*
-	 * 提出ボタン押下　日報登録
+	/**
+	 * 日報申請情報 取得
+	 *
+	 * @param userId 
+	 * @param date 
+	 * @return 指定されたユーザーIDと日付に一致する日報申請情報のリスト
 	 */
-	void insert(DailyReportDetail dailyReportDetail);
+	DailyReport findByUserIdAndDate(@Param("userId") Integer userId, @Param("date") Date date);
 	
-	/*
-	 * 提出ボタン押下　日報更新
+	/**
+	 * 日報申請情報 登録
+	 *
+	 * @param dailyReport 
 	 */
-	void update(DailyReportDetail dailyReportDetail);
-
+	void insert(DailyReport dailyReport);
+	
+	/**
+	 * 日報申請情報 更新
+	 *
+	 * @param dailyReport 
+	 */
+	void update(DailyReport dailyReport);
 }
