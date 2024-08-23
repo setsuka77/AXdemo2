@@ -17,4 +17,7 @@ public class DailyReportDetailForm {
 	/** 作業内容 */
 	@Size(max = 50, message = "50字以内で入力してください。")
 	private String content;
+	
+	/** エラーFlag */
+	private Boolean errorFlag;
 }

@@ -44,7 +44,7 @@ public class DailyReportService {
 		StringBuilder errorMessages = new StringBuilder();
 
 		//対象日付のチェック
-		if (selectDate == null) {
+		if (selectDate == null|| selectDate.isEmpty()) {
 			errorMessages.append("日付が選択されていません。<br>");
 		}
 
@@ -57,8 +57,10 @@ public class DailyReportService {
 		    // 片方だけ入力されている場合
 		    if (hasTime && !hasContent) {
 		        errorMessages.append("作業内容が入力されていません。<br>");
+		        detailForm.setErrorFlag(true);
 		    } else if (!hasTime && hasContent) {
 		        errorMessages.append("作業時間が入力されていません。<br>");
+		        detailForm.setErrorFlag(true);
 		    }
 		}
 		return errorMessages.toString();

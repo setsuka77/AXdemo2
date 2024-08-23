@@ -69,21 +69,20 @@ public class DailyReportController {
 	 * @return 日報登録画面
 	 */
 	@PostMapping(path = "/report/dailyReport", params = "submit")
-	public String submitReport(HttpSession session,DailyReportForm dailyReportForm,@Valid DailyReportDetailForm dailyReportDetailForm,BindingResult result,
+	public String submitReport(HttpSession session,@Valid DailyReportForm dailyReportForm,BindingResult result,
 			Model model,String selectDate, RedirectAttributes redirectAttributes) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		
 		// ユーザー情報が取得できない場合の処理
         if (loginUser == null) {
-            return "redirect:/login"; // ログイン画面にリダイレクト
+            return "redirect:/login"; // ログイン画面に戻る
         }
 		
 		//入力チェック
 	    StringBuilder errorMessages = new StringBuilder();
 		 if (result.hasErrors()) {
 			 result.getAllErrors().forEach(error -> errorMessages.append(error.getDefaultMessage()).append("<br>"));
-			 System.out.println("ここまで来てる？");
 		}
 
 	    String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);

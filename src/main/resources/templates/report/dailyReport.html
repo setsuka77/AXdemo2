@@ -42,7 +42,7 @@
 			</div>
 
 			<!-- 登録時入力エラーメッセージ表示 -->
-			<div th:if="${registerError}" class="alert alert-danger" role="alert" th:each="error : ${#fields.detailedErrors()}">
+			<div th:if="${registerError}" class="alert alert-danger" role="alert">
 				<p th:utext="${registerError}"></p>
 			</div>
 			<!-- 登録完了メッセージ表示 -->
