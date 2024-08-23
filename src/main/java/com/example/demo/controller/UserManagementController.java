@@ -6,13 +6,6 @@ import com.example.demo.form.UserManagementForm;
 import com.example.demo.service.UserManagementService;
 
 import java.text.ParseException;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,49 +66,33 @@ public class UserManagementController {
 	public String searchUser(@ModelAttribute UserManagementForm userForm, HttpSession session, Model model,
 			RedirectAttributes redirectAttributes) {
 
+		// 入力ユーザ名でユーザ情報を検索
 		UserManagementDto userDto = userManagementService.searchUserByName(userForm.getName());
 
 		// 新規か既存かを判断
 		if (userDto != null) {
-			// 既存、登録情報表示
-			userForm.setId(userDto.getId());
-			userForm.setPassword(userDto.getPassword());
-			userForm.setRole(userDto.getRole());
-			userForm.setDepartmentId(userDto.getDepartmentId());
+			// 既存ユーザの情報をフォームに設定
+			userForm = userManagementService.setUserFormFromDto(userDto, userForm);
 
-			// startDate の型変換
-			if (userDto.getStartDate() != null) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-				String formattedDate = userDto.getStartDate().format(formatter);
-
-				// 利用開始日が9999/12/31だった場合の処理
-				if ("9999/12/31".equals(formattedDate)) {
-					formattedDate = "9999/99/99";
-				}
-
-				userForm.setStartDate(formattedDate);
-			}
 			// 検索成功時は登録ボタンを活性に
 			session.setAttribute("checkRegister", false);
 		} else {
-			// 新規、ID生成
+			// 新規ユーザのID生成とエラー表示
 			userForm.setId(userManagementService.generateNewUserId());
-			// バリデーションエラー表示
 			redirectAttributes.addFlashAttribute("searchError", "存在しないユーザです。");
 			redirectAttributes.addFlashAttribute("userForm", userForm);
+
 			// 検索エラー時は登録ボタンを活性に
 			session.setAttribute("checkRegister", false);
 			return "redirect:/userManagement/manage";
 		}
 
 		model.addAttribute("userForm", userForm);
-		// 検索成功時は登録ボタンを活性に
-		session.setAttribute("checkRegister", false);
 		return "userManagement/manage";
 	}
 
 	/**
-	 * ユーザ管理画面 登録ボタン押下時 登録/更新機能
+	 * ユーザ管理画面 登録ボタン押下時 登録/更新/削除機能
 	 * 
 	 * @param userForm           ユーザ管理フォーム
 	 * @param session
@@ -135,31 +112,10 @@ public class UserManagementController {
 			bindingResult.rejectValue("name", "error.userForm", userNameError);
 		}
 
-		// フィールド順を定義 (フォームの順番)
-		List<String> fieldOrder = Arrays.asList("name", "id", "password", "role", "departmentId", "startDate");
-
-		// フィールドごとのエラーメッセージを保持するMap
-		Map<String, List<String>> errors = new LinkedHashMap<>();
-
-		// フィールド順に従ってエラーメッセージをソート
-		bindingResult.getFieldErrors().stream()
-				.sorted(Comparator.comparing(error -> fieldOrder.indexOf(error.getField()))).forEach(error -> {
-					String message = error.getDefaultMessage();
-
-					// 同じフィールドに複数のエラーが発生する場合、同じメッセージを重複させない
-					if (!errors.containsKey(error.getField()) || !errors.get(error.getField()).contains(message)) {
-						errors.computeIfAbsent(error.getField(), k -> new ArrayList<>()).add(message);
-					}
-				});
-
-		// エラーメッセージを HTML に合成
-		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("ユーザー登録/更新に失敗しました。<br>");
-			errors.forEach((field, messages) -> {
-				messages.forEach(message -> errorMessage.append(message).append("<br>"));
-			});
-
-			redirectAttributes.addFlashAttribute("registerError", errorMessage.toString());
+		// エラーメッセージがあれば表示
+		if (bindingResult.hasErrors()) {
+			String errorMessage = userManagementService.formatErrors(bindingResult);
+			redirectAttributes.addFlashAttribute("registerError", errorMessage);
 			redirectAttributes.addFlashAttribute("userForm", userForm);
 			session.setAttribute("checkRegister", false);
 			return "redirect:/userManagement/manage";
@@ -184,10 +140,8 @@ public class UserManagementController {
 	 */
 	@PostMapping(path = "/manage", params = "back")
 	public String backMenu(HttpSession session, RedirectAttributes redirectAttributes) {
-
 		// sessionを削除
 		session.removeAttribute("checkRegister");
-
 		return "redirect:/index";
 	}
 }
