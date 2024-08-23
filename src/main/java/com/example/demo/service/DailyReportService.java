@@ -44,7 +44,7 @@ public class DailyReportService {
 		StringBuilder errorMessages = new StringBuilder();
 
 		//対象日付のチェック
-		if (selectDate == null || selectDate.isEmpty()) {
+		if (selectDate == null) {
 			errorMessages.append("日付が選択されていません。<br>");
 		}
 

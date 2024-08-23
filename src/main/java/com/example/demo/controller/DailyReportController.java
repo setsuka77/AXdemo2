@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,6 +17,7 @@ import com.example.demo.form.DailyReportForm;
 import com.example.demo.service.DailyReportService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class DailyReportController {
@@ -69,39 +69,45 @@ public class DailyReportController {
 	 * @return 日報登録画面
 	 */
 	@PostMapping(path = "/report/dailyReport", params = "submit")
-	public String submitReport(HttpSession session,@Validated DailyReportForm dailyReportForm,BindingResult bindingResult,Model model,String selectDate) {
+	public String submitReport(HttpSession session,DailyReportForm dailyReportForm,@Valid DailyReportDetailForm dailyReportDetailForm,BindingResult result,
+			Model model,String selectDate, RedirectAttributes redirectAttributes) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		
+		// ユーザー情報が取得できない場合の処理
+        if (loginUser == null) {
+            return "redirect:/login"; // ログイン画面にリダイレクト
+        }
+		
 		//入力チェック
 	    StringBuilder errorMessages = new StringBuilder();
-	    if (bindingResult.hasErrors()) {
-	        bindingResult.getAllErrors().forEach(error -> {
-	            errorMessages.append(error.getDefaultMessage());
-	        });
-	    }
+		 if (result.hasErrors()) {
+			 result.getAllErrors().forEach(error -> errorMessages.append(error.getDefaultMessage()).append("<br>"));
+			 System.out.println("ここまで来てる？");
+		}
+
 	    String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);
 	    if (!validationErrors.isEmpty()) {
 	        errorMessages.append(validationErrors);
 	    }
 
 	    // エラーが存在する場合
-	    if (errorMessages != null) {
+	    if (errorMessages.length() > 0) {
 	        model.addAttribute("registerError", errorMessages.toString());
 	        model.addAttribute("loginUser", loginUser);
 	        model.addAttribute("dailyReportForm", dailyReportForm);
+	        model.addAttribute("statusText", "未提出");
 	        return "report/dailyReport";
 	    }
 	    
 		//登録処理 
-		String message = dailyReportService.submitDailyReport(dailyReportForm, loginUser,selectDate);
-		model.addAttribute("message", message);
-		System.out.println(message);
+		String message = dailyReportService.submitDailyReport(dailyReportForm,loginUser,selectDate);
+		redirectAttributes.addFlashAttribute("message", message);
 		
 		//status変更
 		dailyReportService.changeStatus(loginUser,selectDate,1);
 		
-		return "report/dailyReport";
+		return "redirect:/report/dailyReport";
 	}
 	
 	
@@ -113,9 +119,6 @@ public class DailyReportController {
 	 */
 	@PostMapping(path = "/report/dailyReport", params = "back")
 	public String backMenu(RedirectAttributes redirectAttributes) {
-
-		/*		//sessionを削除
-				session.removeAttribute("calendar");*/
 		
 		return "redirect:/index";
 	}

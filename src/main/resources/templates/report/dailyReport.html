@@ -34,15 +34,15 @@
 		<form id="report-form" th:action="@{/report/dailyReport}" method="post" th:if="${loginUser.role != '2'}">
 			<div class="form-group">
 				対象日付:
-				<input type="date" name="selectDate" th:value="${selectDate}"></input>
+				<input type="date" name="selectDate" th:value="${selectDate}">
 			</div>
 
 			<div class="button-group">
-				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" class="button">提出</button>
+				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit" class="button">提出</button>
 			</div>
 
 			<!-- 登録時入力エラーメッセージ表示 -->
-			<div th:if="${registerError}" class="alert alert-danger" role="alert">
+			<div th:if="${registerError}" class="alert alert-danger" role="alert" th:each="error : ${#fields.detailedErrors()}">
 				<p th:utext="${registerError}"></p>
 			</div>
 			<!-- 登録完了メッセージ表示 -->
@@ -61,10 +61,10 @@
 					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}">
 						<td>
 							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
-								th:value="${detail.time}" min="0" step="1"> h
+								th:value="${detail.time}" id="time" min="0" step="1"> h
 						</td>
 						<td class="textarea-wrapper">
-							<textarea th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
+							<textarea id="content" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
 								th:text="${detail.content}" class="textarea note" rows="2" cols="60"></textarea>
 							<div class="char-counter" id="charCounter">0 / 50</div>
 						</td>
@@ -108,6 +108,37 @@
 			// ウィンドウサイズが変わったときに高さを再調整
 			window.addEventListener("resize", () => adjustHeight(textarea));
 		});
+		
+		
+		// 提出ボタン有効化
+    window.addEventListener('DOMContentLoaded', function () {
+        // 提出ボタンを最初は無効化
+        const submitButton = document.getElementById('submit');
+        submitButton.disabled = true;
+        submitButton.classList.add('disabled-form');
+
+        // 時間と内容が入力されたときにボタンを有効化
+        const timeInput = document.querySelector("input[name='dailyReportDetailFormList[0].time']");
+        const contentTextarea = document.querySelector("textarea[name='dailyReportDetailFormList[0].content']");
+
+        const checkFormValidity = () => {
+            if ((timeInput && timeInput.value.trim() !== '') && (contentTextarea && contentTextarea.value.trim() !== '')) {
+                submitButton.disabled = false;
+                submitButton.classList.remove('disabled-form');
+            } else {
+                submitButton.disabled = true;
+                submitButton.classList.add('disabled-form');
+            }
+        };
+
+        // 初期チェック
+        checkFormValidity();
+
+        // フォームの各要素に対してイベントリスナーを追加
+        if (timeInput) timeInput.addEventListener('input', checkFormValidity);
+        if (contentTextarea) contentTextarea.addEventListener('input', checkFormValidity);
+    });
+
 
 	</script>
 
