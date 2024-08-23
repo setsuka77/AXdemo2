@@ -50,9 +50,26 @@ public class UserManagementService {
 		Integer maxId = usersMapper.findMaxId();
 		return (maxId == null) ? 1 : maxId + 1;
 	}
+	
+	/**
+	 *ユーザ名が既に登録されているかチェック
+	 * 
+	 * @param name
+	 * @param id
+	 * @return
+	 */
+	
+    @Transactional(readOnly = true)
+    public String checkUserNameConflict(String name, Integer id) {
+        UserManagementDto user = usersMapper.findByName(name);
+        if (user != null && !user.getId().equals(id)) {
+            return "ユーザ名 : このユーザ名は既に登録されています。別のユーザ名を入力してください。";
+        }
+        return null;
+    }
 
 	/**
-	 * ユーザ管理画面 新規ユーザ情報登録 既存ユーザ情報更新
+	 * ユーザ管理画面 新規ユーザ情報登録 既存ユーザ情報更新 論理削除
 	 * 
 	 * @param userForm ユーザ管理フォーム
 	 * @param id       ユーザID
@@ -105,59 +122,6 @@ public class UserManagementService {
 		}
 
 		return isDeleted;
-	}
-
-	/**
-	 * ユーザ管理画面 文字数制限・日付形式チェック
-	 * 
-	 * @param userForm ユーザ管理フォーム
-	 * @return エラーメッセージ(エラーがない場合は null)
-	 */
-	public String validateUserForm(UserManagementForm userForm) {
-		StringBuilder errorMessage = new StringBuilder("ユーザー登録/更新に失敗しました。<br>");
-		boolean hasErrors = false;
-
-		// 全角文字のみで20文字以内かどうかを確認する正規表現
-		String fullWidthAndLengthRegex = "^[\\u3000-\\uFFFD]{1,20}$";
-
-		// ユーザ名チェック
-		String name = userForm.getName();
-		if (name == null || !name.matches(fullWidthAndLengthRegex)) {
-			errorMessage.append("ユーザ名 : 20文字以内の全角文字のみで入力してください。<br>");
-			hasErrors = true;
-		}
-
-		// パスワードチェック
-		String password = userForm.getPassword();
-		String halfWidthRegex = "^[a-zA-Z0-9]{1,16}$";
-		if (password == null || !password.matches(halfWidthRegex)) {
-			errorMessage.append("パスワード : 16桁以下の半角英数字のみで入力してください。<br>");
-			hasErrors = true;
-		}
-
-		// 権限チェック
-		String role = userForm.getRole();
-		if (role == null || role.isEmpty()) {
-			errorMessage.append("権限 : 権限を選択してください。<br>");
-			hasErrors = true;
-		}
-
-		// 所属部署 必須チェック
-		Integer departmentId = userForm.getDepartmentId();
-		if (departmentId == null) {
-			errorMessage.append("所属部署 : 所属部署を選択してください。<br>");
-			hasErrors = true;
-		}
-
-		// 利用開始日 形式チェック
-		String startDate = userForm.getStartDate();
-		Pattern datePattern = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$");
-		if (startDate == null || !datePattern.matcher(startDate).matches()) {
-			errorMessage.append("利用開始日 : yyyy/mm/dd のフォーマットで入力してください。<br>");
-			hasErrors = true;
-		}
-
-		return hasErrors ? errorMessage.toString() : null;
 	}
 
 }
