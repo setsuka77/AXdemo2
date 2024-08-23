@@ -5,7 +5,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +15,7 @@ import com.example.demo.form.LoginForm;
 import com.example.demo.service.LoginService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class LoginController {
@@ -42,14 +42,23 @@ public class LoginController {
 	 * @return 遷移先のURL
 	 */
 	@PostMapping("/login")
-	public String login(@Validated @ModelAttribute("loginForm")LoginForm loginForm, BindingResult result, HttpSession session, RedirectAttributes redirectAttributes) {
+	public String login(@Valid @ModelAttribute("loginForm")LoginForm loginForm, BindingResult result, HttpSession session, RedirectAttributes redirectAttributes) {
 		
-//		if (result.hasErrors()) {
-//			redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
-//			return "redirect:/";
-//		}
+		if (result.hasErrors()) {
+			String errorMessage = LoginService.formatErrors(result);
+			redirectAttributes.addFlashAttribute("error", errorMessage);
+			return "redirect:/";
+		}
 		
-		Integer id = loginForm.getId();
+		// idをStringからIntegerに変換
+	    Integer id;
+	    try {
+	        id = Integer.parseInt(loginForm.getId());
+	    } catch (NumberFormatException e) {
+	        redirectAttributes.addFlashAttribute("error", "ユーザーIDが不正です。");
+	        return "redirect:/";
+	    }
+
 		String password = loginForm.getPassword();
 
 		Users user = loginService.login(id, password);

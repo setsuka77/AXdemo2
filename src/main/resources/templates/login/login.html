@@ -21,7 +21,6 @@
 				<label for="id">ユーザID</label>
 				<input type="text" id="id" name="id">
 			</div>
-			<span class="error-message loginError" id="idError"></span>
 
 			<div class="input-group">
 				<label for="password">パスワード</label>
@@ -30,7 +29,6 @@
 				<i id="eye" class="fa-solid fa-eye"></i>
 				</div>
 			</div>
-			<span class="error-message loginError" id="passwordError"></span>
 
 			<!-- エラーメッセージ表示 -->
 			<div th:if="${error}" class="alert alert-danger" role="alert">
@@ -58,71 +56,7 @@
                     this.classList.toggle('fa-eye-slash');
                }
           })
-		
-		// 必須、入力形式チェック
-		// サーバー側で形式チェックのみエラーメッセージを表示させたい、フラグを予定
-		document.addEventListener("DOMContentLoaded", function () {
-			const loginForm = document.getElementById("loginForm");
 
-			loginForm.addEventListener("submit", function (event) {
-				let valid = true;
-
-				const idInput = document.getElementById("id");
-				const idError = document.getElementById("idError");
-				const passwordInput = document.getElementById("password");
-				const passwordError = document.getElementById("passwordError");
-
-				// エラーメッセージを設定
-				const idErrorMessageEmpty = "ユーザIDを入力してください。";
-				//const idErrorMessageInvalid = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
-				//const idErrorMessageNumber = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
-				const passwordErrorMessageEmpty = "パスワードを入力してください。";
-				//const passwordErrorMessageInvalid = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
-				//const passwordErrorMessageNumber = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
-				const inputErrorMessage = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。";
-
-				// 初期状態を設定
-				idError.style.display = "none";
-				passwordError.style.display = "none";
-
-				const idValue = idInput.value.trim();
-				if (idValue === "") {
-					idError.textContent = idErrorMessageEmpty;
-					idError.style.display = "block";
-					valid = false;
-				} else if (!/^[0-9]+$/.test(idValue)) {
-					idError.textContent = inputErrorMessage;
-					idError.style.display = "block";
-					valid = false;
-				} else if (/.{17,}/.test(idValue)) {
-					idError.textContent = inputErrorMessage;
-					idError.style.display = "block";
-					valid = false;
-				} else {
-					idError.style.display = "none";
-				}
-
-				if (passwordInput.value.trim() === "") {
-					passwordError.textContent = passwordErrorMessageEmpty;
-					passwordError.style.display = "block";
-					valid = false;
-				} else if (/[^a-zA-Z0-9]/.test(passwordInput.value.trim())) {
-					passwordError.textContent = inputErrorMessage;
-					passwordError.style.display = "block";
-					valid = false;
-				} else if (/.{17,}/.test(passwordInput.value.trim())) {
-					passwordError.textContent = inputErrorMessage;
-					passwordError.style.display = "block";
-					valid = false;
-				} else {
-					passwordError.style.display = "none";
-				}
-
-				if (!valid) {
-					event.preventDefault();
-				}
-			});
-		});
 	</script>
 
 </body>

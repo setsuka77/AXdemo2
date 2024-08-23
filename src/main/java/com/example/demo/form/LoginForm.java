@@ -10,12 +10,12 @@ import lombok.Data;
 public class LoginForm {
 	
 	/** ユーザーID */
-//	@NotNull(message = "ユーザIDを入力してください。")
-//	@Pattern(regexp = "^[0-9]{1,16}$", message = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。")
-	private Integer id;
+	@NotNull(message = "ユーザIDを入力してください。")
+	@Pattern(regexp = "^[0-9]{1,16}$", message = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。")
+	private String id;
 	/** パスワード */
-//	@NotNull(message = "パスワードを入力してください。")
-//	@Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。")
+	@NotNull(message = "パスワードを入力してください。")
+	@Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。")
 	private String password;
 	/** 氏名 */
 	private String name;

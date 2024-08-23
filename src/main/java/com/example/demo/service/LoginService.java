@@ -1,7 +1,17 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import com.example.demo.entity.Users;
 import com.example.demo.mapper.UsersMapper;
@@ -25,5 +35,45 @@ public class LoginService {
 			return user;
 		}
 		return null;
+	}
+	
+	/**
+	 * バインディング結果からエラーメッセージをフォーマット
+	 * 
+	 * @param bindingResult
+	 * @return フォーマットされたエラーメッセージ
+	 */
+	public static String formatErrors(BindingResult bindingResult) {
+	    // フィールド順を定義 (ログインフォームの順番)
+	    List<String> fieldOrder = Arrays.asList("id", "password");
+
+	    // フィールドごとのエラーメッセージを保持するMap
+	    Map<String, List<String>> errors = new LinkedHashMap<>();
+
+	    // 追加済みのエラーメッセージを保持するセット
+	    Set<String> addedMessages = new HashSet<>();
+
+	    // フィールド順に従ってエラーメッセージをソート
+	    bindingResult.getFieldErrors().stream()
+	            .sorted(Comparator.comparing(error -> fieldOrder.indexOf(error.getField())))
+	            .forEach(error -> {
+	                String message = error.getDefaultMessage();
+
+	                // すべてのフィールドで重複したエラーメッセージを1つのみ表示
+	                if (!addedMessages.contains(message)) {
+	                    errors.computeIfAbsent(error.getField(), k -> new ArrayList<>()).add(message);
+	                    addedMessages.add(message);
+	                }
+	            });
+
+	    // エラーメッセージを HTML に合成
+	    if (!errors.isEmpty()) {
+	        StringBuilder errorMessage = new StringBuilder("ログインに失敗しました。<br>");
+	        errors.forEach((field, messages) -> {
+	            messages.forEach(message -> errorMessage.append(message).append("<br>"));
+	        });
+	        return errorMessage.toString();
+	    }
+	    return "";
 	}
 }
