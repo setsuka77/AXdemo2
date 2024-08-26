@@ -55,7 +55,7 @@ public class LoginController {
 	    try {
 	        id = Integer.parseInt(loginForm.getId());
 	    } catch (NumberFormatException e) {
-	        redirectAttributes.addFlashAttribute("error", "ユーザーIDが不正です。");
+	        redirectAttributes.addFlashAttribute("error", "ユーザーID、パスワードが不正、もしくはユーザーが無効です。");
 	        return "redirect:/";
 	    }
 

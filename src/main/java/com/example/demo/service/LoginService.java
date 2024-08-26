@@ -1,12 +1,6 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,34 +38,19 @@ public class LoginService {
 	 * @return フォーマットされたエラーメッセージ
 	 */
 	public static String formatErrors(BindingResult bindingResult) {
-	    // フィールド順を定義 (ログインフォームの順番)
-	    List<String> fieldOrder = Arrays.asList("id", "password");
+	    // エラーメッセージを保持するセット
+	    Set<String> errorMessages = new LinkedHashSet<>();
 
-	    // フィールドごとのエラーメッセージを保持するMap
-	    Map<String, List<String>> errors = new LinkedHashMap<>();
-
-	    // 追加済みのエラーメッセージを保持するセット
-	    Set<String> addedMessages = new HashSet<>();
-
-	    // フィールド順に従ってエラーメッセージをソート
+	    // エラーメッセージをセットに追加
 	    bindingResult.getFieldErrors().stream()
-	            .sorted(Comparator.comparing(error -> fieldOrder.indexOf(error.getField())))
-	            .forEach(error -> {
-	                String message = error.getDefaultMessage();
-
-	                // すべてのフィールドで重複したエラーメッセージを1つのみ表示
-	                if (!addedMessages.contains(message)) {
-	                    errors.computeIfAbsent(error.getField(), k -> new ArrayList<>()).add(message);
-	                    addedMessages.add(message);
-	                }
-	            });
+	            .map(error -> error.getDefaultMessage())
+	            .distinct()  // 重複を排除
+	            .forEach(errorMessages::add);
 
 	    // エラーメッセージを HTML に合成
-	    if (!errors.isEmpty()) {
-	        StringBuilder errorMessage = new StringBuilder("ログインに失敗しました。<br>");
-	        errors.forEach((field, messages) -> {
-	            messages.forEach(message -> errorMessage.append(message).append("<br>"));
-	        });
+	    if (!errorMessages.isEmpty()) {
+	        StringBuilder errorMessage = new StringBuilder();
+	        errorMessages.forEach(message -> errorMessage.append(message).append("<br>"));
 	        return errorMessage.toString();
 	    }
 	    return "";
