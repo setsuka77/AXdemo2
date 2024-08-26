@@ -81,7 +81,6 @@ public class DailyReportController {
 		
 		//入力チェック
 	    String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);
-	    System.out.println(dailyReportForm);
 
 	    // エラーが存在する場合
 	    if (!validationErrors.isEmpty()) {

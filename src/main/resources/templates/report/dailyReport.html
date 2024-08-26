@@ -61,7 +61,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}"
-						class="${detail[' + ${iterStat.index} + '].errorFlag ? 'error-field' : ' '}">
+						th:classappend="${detail.errorFlag ? 'error-field' : ''}">
 						<td>
 							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
 								th:value="${detail.time}" id="time" min="0" step="1"> h
