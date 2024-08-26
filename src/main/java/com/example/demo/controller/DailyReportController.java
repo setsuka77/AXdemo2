@@ -4,13 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.entity.DailyReportDetail;
 import com.example.demo.entity.Users;
 import com.example.demo.form.DailyReportDetailForm;
 import com.example.demo.form.DailyReportForm;
@@ -57,7 +63,25 @@ public class DailyReportController {
 	}
 	
 	
-	
+	/**
+     * 日付が選択されたときに日報情報を取得して返す
+     *
+     * @param session
+     * @param selectDate
+     * @return 選択された日付の日報情報
+     */
+	 @ResponseBody
+	 @RequestMapping(value = "/report/dailyReport", method = RequestMethod.POST, produces="application/json; charset=UTF-8")
+    public ResponseEntity<DailyReportDetail> searchReport(HttpSession session, @RequestBody String selectDate) {
+        // セッションからユーザー情報を取得
+        Users loginUser = (Users) session.getAttribute("user");
+        
+        // 日報情報を取得
+        DailyReportDetail reportDetail = dailyReportService.searchReport(loginUser, selectDate);
+        
+        // 取得した日報情報をJSONとして返す
+        return ResponseEntity.ok(reportDetail);
+    }
 	
 	/**
 	 * 「提出」ボタン押下
@@ -88,6 +112,7 @@ public class DailyReportController {
 	        model.addAttribute("loginUser", loginUser);
 	        model.addAttribute("dailyReportForm", dailyReportForm);
 	        model.addAttribute("statusText", "未提出");
+	        model.addAttribute("selectDate",selectDate);
 	        return "report/dailyReport";
 	    }
 	    

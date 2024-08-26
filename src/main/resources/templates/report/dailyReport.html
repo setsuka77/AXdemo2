@@ -35,7 +35,7 @@
 		<form id="report-form" th:action="@{/report/dailyReport}" method="post" th:if="${loginUser.role != '2'}">
 			<div class="form-group">
 				対象日付:
-				<input type="date" name="selectDate" th:value="${selectDate}">
+				<input type="date" name="selectDate" th:value="${selectDate}" onchange="fetchReport()" id="dateInput">
 			</div>
 
 			<div class="button-group">
@@ -79,6 +79,84 @@
 	</div>
 
 	<script>
+		
+		// 日付を選択した瞬間にDBから情報を取得する
+        function fetchReport() {
+            var selectDate = document.getElementById('dateInput').value;
+
+            if (typeof console !== "undefined" && console.log) {
+                console.log('Selected date:', selectDate); // デバッグ用ログ
+            }
+            
+            if (!selectDate) {
+				console.error('No date selected.');
+				return;
+			}
+
+
+            fetch('/login/report/dailyReport', { // Controllerのエンドポイントに合わせる
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(selectDate)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 返ってきたときの処理
+                console.log('Response data:', data); // デバッグ用ログ
+
+                // データをフォームにセットする
+                if (data && Array.isArray(data.dailyReportDetailFormList)) {
+                    var tbody = document.getElementById('report-details');
+                    tbody.innerHTML = ''; // テーブルのtbodyをクリア
+
+                    data.dailyReportDetailFormList.forEach(function(detail, index) {
+                        var row = document.createElement('tr');
+                        row.className = detail.errorFlag ? 'error-field' : '';
+
+                        var timeCell = document.createElement('td');
+                        var timeInput = document.createElement('input');
+                        timeInput.type = 'number';
+                        timeInput.name = `dailyReportDetailFormList[${index}].time`;
+                        timeInput.value = detail.time;
+                        timeInput.id = `time${index}`;
+                        timeInput.min = '0';
+                        timeInput.step = '1';
+                        timeCell.appendChild(timeInput);
+                        timeCell.appendChild(document.createTextNode(' h'));
+                        row.appendChild(timeCell);
+
+                        var contentCell = document.createElement('td');
+                        var contentTextarea = document.createElement('textarea');
+                        contentTextarea.name = `dailyReportDetailFormList[${index}].content`;
+                        contentTextarea.id = `content${index}`;
+                        contentTextarea.className = 'textarea note';
+                        contentTextarea.rows = '2';
+                        contentTextarea.cols = '60';
+                        contentTextarea.textContent = detail.content;
+                        contentCell.appendChild(contentTextarea);
+                        var charCounter = document.createElement('div');
+                        charCounter.className = 'char-counter';
+                        charCounter.id = `charCounter${index}`;
+                        charCounter.textContent = `${detail.content.length} / 50`;
+                        contentCell.appendChild(charCounter);
+                        row.appendChild(contentCell);
+
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    // データがない場合の処理
+                    console.log('No data found for the selected date.');
+                }
+            })
+            .catch(error => {
+                // エラーが発生した場合の処理
+                console.error('Error fetching data:', error);
+            });
+        }
+
+
 
 		// テキストエリアの高さ調整と文字数カウンター
 		const textareas = document.querySelectorAll(".textarea");

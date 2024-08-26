@@ -36,6 +36,27 @@ public class DailyReportService {
 		DailyReport reportDto = 
 	}*/
 	
+	
+	/**
+	 * 日報登録情報を取得
+	 * 
+	 * @param loginUser
+	 * @param selectDate
+	 * @return 指定されたユーザーIDと日付に一致する日報申請情報
+	 */
+	public DailyReportDetail searchReport(Users loginUser,String selectDate){
+		System.out.println("Received selectDate: " + selectDate);
+		Integer userId = loginUser.getId();
+		Date submitDate= Date.valueOf(selectDate);
+		System.out.println(submitDate);
+		//日報情報を検索してIDを取得
+		DailyReportDetail searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
+		 
+	    System.out.println("Report Detail from DB: " + searchReport); // デバッグ用ログ
+		
+		return searchReport;
+	}
+	
 	/**
      * 入力チェックメソッド
      * @param dailyReportForm
@@ -91,8 +112,13 @@ public class DailyReportService {
 		
 		for(DailyReportDetailForm dailyForm : dailyReportDetailFormList) {
 			if(dailyForm.getTime() != null && dailyForm.getContent() != null) {
+				
+				//日報情報を検索してIDを取得
+				DailyReportDetail searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
+				
+				//新しい日報オブジェクトを作成
 				DailyReportDetail dailyReportDetail = new DailyReportDetail();
-				dailyReportDetail.setId(null);
+				dailyReportDetail.setId(searchReport != null ? searchReport.getId() : null);
 				dailyReportDetail.setUserId(userId);
 				dailyReportDetail.setDate(submitDate);
 				dailyReportDetail.setTime(dailyForm.getTime());
