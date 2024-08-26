@@ -80,19 +80,12 @@ public class DailyReportController {
         }
 		
 		//入力チェック
-	    StringBuilder errorMessages = new StringBuilder();
-		 if (result.hasErrors()) {
-			 result.getAllErrors().forEach(error -> errorMessages.append(error.getDefaultMessage()).append("<br>"));
-		}
-
 	    String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);
-	    if (!validationErrors.isEmpty()) {
-	        errorMessages.append(validationErrors);
-	    }
+	    System.out.println(dailyReportForm);
 
 	    // エラーが存在する場合
-	    if (errorMessages.length() > 0) {
-	        model.addAttribute("registerError", errorMessages.toString());
+	    if (!validationErrors.isEmpty()) {
+	        model.addAttribute("registerError", validationErrors);
 	        model.addAttribute("loginUser", loginUser);
 	        model.addAttribute("dailyReportForm", dailyReportForm);
 	        model.addAttribute("statusText", "未提出");

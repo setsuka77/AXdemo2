@@ -25,7 +25,8 @@
 				<div class="info-container">
 					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span></div>
+					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span>
+					</div>
 				</div>
 			</td>
 		</tr>
@@ -38,7 +39,8 @@
 			</div>
 
 			<div class="button-group">
-				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit" class="button">提出</button>
+				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit"
+					class="button">提出</button>
 			</div>
 
 			<!-- 登録時入力エラーメッセージ表示 -->
@@ -58,13 +60,15 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}">
+					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}"
+						class="${detail[' + ${iterStat.index} + '].errorFlag ? 'error-field' : ' '}">
 						<td>
 							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
 								th:value="${detail.time}" id="time" min="0" step="1"> h
 						</td>
 						<td class="textarea-wrapper">
-							<textarea id="content" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
+							<textarea id="content"
+								th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
 								th:text="${detail.content}" class="textarea note" rows="2" cols="60"></textarea>
 							<div class="char-counter" id="charCounter">0 / 50</div>
 						</td>
@@ -108,36 +112,32 @@
 			// ウィンドウサイズが変わったときに高さを再調整
 			window.addEventListener("resize", () => adjustHeight(textarea));
 		});
-		
-		
+
+
 		// 提出ボタン有効化
-    window.addEventListener('DOMContentLoaded', function () {
-        // 提出ボタンを最初は無効化
-        const submitButton = document.getElementById('submit');
-        submitButton.disabled = true;
-        submitButton.classList.add('disabled-form');
+		window.addEventListener('DOMContentLoaded', () => {
+			const submitButton = document.getElementById('submit');
+			const timeInputs = document.querySelectorAll("input[name^='dailyReportDetailFormList'][name$='.time']");
+			const contentTextareas = document.querySelectorAll("textarea[name^='dailyReportDetailFormList'][name$='.content']");
 
-        // 時間と内容が入力されたときにボタンを有効化
-        const timeInput = document.querySelector("input[name='dailyReportDetailFormList[0].time']");
-        const contentTextarea = document.querySelector("textarea[name='dailyReportDetailFormList[0].content']");
+			const checkFormValidity = () => {
+				let valid = false;
 
-        const checkFormValidity = () => {
-            if ((timeInput && timeInput.value.trim() !== '') && (contentTextarea && contentTextarea.value.trim() !== '')) {
-                submitButton.disabled = false;
-                submitButton.classList.remove('disabled-form');
-            } else {
-                submitButton.disabled = true;
-                submitButton.classList.add('disabled-form');
-            }
-        };
+				timeInputs.forEach((input, index) => {
+					const content = contentTextareas[index];
+					if (input.value.trim() !== '' && content.value.trim() !== '') {
+						valid = true;
+					}
+				});
 
-        // 初期チェック
-        checkFormValidity();
+				submitButton.disabled = !valid;
+				submitButton.classList.toggle('disabled-form', !valid);
+			};
 
-        // フォームの各要素に対してイベントリスナーを追加
-        if (timeInput) timeInput.addEventListener('input', checkFormValidity);
-        if (contentTextarea) contentTextarea.addEventListener('input', checkFormValidity);
-    });
+			checkFormValidity();
+			timeInputs.forEach(input => input.addEventListener('input', checkFormValidity));
+			contentTextareas.forEach(textarea => textarea.addEventListener('input', checkFormValidity));
+		});
 
 
 	</script>

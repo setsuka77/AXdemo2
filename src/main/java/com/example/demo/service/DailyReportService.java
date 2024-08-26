@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import java.sql.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,11 +43,11 @@ public class DailyReportService {
      * @return エラーメッセージ（エラーがない場合は空文字列）
      */
 	public String validateDailyReport(DailyReportForm dailyReportForm, String selectDate) {
-		StringBuilder errorMessages = new StringBuilder();
+		  Set<String> errorMessages = new LinkedHashSet<>();
 
 		//対象日付のチェック
 		if (selectDate == null|| selectDate.isEmpty()) {
-			errorMessages.append("日付が選択されていません。<br>");
+			errorMessages.add("日付が選択されていません。");
 		}
 
 		//作業時間と作業内容のチェック
@@ -56,14 +58,21 @@ public class DailyReportService {
 
 		    // 片方だけ入力されている場合
 		    if (hasTime && !hasContent) {
-		        errorMessages.append("作業内容が入力されていません。<br>");
+		        errorMessages.add("作業内容が入力されていません。");
 		        detailForm.setErrorFlag(true);
 		    } else if (!hasTime && hasContent) {
-		        errorMessages.append("作業時間が入力されていません。<br>");
+		        errorMessages.add("作業時間が入力されていません。");
 		        detailForm.setErrorFlag(true);
 		    }
+		    
+		    //50字以上入力されている場合
+		    if (hasContent && detailForm.getContent().length() > 50) {
+		        errorMessages.add("作業内容は50字以内で入力してください。");
+		        detailForm.setErrorFlag(true);
+		    }
+		    
 		}
-		return errorMessages.toString();
+		return String.join("<br>", errorMessages);
 	}
 	
 	
