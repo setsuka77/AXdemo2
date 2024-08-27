@@ -57,6 +57,24 @@ public class DailyReportService {
 	}
 	
 	/**
+	 * 日報ステータスの取得
+	 * 
+	 * @param loginUser
+	 * @param selectDate
+	 * @return 日報ステータス
+	 */
+	public Integer searchReportStatus(Users loginUser, String selectDate) {
+		Integer userId = loginUser.getId();
+		Date submitDate= Date.valueOf(selectDate);
+		
+		//loginUserとdateで申請があるか確認
+		DailyReport searchReport = dailyReportMapper.findByUserIdAndDate(userId, submitDate);
+		Integer status =searchReport.getStatus();
+		
+		return status;
+	}
+	
+	/**
      * 入力チェックメソッド
      * @param dailyReportForm
      * @param selectDate
@@ -171,5 +189,7 @@ public class DailyReportService {
 		}
 		return true;
 	}
+
+	
 
 }

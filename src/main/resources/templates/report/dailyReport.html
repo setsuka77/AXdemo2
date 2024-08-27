@@ -25,7 +25,7 @@
 				<div class="info-container">
 					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"></span>
+					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}" id="statusText"></span>
 					</div>
 				</div>
 			</td>
@@ -93,13 +93,41 @@
             })
            	.then(response => response.json())
 				.then(data => {
-					if (data && data.length > 0) {
+					if (data) {
 						// データが存在する場合の処理
-						// 取得したデータをフォームに代入
-						populateForm(data);
+						const reportDetails = data.reportDetails;
+						const statusText = data.statusText;
+						// 日報データをフォームに代入
+						if (reportDetails && reportDetails.length > 0) {
+							populateForm(reportDetails);
+						} else {
+							// データがない場合の処理
+							clearForm();
+							console.log('No data found for the selected date.');
+						}
+						
+						// ステータスを表示
+						const statusElement = document.querySelector('.info-item span');
+						if (statusElement) {
+							statusElement.textContent = statusText;
+						}
 					} else {
 						// データがない場合の処理
+						// 既存のフォーム要素を取得
+						const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+						const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+
+						// 既存の行をクリア
+						timeInputs.forEach(input => input.value = '');
+						contentTextareas.forEach(textarea => textarea.value = '');
 						console.log('No data found for the selected date.');
+						
+						// 文字数カウンターを更新
+							const charCounter = contentTextareas[index].nextElementSibling;
+							if (charCounter) {
+								charCounter.textContent = `${detail.content.length} / 50`;
+							}
+						
 					}
 				})
 			.catch(error => {

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,7 @@ public class DailyReportController {
      */
 	 @ResponseBody
 	 @RequestMapping(value = "/report/dailyReport", method = RequestMethod.POST, produces="application/json; charset=UTF-8")
-    public ResponseEntity<List<DailyReportDetail>> searchReport(HttpSession session, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Map<String, Object>> searchReport(HttpSession session, @RequestBody Map<String, String> requestBody) {
         // セッションからユーザー情報を取得
         Users loginUser = (Users) session.getAttribute("user");
         // リクエストボディから日付を取得
@@ -81,8 +82,15 @@ public class DailyReportController {
 
         // 日報情報を取得
         List<DailyReportDetail> reportDetail = dailyReportService.searchReport(loginUser, selectDate);
+        
+        //ステータスを取得
+        Integer status = dailyReportService.searchReportStatus(loginUser, selectDate);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("reportDetails", reportDetail);
+        response.put("statusText", status);
 
-        return ResponseEntity.ok(reportDetail);
+        return ResponseEntity.ok(response);
     }
 	
 	/**
