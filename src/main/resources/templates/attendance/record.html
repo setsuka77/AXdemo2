@@ -112,6 +112,10 @@
 			</div>
 
 			<table class="table table-hover" border="1" cellspacing="0" id="attendance">
+				<!-- 申請一覧に戻るボタンを表示する条件 -->
+				<span th:if="${loginUser.role == '2' and calendar != null and calendar.size() > 0}">
+					<a href="javascript:history.back()">⇐申請一覧に戻る</a>
+				</span>
 				<thead>
 					<tr>
 						<th>日付</th>
@@ -235,10 +239,6 @@
 		document.getElementById('month').addEventListener('change', function () {
 			document.getElementById('hidden-month').value = this.value;
 		});
-
-
-
-
 
 	</script>
 

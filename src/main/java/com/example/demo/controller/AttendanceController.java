@@ -63,27 +63,21 @@ public class AttendanceController {
 
 		// roleが2の時、申請一覧を表示
 		if (loginUser != null && "2".equals(loginUser.getRole())) {
-			List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findAllAttendance();
-			model.addAttribute("monthlyAttendanceReq", monthlyAttendanceReq);
+			model.addAttribute("monthlyAttendanceReq", attendanceService.findAllAttendance());
 			//却下と承認ボタンを非活性に設定
-			boolean checkReject = false;
-			model.addAttribute("checkReject", checkReject);
-			boolean checkApproval = false;
-			model.addAttribute("checkApproval", checkApproval);
+			model.addAttribute("checkReject", false);
+            model.addAttribute("checkApproval", false);
+            model.addAttribute("loginUser", loginUser);
 		}
 
 		// 承認申請ボタンと登録ボタンを非活性に設定
-		boolean checkAllStatus = false;
-		model.addAttribute("checkAllStatus", checkAllStatus);
-		boolean checkRegister = false;
-		model.addAttribute("checkRegister", checkRegister);
+		model.addAttribute("checkAllStatus", false);
+        model.addAttribute("checkRegister", false);
 		
 		// 表示年月に現在の年月を表示
-		LocalDateTime nowDate = LocalDateTime.now();
-		Integer year = nowDate.getYear();
-		Integer month = nowDate.getMonthValue(); 
-		model.addAttribute("selectYear", year);
-		model.addAttribute("selectMonth", month);
+        LocalDateTime nowDate = LocalDateTime.now();
+        model.addAttribute("selectYear", nowDate.getYear());
+        model.addAttribute("selectMonth", nowDate.getMonthValue());
 
 		// 年月プルダウンリストを設定
 		setYearMonthList(model);
@@ -227,8 +221,7 @@ public class AttendanceController {
 			model.addAttribute("checkAllStatus", false);
 			
 			//本日の日付を渡す
-			LocalDate nowDate = LocalDate.now();
-			model.addAttribute("today", nowDate);
+			model.addAttribute("today", LocalDate.now());
 
 			// 再度リストを設定する
 			setYearMonthList(model);

@@ -47,7 +47,7 @@ body {
 
 .info-item {
 	flex: 1; /* アイテムが均等に広がる */
-	padding: 10px;
+	margin-right: 10px;
 	white-space: nowrap; /* テキストの折り返しを防ぐ */
 }
 
