@@ -25,7 +25,8 @@
 				<div class="info-container">
 					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}" id="statusText"></span>
+					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"
+							id="statusText"></span>
 					</div>
 				</div>
 			</td>
@@ -79,19 +80,19 @@
 	</div>
 
 	<script>
-		
-		// 日付を選択した瞬間にDBから情報を取得する
-        function fetchReport() {
-            var selectDate = document.getElementById('dateInput').value;
 
-            fetch('/login/report/dailyReport', { // Controllerのエンドポイントに合わせる
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ selectDate: selectDate })
-            })
-           	.then(response => response.json())
+		// 日付を選択した瞬間にDBから情報を取得する
+		function fetchReport() {
+			var selectDate = document.getElementById('dateInput').value;
+
+			fetch('/login/report/dailyReport', { // Controllerのエンドポイントに合わせる
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({selectDate: selectDate})
+			})
+				.then(response => response.json())
 				.then(data => {
 					if (data) {
 						// データが存在する場合の処理
@@ -105,61 +106,58 @@
 							clearForm();
 							console.log('No data found for the selected date.');
 						}
-						
+
 						// ステータスを表示
-						const statusElement = document.querySelector('.info-item span');
-						if (statusElement) {
-							statusElement.textContent = statusText;
+						const statusTextElement = document.getElementById('statusText');
+						if (statusText) {
+							statusTextElement.textContent = statusText;
 						}
 					} else {
 						// データがない場合の処理
-						// 既存のフォーム要素を取得
-						const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-						const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
-
-						// 既存の行をクリア
-						timeInputs.forEach(input => input.value = '');
-						contentTextareas.forEach(textarea => textarea.value = '');
-						console.log('No data found for the selected date.');
-						
-						// 文字数カウンターを更新
-							const charCounter = contentTextareas[index].nextElementSibling;
-							if (charCounter) {
-								charCounter.textContent = `${detail.content.length} / 50`;
-							}
-						
+						clearForm();
 					}
 				})
-			.catch(error => {
+				.catch(error => {
 					console.error('Error fetching data:', error);
 				});
-			}
-			
-			function populateForm(data) {
-					// 既存のフォーム要素を取得
-					const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-					const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+		}
 
-					// 既存の行をクリア
-					timeInputs.forEach(input => input.value = '');
-					contentTextareas.forEach(textarea => textarea.value = '');
+		function populateForm(data) {
+			// 既存のフォーム要素を取得
+			const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+			const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
 
-					// 新しいデータをフォームに代入
-					data.forEach((detail, index) => {
-						if (timeInputs[index]) {
-							timeInputs[index].value = detail.time;
-						}
-						if (contentTextareas[index]) {
-							contentTextareas[index].value = detail.content;
-							// 文字数カウンターを更新
-							const charCounter = contentTextareas[index].nextElementSibling;
-							if (charCounter) {
-								charCounter.textContent = `${detail.content.length} / 50`;
-							}
-						}
-					});
+			// 既存の行をクリア
+			timeInputs.forEach(input => input.value = '');
+			contentTextareas.forEach(textarea => textarea.value = '');
+
+			// 新しいデータをフォームに代入
+			data.forEach((detail, index) => {
+				if (timeInputs[index]) {
+					timeInputs[index].value = detail.time;
 				}
+				if (contentTextareas[index]) {
+					contentTextareas[index].value = detail.content;
+					// 文字数カウンターを更新
+					const charCounter = contentTextareas[index].nextElementSibling;
+					if (charCounter) {
+						charCounter.textContent = `${detail.content.length} / 50`;
+					}
+				}
+			});
+		}
 
+		//Form内をクリアにする
+		function clearForm() {
+			const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+			const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+			const charCounters = document.querySelectorAll('.char-counter');
+
+			timeInputs.forEach(input => input.value = '');
+			contentTextareas.forEach(textarea => textarea.value = '');
+			charCounters.forEach(counter => counter.textContent = '0 / 50');
+		}
+		s
 
 		// テキストエリアの高さ調整と文字数カウンター
 		const textareas = document.querySelectorAll(".textarea");

@@ -65,13 +65,19 @@ public class DailyReportService {
 	 */
 	public Integer searchReportStatus(Users loginUser, String selectDate) {
 		Integer userId = loginUser.getId();
-		Date submitDate= Date.valueOf(selectDate);
-		
-		//loginUserとdateで申請があるか確認
+		Date submitDate = Date.valueOf(selectDate);
+
+		// loginUserとdateで申請があるか確認
 		DailyReport searchReport = dailyReportMapper.findByUserIdAndDate(userId, submitDate);
-		Integer status =searchReport.getStatus();
 		
-		return status;
+		DailyReport report = new DailyReport();
+		if(searchReport == null) {
+			report.setStatus(0);
+		}else {
+			report.setStatus(searchReport.getStatus());
+		}
+		
+		return report.getStatus();
 	}
 	
 	/**

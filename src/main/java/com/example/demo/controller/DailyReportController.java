@@ -85,6 +85,7 @@ public class DailyReportController {
         
         //ステータスを取得
         Integer status = dailyReportService.searchReportStatus(loginUser, selectDate);
+        System.out.println(status);
         
         Map<String, Object> response = new HashMap<>();
         response.put("reportDetails", reportDetail);
@@ -107,11 +108,6 @@ public class DailyReportController {
 			Model model,String selectDate, RedirectAttributes redirectAttributes) {
 		//ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
-		
-		// ユーザー情報が取得できない場合の処理
-        if (loginUser == null) {
-            return "redirect:/login"; // ログイン画面に戻る
-        }
 		
 		//入力チェック
 	    String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);
