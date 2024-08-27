@@ -1,7 +1,7 @@
 /* ===========================================
  * 共通のスタイル設定
  * ======================================== */
-*{
+* {
 	box-sizing: border-box; /* ボックスサイズをボーダーを含むように設定 */
 	margin: 0; /* 外部マージンをゼロに設定 */
 	padding: 0; /* 内部パディングをゼロに設定 */
@@ -113,24 +113,23 @@ body {
 
 /* パスワードの表示非表示スタイル */
 .password-wrapper {
-    position: relative;
-    width: 100%;
+	position: relative;
+	width: 100%;
 }
 
 .password-wrapper input {
-    width: 100%;
-    padding-right: 30px; /* アイコン用のスペースを確保 */
+	width: 100%;
+	padding-right: 30px; /* アイコン用のスペースを確保 */
 }
 
 .password-wrapper #eye {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #888; /* アイコンの色 */
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	color: #888; /* アイコンの色 */
 }
-
 
 /* 入力グループスタイル */
 .input-group {
@@ -178,7 +177,7 @@ body {
 
 /* テキストエリアスタイル */
 textarea {
-	resize:none;
+	resize: none;
 	width: 100%; /* 幅を100%に設定 */
 	padding: 10px; /* 内部パディングを設定 */
 	margin-bottom: 10px; /* 文字数カウント用の余白 */
@@ -186,23 +185,23 @@ textarea {
 	border-radius: 4px; /* 角を丸くする */
 	font-size: 14px; /* フォントサイズを設定 */
 	overflow: hidden; /* 縦スクロールを無効 */
-    white-space: pre-wrap; /* 改行と折り返しを考慮 */
-    word-wrap: break-word; /* 長い単語を折り返す */
+	white-space: pre-wrap; /* 改行と折り返しを考慮 */
+	word-wrap: break-word; /* 長い単語を折り返す */
 }
 
 /* テキストエリア文字数カウンター */
 .textarea-wrapper {
-  position: relative; 
-  width: 100%;
-  max-width: 400px;
+	position: relative;
+	width: 100%;
+	max-width: 400px;
 }
 
 .char-counter {
-  position: absolute;
-  bottom: 5px;
-  right: 15px;
-  color: #6c757d;
-  font-size: 14px;
+	position: absolute;
+	bottom: 5px;
+	right: 15px;
+	color: #6c757d;
+	font-size: 14px;
 }
 
 /* フォーム非活性時スタイル */
@@ -211,7 +210,7 @@ textarea {
 	opacity: 0.5; /* 非活性状態を視覚的に表示 */
 }
 
- /* ボタンスタイル */
+/* ボタンスタイル */
 /* ======================================== */
 button {
 	width: 100px; /* 幅を100pxに設定 */
@@ -247,31 +246,31 @@ button:hover {
 }
 
 /* ログオフ、メニューボタン位置調整 */
-.header-button{
+.header-button {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 50px;
 }
 
-.menu-header-button{
+.menu-header-button {
 	display: flex;
 	justify-content: space-between; /* 左右に余白を持たせる */
-    align-items: center; /* 垂直方向の中央揃え */
+	align-items: center; /* 垂直方向の中央揃え */
 	margin-bottom: 50px;
 }
 
 .menu-header-button h2 {
-    margin-left: 38%; /* 左の余白を調整して中央に配置 */
+	margin-left: 38%; /* 左の余白を調整して中央に配置 */
 }
 
-.menu-header-button a{
+.menu-header-button a {
 	margin-left: auto;
 }
 
- /* カード型スタイル */
+/* カード型スタイル */
 /* ======================================== */
 .card {
-  display: flex;
+	display: flex;
 	flex-direction: column;
 	justify-content: center; /* コンテンツを縦方向に中央揃え */
 	align-items: center; /* コンテンツを横方向に中央揃え */
@@ -302,7 +301,7 @@ button:hover {
 	text-decoration: none;
 }
 
- /* カード内のアイコン */
+/* カード内のアイコン */
 .card i {
 	margin-bottom: 10px;
 	font-size: 40px;
@@ -318,7 +317,7 @@ ul {
 	padding: 0;
 }
 
- /* エラーメッセージスタイル */
+/* エラーメッセージスタイル */
 /* ======================================== */
 .error-message {
 	display: none; /* デフォルトで非表示 */
@@ -345,23 +344,24 @@ ul {
 
 /* 勤怠登録画面 土日祝日時の文字 */
 .sunday {
-    color: red;
+	color: red;
 }
+
 .saturday {
-    color: rgb(0, 128, 255);
+	color: rgb(0, 128, 255);
 }
 
 /* 現在の日付時の背景色 */
 .highlight {
-    background-color: rgb(230, 242, 255); /* 背景色を指定 */
+	background-color: rgb(230, 242, 255); /* 背景色を指定 */
 }
 
 /*エラー時の背景色*/
-.error-field{
-	background-color: #f2dede !important;/* 背景色を指定 */
+.error-field {
+	background-color: #f2dede !important; /* 背景色を指定 */
 }
 
- /* アラートスタイル */
+/* アラートスタイル */
 /* ======================================== */
 .alert {
 	padding: 15px; /* 内部パディングを設定 */
@@ -388,7 +388,7 @@ ul {
 	margin: 0; /* マージンをゼロに設定 */
 }
 
- /* テーブル一覧スタイル */
+/* テーブル一覧スタイル */
 /* ======================================== */
 table {
 	width: 100%;
@@ -453,12 +453,11 @@ input.note {
 	/* 勤務状況カラムに合わせた横幅設定 */
 }
 
-
 /* ===========================================
  * レスポンシブ対応・メディアクエリ設定
  * ======================================== */
- 
- /* メディアクエリ (1200px以下のスクリーン) */
+
+/* メディアクエリ (1200px以下のスクリーン) */
 /* ======================================== */
 @media ( max-width : 1200px) {
 	.container {
@@ -485,11 +484,9 @@ input.note {
 	input.note {
 		width: 100%; /* 幅を100%に設定 */
 	}
-	 
-
 }
 
- /* メディアクエリ (800px以下のスクリーン) */
+/* メディアクエリ (800px以下のスクリーン) */
 /* ======================================== */
 @media ( max-width : 800px) {
 	.container {
@@ -520,36 +517,55 @@ input.note {
 	input.note {
 		width: 100%; /* 幅を100%に設定 */
 	}
+	.working-time{
+		width: 50px;
+	}
 	.error-message.attendanceError {
 		margin-top: auto; /* 上部マージンを設定 */
 	}
 }
 
- /* メディアクエリ (480px以下のスクリーン) */
+/* メディアクエリ (480px以下のスクリーン) */
 /* ======================================== */
 @media ( max-width : 480px) {
+	h2 {
+		font-size: 20px;
+	}
+	.menu-header-button h2 {
+		margin-left: 35%;
+	}
 	.form-container {
 		padding: 15px;
 	}
 	.form-container h2 {
 		font-size: 1.5em;
 	}
+	.attendance-container {
+		width: 100%;
+	}
+	button {
+		width: 100%;
+	}
 	.button-group {
 		flex-direction: column;
 		gap: 10px;
 		justify-content: center;
 	}
-	button {
-		width: 100%;
+	.card {
+		height: 100px;
 	}
-	.attendance-container {
-		width: 100%;
+	.card i {
+		margin-top: 5px;
+		font-size: 30px;
+	}
+	.info-item {
+		font-size: 13px;
 	}
 
 	/* テーブルカラムのレスポンシブ対応 */
 	th, td {
 		padding: 6px;
-		font-size: 18px;
+		font-size: 14px;
 	}
 	th.time-column, td.time-column {
 		width: auto; /* 自動調整 */
@@ -559,6 +575,12 @@ input.note {
 	}
 	input.note {
 		width: 100%; /* 幅を100%に設定 */
+	}
+	.input-time {
+		width: 50px; /* 横幅を短く設定 */
+	}
+	.working-time{
+		width: 50px;
 	}
 	.error-message.attendanceError {
 		margin-top: auto; /* 上部マージンを設定 */

@@ -395,4 +395,6 @@ public class AttendanceController {
 		
 		return "redirect:/index";
 	}
+	
+	
 }

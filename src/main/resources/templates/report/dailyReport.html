@@ -64,7 +64,8 @@
 					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}"
 						th:classappend="${detail.errorFlag ? 'error-field' : ''}">
 						<td>
-							<input type="number" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
+							<input type="number" class="working-time"
+								th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
 								th:value="${detail.time}" id="time" min="0" step="1"> h
 						</td>
 						<td class="textarea-wrapper">
@@ -98,6 +99,8 @@
 						// データが存在する場合の処理
 						const reportDetails = data.reportDetails;
 						const statusText = data.statusText;
+						const loginUser = data.loginUser;
+
 						// 日報データをフォームに代入
 						if (reportDetails && reportDetails.length > 0) {
 							populateForm(reportDetails);
@@ -157,7 +160,6 @@
 			contentTextareas.forEach(textarea => textarea.value = '');
 			charCounters.forEach(counter => counter.textContent = '0 / 50');
 		}
-		s
 
 		// テキストエリアの高さ調整と文字数カウンター
 		const textareas = document.querySelectorAll(".textarea");

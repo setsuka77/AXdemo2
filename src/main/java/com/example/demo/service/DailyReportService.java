@@ -26,19 +26,6 @@ public class DailyReportService {
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
 	
-	/*
-	 * 上部ステータス表示の設定
-	 */
-	/*public String getStatusText(Users loginUser) {
-		
-		if(loginUser.isEmpty()) {
-			return "未提出";
-		}
-		
-		DailyReport reportDto = 
-	}*/
-	
-	
 	/**
 	 * 日報登録情報を取得
 	 * 

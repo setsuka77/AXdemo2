@@ -150,13 +150,8 @@ public class AttendanceService {
 	 * @return ステータスが「却下」または「未申請」の場合は true、それ以外は false
 	 */
 	public boolean checkRegister(String status) {
-		// statusが「却下」または「未申請」の場合はtrueを返す
-		if ("却下".equals(status) || "未申請".equals(status)) {
-			return true;
-		}
-
-		return false;
-	}
+        return "却下".equals(status) || "未申請".equals(status); //true
+    }
 
 	/**
 	 * 指定した年月のステータスを取得
