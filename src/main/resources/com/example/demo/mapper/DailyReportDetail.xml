@@ -22,8 +22,15 @@
 		WHERE id = #{id}
 	</update>
 	
-	<!-- 日報申請情報を取得 -->
+	<!-- 日報申請情報を取得(複数) -->
     <select id="findByUserIdAndDate" resultType="com.example.demo.entity.DailyReportDetail">
+        SELECT * FROM daily_report_detail
+        WHERE user_id = #{userId}
+        AND date = #{date}
+    </select>
+    
+    <!-- 日報申請情報を取得 -->
+    <select id="findByReport" resultType="com.example.demo.entity.DailyReportDetail">
         SELECT * FROM daily_report_detail
         WHERE user_id = #{userId}
         AND date = #{date}

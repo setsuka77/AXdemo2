@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -72,14 +73,15 @@ public class DailyReportController {
      */
 	 @ResponseBody
 	 @RequestMapping(value = "/report/dailyReport", method = RequestMethod.POST, produces="application/json; charset=UTF-8")
-    public ResponseEntity<DailyReportDetail> searchReport(HttpSession session, @RequestBody String selectDate) {
+    public ResponseEntity<List<DailyReportDetail>> searchReport(HttpSession session, @RequestBody Map<String, String> requestBody) {
         // セッションからユーザー情報を取得
         Users loginUser = (Users) session.getAttribute("user");
-        
+        // リクエストボディから日付を取得
+        String selectDate = requestBody.get("selectDate");
+
         // 日報情報を取得
-        DailyReportDetail reportDetail = dailyReportService.searchReport(loginUser, selectDate);
-        
-        // 取得した日報情報をJSONとして返す
+        List<DailyReportDetail> reportDetail = dailyReportService.searchReport(loginUser, selectDate);
+
         return ResponseEntity.ok(reportDetail);
     }
 	

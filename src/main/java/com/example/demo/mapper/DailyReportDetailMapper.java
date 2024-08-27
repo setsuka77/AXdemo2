@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,12 +22,23 @@ public interface DailyReportDetailMapper {
 	void update(DailyReportDetail dailyReportDetail);
 	
 	/**
-	 * 日報申請情報 取得
+	 * 日報情報 取得
 	 *
 	 * @param userId 
 	 * @param date 
 	 * @return 指定されたユーザーIDと日付に一致する日報申請情報のリスト
 	 */
-	DailyReportDetail findByUserIdAndDate(@Param("userId") Integer userId, @Param("date") Date date);
+	List<DailyReportDetail> findByUserIdAndDate(@Param("userId") Integer userId, @Param("date") Date date);
+	
+	/**
+	 * 日報情報 取得
+	 *
+	 * @param userId 
+	 * @param date 
+	 * @return 指定されたユーザーIDと日付に一致する日報情報
+	 */
+	//DailyReportDetail findByReport(@Param("userId") Integer userId, @Param("date") Date date);
+	
+	
 	
 }

@@ -52,7 +52,7 @@
 				<p th:utext="${message}"></p>
 			</div>
 
-			<table class="table table-hover" border="1" cellspacing="0" id="attendance">
+			<table class="table table-hover" border="1" cellspacing="0" id="report">
 				<thead>
 					<tr>
 						<th>作業時間(h)</th>
@@ -84,78 +84,53 @@
         function fetchReport() {
             var selectDate = document.getElementById('dateInput').value;
 
-            if (typeof console !== "undefined" && console.log) {
-                console.log('Selected date:', selectDate); // デバッグ用ログ
-            }
-            
-            if (!selectDate) {
-				console.error('No date selected.');
-				return;
-			}
-
-
             fetch('/login/report/dailyReport', { // Controllerのエンドポイントに合わせる
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(selectDate)
+                body: JSON.stringify({ selectDate: selectDate })
             })
-            .then(response => response.json())
-            .then(data => {
-                // 返ってきたときの処理
-                console.log('Response data:', data); // デバッグ用ログ
+           	.then(response => response.json())
+				.then(data => {
+					if (data && data.length > 0) {
+						// データが存在する場合の処理
+						// 取得したデータをフォームに代入
+						populateForm(data);
+					} else {
+						// データがない場合の処理
+						console.log('No data found for the selected date.');
+					}
+				})
+			.catch(error => {
+					console.error('Error fetching data:', error);
+				});
+			}
+			
+			function populateForm(data) {
+					// 既存のフォーム要素を取得
+					const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+					const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
 
-                // データをフォームにセットする
-                if (data && Array.isArray(data.dailyReportDetailFormList)) {
-                    var tbody = document.getElementById('report-details');
-                    tbody.innerHTML = ''; // テーブルのtbodyをクリア
+					// 既存の行をクリア
+					timeInputs.forEach(input => input.value = '');
+					contentTextareas.forEach(textarea => textarea.value = '');
 
-                    data.dailyReportDetailFormList.forEach(function(detail, index) {
-                        var row = document.createElement('tr');
-                        row.className = detail.errorFlag ? 'error-field' : '';
-
-                        var timeCell = document.createElement('td');
-                        var timeInput = document.createElement('input');
-                        timeInput.type = 'number';
-                        timeInput.name = `dailyReportDetailFormList[${index}].time`;
-                        timeInput.value = detail.time;
-                        timeInput.id = `time${index}`;
-                        timeInput.min = '0';
-                        timeInput.step = '1';
-                        timeCell.appendChild(timeInput);
-                        timeCell.appendChild(document.createTextNode(' h'));
-                        row.appendChild(timeCell);
-
-                        var contentCell = document.createElement('td');
-                        var contentTextarea = document.createElement('textarea');
-                        contentTextarea.name = `dailyReportDetailFormList[${index}].content`;
-                        contentTextarea.id = `content${index}`;
-                        contentTextarea.className = 'textarea note';
-                        contentTextarea.rows = '2';
-                        contentTextarea.cols = '60';
-                        contentTextarea.textContent = detail.content;
-                        contentCell.appendChild(contentTextarea);
-                        var charCounter = document.createElement('div');
-                        charCounter.className = 'char-counter';
-                        charCounter.id = `charCounter${index}`;
-                        charCounter.textContent = `${detail.content.length} / 50`;
-                        contentCell.appendChild(charCounter);
-                        row.appendChild(contentCell);
-
-                        tbody.appendChild(row);
-                    });
-                } else {
-                    // データがない場合の処理
-                    console.log('No data found for the selected date.');
-                }
-            })
-            .catch(error => {
-                // エラーが発生した場合の処理
-                console.error('Error fetching data:', error);
-            });
-        }
-
+					// 新しいデータをフォームに代入
+					data.forEach((detail, index) => {
+						if (timeInputs[index]) {
+							timeInputs[index].value = detail.time;
+						}
+						if (contentTextareas[index]) {
+							contentTextareas[index].value = detail.content;
+							// 文字数カウンターを更新
+							const charCounter = contentTextareas[index].nextElementSibling;
+							if (charCounter) {
+								charCounter.textContent = `${detail.content.length} / 50`;
+							}
+						}
+					});
+				}
 
 
 		// テキストエリアの高さ調整と文字数カウンター

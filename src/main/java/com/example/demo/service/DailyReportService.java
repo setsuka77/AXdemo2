@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,16 +46,13 @@ public class DailyReportService {
 	 * @param selectDate
 	 * @return 指定されたユーザーIDと日付に一致する日報申請情報
 	 */
-	public DailyReportDetail searchReport(Users loginUser,String selectDate){
-		System.out.println("Received selectDate: " + selectDate);
+	public List<DailyReportDetail> searchReport(Users loginUser,String selectDate){
 		Integer userId = loginUser.getId();
 		Date submitDate= Date.valueOf(selectDate);
-		System.out.println(submitDate);
-		//日報情報を検索してIDを取得
-		DailyReportDetail searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
-		 
-	    System.out.println("Report Detail from DB: " + searchReport); // デバッグ用ログ
 		
+		//日報情報を検索してIDを取得
+		List<DailyReportDetail> searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
+
 		return searchReport;
 	}
 	
@@ -70,6 +69,13 @@ public class DailyReportService {
 		if (selectDate == null|| selectDate.isEmpty()) {
 			errorMessages.add("日付が選択されていません。");
 		}
+		//対象日付が現在の日付より未来かどうかのチェック
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate selectedDate = LocalDate.parse(selectDate, formatter);
+        LocalDate today = LocalDate.now();
+        if (selectedDate.isAfter(today)) {
+            errorMessages.add("本日か過去の日付を選択してください。");
+        }
 
 		//作業時間と作業内容のチェック
 		List<DailyReportDetailForm> dailyReportDetailFormList = dailyReportForm.getDailyReportDetailFormList();
@@ -114,11 +120,12 @@ public class DailyReportService {
 			if(dailyForm.getTime() != null && dailyForm.getContent() != null) {
 				
 				//日報情報を検索してIDを取得
-				DailyReportDetail searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
+				//DailyReportDetail searchReport = dailyReportDetailMapper.findByReport(userId, submitDate);
 				
 				//新しい日報オブジェクトを作成
 				DailyReportDetail dailyReportDetail = new DailyReportDetail();
-				dailyReportDetail.setId(searchReport != null ? searchReport.getId() : null);
+				//dailyReportDetail.setId(searchReport != null ? searchReport.getId() : null);
+				dailyReportDetail.setId(null);
 				dailyReportDetail.setUserId(userId);
 				dailyReportDetail.setDate(submitDate);
 				dailyReportDetail.setTime(dailyForm.getTime());
