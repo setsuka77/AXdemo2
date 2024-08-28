@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>日報管理画面 | Analix社内管理システム</title>
-	<link rel="stylesheet" href="/login/styles.css">
+	<link rel="stylesheet" href="/login/css/styles.css">
 </head>
 
 <body>
@@ -60,7 +60,7 @@
 						<th>作業内容</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody id="reportBody">
 					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}"
 						th:classappend="${detail.errorFlag ? 'error-field' : ''}">
 						<td>
@@ -77,149 +77,160 @@
 					</tr>
 				</tbody>
 			</table>
+			<tfoot>
+                    <tr>
+                        <td><button id="add" type="button">＋</button></td>
+                    </tr>
+            </tfoot>
 		</form>
 	</div>
 
 	<script>
 
-		// 日付を選択した瞬間にDBから情報を取得する
-		function fetchReport() {
-			var selectDate = document.getElementById('dateInput').value;
+	// 日付を選択した瞬間にDBから情報を取得する
+	function fetchReport() {
+		const selectDate = document.getElementById('dateInput').value;
 
-			fetch('/login/report/dailyReport', { // Controllerのエンドポイントに合わせる
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({selectDate: selectDate})
-			})
-				.then(response => response.json())
-				.then(data => {
-					if (data) {
-						// データが存在する場合の処理
-						const reportDetails = data.reportDetails;
-						const statusText = data.statusText;
-						const loginUser = data.loginUser;
+		fetch('/login/report/dailyReport', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({selectDate})
+		})
+			.then(response => response.json())
+			.then(data => handleReportData(data))
+			.catch(error => console.error('Error fetching data:', error));
+	}
 
-						// 日報データをフォームに代入
-						if (reportDetails && reportDetails.length > 0) {
-							populateForm(reportDetails);
-						} else {
-							// データがない場合の処理
-							clearForm();
-							console.log('No data found for the selected date.');
-						}
-
-						// ステータスを表示
-						const statusTextElement = document.getElementById('statusText');
-						if (statusText) {
-							statusTextElement.textContent = statusText;
-						}
-					} else {
-						// データがない場合の処理
-						clearForm();
-					}
-				})
-				.catch(error => {
-					console.error('Error fetching data:', error);
-				});
+	function handleReportData(data) {
+		if (!data) {
+			clearForm();
+			return;
 		}
 
-		function populateForm(data) {
-			// 既存のフォーム要素を取得
-			const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-			const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+		const {reportDetails, statusText} = data;
+		populateForm(reportDetails || []);
+		updateStatusText(statusText);
+		toggleSubmitButton(statusText);
+	}
 
-			// 既存の行をクリア
-			timeInputs.forEach(input => input.value = '');
-			contentTextareas.forEach(textarea => textarea.value = '');
+	function updateStatusText(statusText) {
+		const statusTextElement = document.getElementById('statusText');
+		if (statusText) {
+			statusTextElement.textContent = statusText;
+		}
+	}
 
-			// 新しいデータをフォームに代入
-			data.forEach((detail, index) => {
-				if (timeInputs[index]) {
-					timeInputs[index].value = detail.time;
-				}
-				if (contentTextareas[index]) {
-					contentTextareas[index].value = detail.content;
-					// 文字数カウンターを更新
-					const charCounter = contentTextareas[index].nextElementSibling;
-					if (charCounter) {
-						charCounter.textContent = `${detail.content.length} / 50`;
-					}
+	function toggleSubmitButton(statusText) {
+		const submitButton = document.getElementById('submit');
+		const isApproved = statusText === '承認済み';
+		submitButton.disabled = isApproved;
+		submitButton.classList.toggle('disabled-form', isApproved);
+	}
+
+	function populateForm(data) {
+		const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+		const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+
+		clearForm();
+
+		data.forEach((detail, index) => {
+			const timeInput = timeInputs[index];
+			const contentTextarea = contentTextareas[index];
+			if (timeInput) timeInput.value = detail.time;
+			if (contentTextarea) {
+				contentTextarea.value = detail.content;
+				updateCharCounter(contentTextarea, detail.content.length);
+			}
+		});
+	}
+
+	function clearForm() {
+		const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+		const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+		const charCounters = document.querySelectorAll('.char-counter');
+
+		timeInputs.forEach(input => input.value = '');
+		contentTextareas.forEach(textarea => {
+			textarea.value = '';
+			updateCharCounter(textarea, 0);
+		});
+	}
+
+	function updateCharCounter(textarea, length) {
+		const charCounter = textarea.nextElementSibling;
+		if (charCounter) {
+			charCounter.textContent = `${length} / 50`;
+		}
+	}
+
+	function addRow() {
+		const tbody = document.getElementById('reportBody');
+		const rowCount = tbody.rows.length;
+
+		const newRow = document.createElement('tr');
+		newRow.innerHTML = `
+        <td>
+            <input type="number" class="working-time" name="dailyReportDetailFormList[${rowCount}].time" min="0" step="1"> h
+        </td>
+        <td class="textarea-wrapper">
+            <textarea name="dailyReportDetailFormList[${rowCount}].content" class="textarea note" rows="2" cols="60"></textarea>
+            <div class="char-counter">0 / 50</div>
+        </td>
+    `;
+
+		tbody.appendChild(newRow);
+
+		const textArea = newRow.querySelector('textarea');
+		textArea.addEventListener('input', () => {
+			const maxLength = 50;
+			const currentLength = textArea.value.length;
+			updateCharCounter(textArea, currentLength);
+			adjustHeight(textArea);
+		});
+	}
+
+	function adjustHeight(textarea) {
+		textarea.style.height = 'auto';
+		textarea.style.height = `${textarea.scrollHeight}px`;
+	}
+
+	// 初期設定
+	window.addEventListener('DOMContentLoaded', () => {
+		const submitButton = document.getElementById('submit');
+		const timeInputs = document.querySelectorAll("input[name^='dailyReportDetailFormList'][name$='.time']");
+		const contentTextareas = document.querySelectorAll("textarea[name^='dailyReportDetailFormList'][name$='.content']");
+
+		function checkFormValidity() {
+			let valid = false;
+			timeInputs.forEach((input, index) => {
+				const content = contentTextareas[index];
+				if (input.value.trim() && content.value.trim()) {
+					valid = true;
 				}
 			});
+			submitButton.disabled = !valid;
+			submitButton.classList.toggle('disabled-form', !valid);
 		}
 
-		//Form内をクリアにする
-		function clearForm() {
-			const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-			const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
-			const charCounters = document.querySelectorAll('.char-counter');
+		checkFormValidity();
+		timeInputs.forEach(input => input.addEventListener('input', checkFormValidity));
+		contentTextareas.forEach(textarea => textarea.addEventListener('input', checkFormValidity));
 
-			timeInputs.forEach(input => input.value = '');
-			contentTextareas.forEach(textarea => textarea.value = '');
-			charCounters.forEach(counter => counter.textContent = '0 / 50');
-		}
+		// 行追加ボタンのクリックイベント
+		document.getElementById('add').addEventListener('click', addRow);
 
 		// テキストエリアの高さ調整と文字数カウンター
-		const textareas = document.querySelectorAll(".textarea");
-
-		const adjustHeight = (textarea) => {
-			textarea.style.height = 'auto';
-			textarea.style.height = `${textarea.scrollHeight}px`;
-		};
-
-		textareas.forEach(textarea => {
-			const maxLength = 50;
-			const charCounter = textarea.nextElementSibling;
-
-			// 初期カウント表示
-			charCounter.textContent = `${textarea.value.length} / ${maxLength}`;
-
-			// 初期の高さ調整
+		document.querySelectorAll(".textarea").forEach(textarea => {
 			adjustHeight(textarea);
-
-			// textareaに文字が入力されるたびに
-			textarea.addEventListener("input", () => {
-				// その時点での文字数を取得する 
+			textarea.addEventListener('input', () => {
+				const maxLength = 50;
 				const currentLength = textarea.value.length;
-				// 「現在文字数 / 最大文字数」というテキストを作って文字数カウンター要素に入れる
-				charCounter.textContent = `${currentLength} / ${maxLength}`;
-
-				// 高さを調整する
+				updateCharCounter(textarea, currentLength);
 				adjustHeight(textarea);
 			});
-
-			// ウィンドウサイズが変わったときに高さを再調整
-			window.addEventListener("resize", () => adjustHeight(textarea));
+			window.addEventListener('resize', () => adjustHeight(textarea));
 		});
-
-
-		// 提出ボタン有効化
-		window.addEventListener('DOMContentLoaded', () => {
-			const submitButton = document.getElementById('submit');
-			const timeInputs = document.querySelectorAll("input[name^='dailyReportDetailFormList'][name$='.time']");
-			const contentTextareas = document.querySelectorAll("textarea[name^='dailyReportDetailFormList'][name$='.content']");
-
-			const checkFormValidity = () => {
-				let valid = false;
-
-				timeInputs.forEach((input, index) => {
-					const content = contentTextareas[index];
-					if (input.value.trim() !== '' && content.value.trim() !== '') {
-						valid = true;
-					}
-				});
-
-				submitButton.disabled = !valid;
-				submitButton.classList.toggle('disabled-form', !valid);
-			};
-
-			checkFormValidity();
-			timeInputs.forEach(input => input.addEventListener('input', checkFormValidity));
-			contentTextareas.forEach(textarea => textarea.addEventListener('input', checkFormValidity));
-		});
-
+	});
 
 	</script>
 
