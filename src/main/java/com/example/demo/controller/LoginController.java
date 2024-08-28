@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +30,15 @@ public class LoginController {
 	 * @return ログイン画面
 	 */
 	@RequestMapping("/")
-	public String login() {
-		return "login/login";
-	}
+	public String login(Model model, HttpSession session) {
+        // セッションからエラーメッセージを取得し、モデルに追加
+        String errorMessage = (String) session.getAttribute("error");
+        if (errorMessage != null) {
+            model.addAttribute("error", errorMessage);
+            session.removeAttribute("error"); // エラーメッセージをクリア
+        }
+        return "login/login";
+    }
 
 	/**
 	 * ログインボタン押下
@@ -102,21 +109,6 @@ public class LoginController {
         return "redirect:/"; // ログイン画面にリダイレクト
     }
     
-    /**
-     * 各リクエスト前にセッションをチェック
-     * 
-     * @param session
-     * @param redirectAttributes
-     * @return セッションが無効ならログイン画面にリダイレクト
-     */
-    @ModelAttribute
-    public String checkSession(HttpSession session, RedirectAttributes redirectAttributes) {
-        Users loginUser = (Users) session.getAttribute("user");
-        if (loginUser == null) {
-            redirectAttributes.addFlashAttribute("error", "セッションが切れました。再度ログインしてください。");
-            return "redirect:/";
-        }
-        return null; // セッションが有効な場合はリダイレクトなし
-    }
+    
 
 }

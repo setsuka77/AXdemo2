@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import java.util.Date;
-import java.time.LocalDate;
 
 import lombok.Data;
 
