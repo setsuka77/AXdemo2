@@ -45,11 +45,11 @@
 			</div>
 
 			<!-- 登録時入力エラーメッセージ表示 -->
-			<div th:if="${registerError}" class="alert alert-danger" role="alert">
+			<div th:if="${registerError}" class="alert alert-danger register-message" role="alert">
 				<p th:utext="${registerError}"></p>
 			</div>
 			<!-- 登録完了メッセージ表示 -->
-			<div th:if="${message}" class="alert alert-success" role="alert">
+			<div th:if="${message}" class="alert alert-success register-message" role="alert">
 				<p th:utext="${message}"></p>
 			</div>
 
@@ -89,6 +89,9 @@
 
 	// 日付を選択した瞬間にDBから情報を取得する
 	function fetchReport() {
+		// メッセージを削除し、errorFlagをfalseに設定する
+		removeMessages();
+		
 		const selectDate = document.getElementById('dateInput').value;
 
 		fetch('/login/report/dailyReport', {
@@ -108,10 +111,33 @@
 		}
 
 		const {reportDetails, statusText} = data;
+		clearForm()
 		populateForm(reportDetails || []);
 		updateStatusText(statusText);
 		toggleSubmitButton(statusText);
 	}
+	
+	function removeMessages() {
+	    // エラーメッセージが表示されている要素を削除
+	    const errorElements = document.querySelectorAll('.alert-danger');
+	    errorElements.forEach(function(element) {
+	        element.textContent = '';  // テキストを空にする
+	        element.style.display = 'none';  // 表示を隠す
+	    });
+	
+	    // 登録メッセージが表示されている要素を削除
+	    const registerMessageElement = document.querySelector('.alert-success'); // メッセージのクラス名に合わせる
+	    if (registerMessageElement) {
+	        registerMessageElement.textContent = '';  // テキストを空にする
+	        registerMessageElement.style.display = 'none';  // 表示を隠す
+	    }
+	    
+	    const errorFields = document.querySelectorAll('.error-field');
+		errorFields.forEach(field => {
+			field.classList.remove('error-field');  // エラークラスを削除
+		});
+	}
+
 
 	function updateStatusText(statusText) {
 		const statusTextElement = document.getElementById('statusText');
@@ -128,21 +154,26 @@
 	}
 
 	function populateForm(data) {
-		const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-		const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+			const tbody = document.getElementById('reportBody');
+			const existingRows = tbody.rows.length;
 
-		clearForm();
+			// 必要な行数を追加
+			autoAddRows(data.length);
 
-		data.forEach((detail, index) => {
-			const timeInput = timeInputs[index];
-			const contentTextarea = contentTextareas[index];
-			if (timeInput) timeInput.value = detail.time;
-			if (contentTextarea) {
-				contentTextarea.value = detail.content;
-				updateCharCounter(contentTextarea, detail.content.length);
-			}
-		});
-	}
+			const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+			const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+
+			// データをフォームに代入
+			data.forEach((detail, index) => {
+				const timeInput = timeInputs[index];
+				const contentTextarea = contentTextareas[index];
+				if (timeInput) timeInput.value = detail.time;
+				if (contentTextarea) {
+					contentTextarea.value = detail.content;
+					updateCharCounter(contentTextarea, detail.content.length);
+				}
+			});
+		}
 
 	function clearForm() {
 		const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
@@ -188,6 +219,15 @@
 			adjustHeight(textArea);
 		});
 	}
+	
+	function autoAddRows(count) {
+			const rowCount = document.getElementById('reportBody').rows.length;
+			const rowsToAdd = Math.max(0, count - rowCount);
+
+			for (let i = 0; i < rowsToAdd; i++) {
+				addRow();
+			}
+		}
 
 	function adjustHeight(textarea) {
 		textarea.style.height = 'auto';
@@ -231,7 +271,6 @@
 			window.addEventListener('resize', () => adjustHeight(textarea));
 		});
 	});
-
 
 	</script>
 

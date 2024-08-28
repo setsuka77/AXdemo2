@@ -89,7 +89,6 @@ public class DailyReportController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("reportDetails", reportDetail);
 		response.put("statusText", statusText);
-		response.put("loginUser", loginUser);
 
 		return ResponseEntity.ok(response);
 	}
