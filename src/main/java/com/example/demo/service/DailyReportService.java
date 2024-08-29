@@ -157,6 +157,12 @@ public class DailyReportService {
 	
 	/**
 	 * ステータス変更
+	 * 
+	 * @param loginUser
+	 * @param selectDate
+	 * @param status
+	 * @return 申請結果
+	 * 
 	 */
 	public Boolean changeStatus(Users loginUser, String selectDate,int status) {
 		Integer userId = loginUser.getId();
@@ -182,6 +188,7 @@ public class DailyReportService {
 		}
 		return true;
 	}
+
 
 	
 

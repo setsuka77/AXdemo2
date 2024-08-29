@@ -25,7 +25,6 @@ import com.example.demo.form.DailyReportForm;
 import com.example.demo.service.DailyReportService;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 
 @Controller
 public class DailyReportController {
@@ -57,7 +56,6 @@ public class DailyReportController {
 
 		// 上部にステータスを表示
 		model.addAttribute("statusText", "未提出");
-
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("dailyReportForm", dailyReportForm);
 		return "report/dailyReport";
@@ -121,7 +119,7 @@ public class DailyReportController {
 	 * @return 日報登録画面
 	 */
 	@PostMapping(path = "/report/dailyReport", params = "submit")
-	public String submitReport(HttpSession session, @Valid DailyReportForm dailyReportForm, BindingResult result,
+	public String submitReport(HttpSession session,DailyReportForm dailyReportForm, BindingResult result,
 			Model model, String selectDate, RedirectAttributes redirectAttributes) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");

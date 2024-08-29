@@ -41,7 +41,7 @@
 
 			<div class="button-group">
 				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit"
-					class="button">提出</button>
+					class="button" disabled>提出</button>
 			</div>
 
 			<!-- 登録時入力エラーメッセージ表示 -->
@@ -66,7 +66,7 @@
 						<td>
 							<input type="number" class="working-time"
 								th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
-								th:value="${detail.time}" id="time" min="0" step="1"> h
+								th:value="${detail.time}" id="time" min="1" step="1"> h
 						</td>
 						<td class="textarea-wrapper">
 							<textarea id="content"
@@ -115,6 +115,7 @@
 		populateForm(reportDetails || []);
 		updateStatusText(statusText);
 		toggleSubmitButton(statusText);
+		checkFormValidity();
 	}
 	
 	function removeMessages() {
@@ -231,28 +232,43 @@
 
 	function adjustHeight(textarea) {
 		textarea.style.height = 'auto';
-		textarea.style.height = `${textarea.scrollHeight}px`;
+				textarea.style.height = `${textarea.scrollHeight}px`;
+			}
+
+	// 日付選択時にフォームをチェックし、ボタンを活性化する関数
+	function checkFormValidity() {
+		const dateInput = document.getElementById('dateInput');
+	    const submitButton = document.getElementById('submit');
+	    const timeInputs = document.querySelectorAll("input[name^='dailyReportDetailFormList'][name$='.time']");
+	    const contentTextareas = document.querySelectorAll("textarea[name^='dailyReportDetailFormList'][name$='.content']");
+	
+	    const dateValid = dateInput.value.trim() !== ''; // 日付が入力されているか確認
+	    let isAnyFormFilled = false; // 少なくとも1行が正しく入力されているかどうか
+	
+	    // 作業時間と作業内容がすべて入力されているか確認
+	    timeInputs.forEach((input, index) => {
+	        const content = contentTextareas[index];
+	        if (input.value.trim() !== '' && content.value.trim() !== '') {
+	            isAnyFormFilled = true; // 少なくとも1行が正しく入力されている場合はtrueに設定
+	        }
+	    });
+	
+	    // 日付が選択され、少なくとも1行が正しく入力されている場合にボタンを活性化
+	    const isValid = dateValid && isAnyFormFilled;
+	    submitButton.disabled = !isValid;
+	    submitButton.classList.toggle('disabled-form', !isValid);
 	}
 
-	// 初期設定
-	window.addEventListener('DOMContentLoaded', () => {
-		const submitButton = document.getElementById('submit');
+		// 初期設定
+		window.addEventListener('DOMContentLoaded', () => {
+		checkFormValidity(); // 初期ロード時にボタンの状態をチェック
+			
+		const dateInput = document.getElementById('dateInput');
 		const timeInputs = document.querySelectorAll("input[name^='dailyReportDetailFormList'][name$='.time']");
 		const contentTextareas = document.querySelectorAll("textarea[name^='dailyReportDetailFormList'][name$='.content']");
-
-		function checkFormValidity() {
-			let valid = false;
-			timeInputs.forEach((input, index) => {
-				const content = contentTextareas[index];
-				if (input.value.trim() && content.value.trim()) {
-					valid = true;
-				}
-			});
-			submitButton.disabled = !valid;
-			submitButton.classList.toggle('disabled-form', !valid);
-		}
-
-		checkFormValidity();
+	
+		// 入力イベントを監視してボタンの状態を更新
+		dateInput.addEventListener('input', checkFormValidity);
 		timeInputs.forEach(input => input.addEventListener('input', checkFormValidity));
 		contentTextareas.forEach(textarea => textarea.addEventListener('input', checkFormValidity));
 
