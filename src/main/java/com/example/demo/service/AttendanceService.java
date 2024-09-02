@@ -244,7 +244,7 @@ public class AttendanceService {
 		boolean hasErrors = false;
 
 		// 出退勤時間形式チェック
-		Pattern timePattern = Pattern.compile("^\\d{2}:\\d{2}$");
+	    Pattern timePattern = Pattern.compile("^[0-9]{2}:[0-9]{2}$");
 
 		for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
 			// すべての項目が未入力の場合はスキップ
