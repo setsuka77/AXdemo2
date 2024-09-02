@@ -25,9 +25,9 @@ public class UserManagementForm {
 	@NotNull(message = "所属部署 : 所属部署を選択してください。")
 	private Integer departmentId;
 	/** 有効開始日 */
-	@NotBlank(message = "利用開始日 : yyyy/MM/dd のフォーマットで入力してください。")
-	@Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "利用開始日 : yyyy/MM/dd のフォーマットで入力してください。")
-	@DateTimeFormat(pattern = "yyyy/MM/dd") // 入力フォームのフォーマットに合わせる
+	@NotBlank(message = "利用開始日 : YYYY/MM/DD のフォーマットで入力してください。")
+	@Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "利用開始日 : YYYY/MM/DD のフォーマットで入力してください。")
+	@DateTimeFormat(pattern = "YYYY/MM/DD") // 入力フォームのフォーマットに合わせる
 	private String startDate;
 	
 }

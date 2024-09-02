@@ -185,7 +185,7 @@ public class UserManagementService {
 
 		// エラーメッセージを HTML に合成
 		if (!errors.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("ユーザー登録/更新に失敗しました。<br>");
+			StringBuilder errorMessage = new StringBuilder("ユーザ登録/更新に失敗しました。<br>");
 			errors.forEach((field, messages) -> {
 				messages.forEach(message -> errorMessage.append(message).append("<br>"));
 			});
