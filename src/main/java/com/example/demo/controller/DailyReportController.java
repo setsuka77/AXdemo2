@@ -46,7 +46,7 @@ public class DailyReportController {
 
 		// 初期表示用に10行の空のフォームを準備する
 		List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 3; i++) {
 			dailyReportDetailFormList.add(new DailyReportDetailForm());
 		}
 

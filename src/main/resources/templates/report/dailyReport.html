@@ -75,6 +75,11 @@
 								th:text="${detail.content}" class="textarea note" rows="2" cols="60"></textarea>
 							<div class="char-counter" id="charCounter">0 / 50</div>
 						</td>
+						<td>
+			            	<input type="hidden" 
+			                	th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].id'" 
+			                	th:value="${detail.id}">
+			       		</td>
 					</tr>
 				</tbody>
 			</table>

@@ -130,20 +130,16 @@ public class DailyReportService {
 		for(DailyReportDetailForm dailyForm : dailyReportDetailFormList) {
 			if(dailyForm.getTime() != null && dailyForm.getContent() != null) {
 				
-				//日報情報を検索してIDを取得
-				//DailyReportDetail searchReport = dailyReportDetailMapper.findByReport(userId, submitDate);
-				
 				//新しい日報オブジェクトを作成
 				DailyReportDetail dailyReportDetail = new DailyReportDetail();
-				//dailyReportDetail.setId(searchReport != null ? searchReport.getId() : null);
-				dailyReportDetail.setId(null);
+				dailyReportDetail.setId(dailyForm.getId());
 				dailyReportDetail.setUserId(userId);
 				dailyReportDetail.setDate(submitDate);
 				dailyReportDetail.setTime(dailyForm.getTime());
 				dailyReportDetail.setContent(dailyForm.getContent());
 				
 				//idが存在しない場合は新規登録
-				if(dailyReportDetail.getId() == null) {
+				if(dailyReportDetail.getId() == null || dailyReportDetail.getId() == 0) {
 					//日報情報を登録
 					dailyReportDetailMapper.insert(dailyReportDetail);
 				}else {
