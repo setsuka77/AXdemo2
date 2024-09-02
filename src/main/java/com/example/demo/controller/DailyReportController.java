@@ -87,6 +87,7 @@ public class DailyReportController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("reportDetails", reportDetail);
 		response.put("statusText", statusText);
+		System.out.println("取得時のデータ:"+reportDetail);
 
 		return ResponseEntity.ok(response);
 	}
@@ -121,6 +122,7 @@ public class DailyReportController {
 	@PostMapping(path = "/report/dailyReport", params = "submit")
 	public String submitReport(HttpSession session,DailyReportForm dailyReportForm, BindingResult result,
 			Model model, String selectDate, RedirectAttributes redirectAttributes) {
+		System.out.println("提出ボタン押下:"+dailyReportForm);
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 

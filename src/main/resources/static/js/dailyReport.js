@@ -67,44 +67,45 @@ function toggleSubmitButton(statusText) {
 
 // フォームに取得したデータを埋め込む
 function populateForm(data) {
-	const tbody = document.getElementById('reportBody');
-	const existingRows = tbody.rows.length;
+    // 必要な行数を追加
+    autoAddRows(data.length);
 
-	// 必要な行数を追加
-	autoAddRows(data.length);
+    // データをフォームに代入
+    data.forEach((detail, index) => {
+        const timeInput = document.querySelector(`input[name="dailyReportDetailFormList[${index}].time"]`);
+        const contentTextarea = document.querySelector(`textarea[name="dailyReportDetailFormList[${index}].content"]`);
+        const idInput = document.querySelector(`input[name="dailyReportDetailFormList[${index}].id"]`);
 
-	const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-	const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
-	const idInputs = document.querySelectorAll('input[type="hidden"][name^="dailyReportDetailFormList"][name$=".id"]');
-
-
-	// データをフォームに代入
-	data.forEach((detail, index) => {
-		const timeInput = timeInputs[index];
-		const contentTextarea = contentTextareas[index];
-		const idInput = idInputs[index];
-		if (timeInput) timeInput.value = detail.time;
-		if (contentTextarea) {
-			contentTextarea.value = detail.content;
-			updateCharCounter(contentTextarea, detail.content.length);
-		}
-		if (idInput) {
-            idInput.value = detail.id ? detail.id : 0; 
+        if (timeInput) timeInput.value = detail.time;
+        if (contentTextarea) {
+            contentTextarea.value = detail.content;
+            updateCharCounter(contentTextarea, detail.content.length);
+            adjustHeight(contentTextarea);
         }
-	});
+        if (idInput) {
+            idInput.value = detail.id ? detail.id : 0;
+        }
+    });
+    
 }
 
 // フォームをクリアする
 function clearForm() {
-	const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-	const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+    const tbody = document.getElementById('reportBody');
+    const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+    const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
 
-	timeInputs.forEach(input => input.value = '');
-	
-	contentTextareas.forEach(textarea => {
-		textarea.value = '';
-		updateCharCounter(textarea, 0);
-	});
+    timeInputs.forEach(input => input.value = '');
+    contentTextareas.forEach(textarea => {
+        textarea.value = '';
+        updateCharCounter(textarea, 0);
+        adjustHeight(textarea);
+    });
+
+    // 行を初期状態にリセット
+    while (tbody.rows.length > 3) {
+        tbody.deleteRow(3);
+    }
 }
 
 // テキストエリアの文字数カウンターを更新する
@@ -117,11 +118,11 @@ function updateCharCounter(textarea, length) {
 
 // 新しい行を追加する
 function addRow() {
-	const tbody = document.getElementById('reportBody');
-	const rowCount = tbody.rows.length;
+    const tbody = document.getElementById('reportBody');
+    const rowCount = tbody.rows.length;
 
-	const newRow = document.createElement('tr');
-	newRow.innerHTML = `
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
         <td>
             <input type="number" class="working-time" name="dailyReportDetailFormList[${rowCount}].time" min="0" step="1"> h
         </td>
@@ -129,27 +130,30 @@ function addRow() {
             <textarea name="dailyReportDetailFormList[${rowCount}].content" class="textarea note" rows="2" cols="60"></textarea>
             <div class="char-counter">0 / 50</div>
         </td>
+        <input type="hidden" name="dailyReportDetailFormList[${rowCount}].id" value="0">
     `;
 
-	tbody.appendChild(newRow);
+    tbody.appendChild(newRow);
 
-	const textArea = newRow.querySelector('textarea');
-	textArea.addEventListener('input', () => {
-		const currentLength = textArea.value.length;
-		updateCharCounter(textArea, currentLength);
-		adjustHeight(textArea);
-	});
+    const textArea = newRow.querySelector('textarea');
+    textArea.addEventListener('input', () => {
+        const currentLength = textArea.value.length;
+        updateCharCounter(textArea, currentLength);
+        adjustHeight(textArea);
+    });
 }
 
 // 必要な行数を自動で追加する
 function autoAddRows(count) {
-	const rowCount = document.getElementById('reportBody').rows.length;
-	const rowsToAdd = Math.max(0, count - rowCount);
+    const tbody = document.getElementById('reportBody');
+    const rowCount = tbody.rows.length;
+    const rowsToAdd = Math.max(0, count - rowCount);
 
-	for (let i = 0; i < rowsToAdd; i++) {
-		addRow();
-	}
+    for (let i = 0; i < rowsToAdd; i++) {
+        addRow();
+    }
 }
+
 
 // テキストエリアの高さを調整する
 function adjustHeight(textarea) {
