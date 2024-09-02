@@ -75,16 +75,22 @@ function populateForm(data) {
 
 	const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
 	const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+	const idInputs = document.querySelectorAll('input[type="hidden"][name^="dailyReportDetailFormList"][name$=".id"]');
+
 
 	// データをフォームに代入
 	data.forEach((detail, index) => {
 		const timeInput = timeInputs[index];
 		const contentTextarea = contentTextareas[index];
+		const idInput = idInputs[index];
 		if (timeInput) timeInput.value = detail.time;
 		if (contentTextarea) {
 			contentTextarea.value = detail.content;
 			updateCharCounter(contentTextarea, detail.content.length);
 		}
+		if (idInput) {
+            idInput.value = detail.id ? detail.id : 0; 
+        }
 	});
 }
 

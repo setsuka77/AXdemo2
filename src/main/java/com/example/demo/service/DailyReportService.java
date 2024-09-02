@@ -142,9 +142,11 @@ public class DailyReportService {
 				if(dailyReportDetail.getId() == null || dailyReportDetail.getId() == 0) {
 					//日報情報を登録
 					dailyReportDetailMapper.insert(dailyReportDetail);
-				}else {
+					System.out.println("インサートできてる");				
+					}else {
 					//日報情報を更新
 					dailyReportDetailMapper.update(dailyReportDetail);
+					System.out.println("アップデートできてる");
 				}
 			}
 		}
