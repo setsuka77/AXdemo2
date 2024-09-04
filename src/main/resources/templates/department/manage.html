@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
+	
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>部署管理登録 | Analix社内管理システム</title>
+<link rel="stylesheet" href="/login/css/styles.css">
 </head>
+
 <body>
+	
+	<div class="container">
+		<div class="form-container">
+			<tr>
+				<div class="header-button">
+					<form th:action="@{/department/manage}" method="post">
+						<button type="submit" name="back" class="button">メニュー</button>
+					</form>
+					<h2>部署管理</h2>
+					<a th:href="@{/logout}"><button>ログオフ</button></a>
+				</div>
+			</tr>
+
+		</div>
+	</div>
 
 </body>
+
 </html>
