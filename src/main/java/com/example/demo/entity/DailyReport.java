@@ -3,6 +3,11 @@ package com.example.demo.entity;
 import java.util.Date;
 
 import lombok.Data;
+
+/*
+ * 日報申請情報エンティティ
+ * テーブル：daily_report
+ */
 @Data
 public class DailyReport {
 	/** 日報ID */

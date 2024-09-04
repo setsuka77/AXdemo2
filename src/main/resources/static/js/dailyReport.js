@@ -190,6 +190,7 @@ function checkFormValidity() {
 	submitButton.classList.toggle('disabled-form', !isValid);
 }
 
+
 // 初期設定
 window.addEventListener('DOMContentLoaded', () => {
 	checkFormValidity(); // 初期ロード時にボタンの状態をチェック

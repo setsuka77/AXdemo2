@@ -6,6 +6,7 @@ import lombok.Data;
 
 /*
  * 月次勤怠申請エンティティ
+ * テーブル：monthly_attendance_req
  */
 @Data
 public class MonthlyAttendanceReq {
