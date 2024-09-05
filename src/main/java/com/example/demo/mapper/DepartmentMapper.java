@@ -3,6 +3,7 @@ package com.example.demo.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.demo.dto.DepartmentDto;
 import com.example.demo.entity.Department;
@@ -29,6 +30,8 @@ public interface DepartmentMapper {
      */
 	List<DepartmentDto> findAllStop();
 	
+	// 部署名部分一致検索用メソッドの追加
+    List<DepartmentDto> findByNameLike(@Param("name") String name);
 	
 	/**
 	 * 部署情報 登録
