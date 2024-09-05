@@ -13,4 +13,6 @@ public class DailyReportDto {
 	private Date date;
 	/** 申請状況 */
 	private Integer status;
+	/** ユーザーの名前*/
+	private String UserName;
 }

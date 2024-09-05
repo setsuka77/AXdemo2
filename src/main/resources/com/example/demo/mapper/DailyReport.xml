@@ -9,6 +9,17 @@
         WHERE user_id = #{userId}
         AND date = #{date}
     </select>
+    
+    <!-- ステータスが1の日報申請情報を取得 -->
+    <select id="findByStatus" resultType="com.example.demo.dto.DailyReportDto">
+        SELECT
+	        u.name AS userName,
+	        u.id AS userId,
+	        report.*
+   		FROM daily_report report
+    	JOIN users u ON report.user_id = u.id
+    	WHERE report.status = 1
+    </select>
 
     <!-- 提出ボタン押下　日報申請 -->
     <insert id="insert" parameterType="com.example.demo.entity.DailyReport">

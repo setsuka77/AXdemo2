@@ -24,8 +24,8 @@ function handleReportData(data) {
 	clearForm()
 	populateForm(reportDetails || []);
 	updateStatusText(statusText);
-	toggleSubmitButton(statusText);
 	checkFormValidity();
+	toggleSubmitButton(statusText);
 }
 
 // エラーメッセージと成功メッセージ、エラーFlagを削除する
@@ -57,12 +57,13 @@ function updateStatusText(statusText) {
 	}
 }
 
-// レポートが承認済みの場合、送信ボタンを無効化する
+// レポートが承認済みの場合、提出ボタンを無効化する
 function toggleSubmitButton(statusText) {
+	 console.log(`Status text: ${statusText }`); // ここで確認
 	const submitButton = document.getElementById('submit');
 	const isApproved = statusText === '承認済み';
+	console.log(`Is Approved: ${isApproved}`);
 	submitButton.disabled = isApproved;
-	submitButton.classList.toggle('disabled-form', isApproved);
 }
 
 // フォームに取得したデータを埋め込む
@@ -83,7 +84,7 @@ function populateForm(data) {
 			adjustHeight(contentTextarea);
 		}
 		if (idInput) {
-			idInput.value = detail.id ? detail.id : 0;
+			idInput.value = detail.id ? detail.id : null;
 		}
 	});
 

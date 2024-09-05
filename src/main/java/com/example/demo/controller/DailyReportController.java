@@ -41,23 +41,30 @@ public class DailyReportController {
 	 */
 	@GetMapping("/report/dailyReport")
 	public String showDailyReport(Model model, HttpSession session) {
-		// ユーザー情報の取得
-		Users loginUser = (Users) session.getAttribute("user");
+	    // ユーザー情報の取得
+	    Users loginUser = (Users) session.getAttribute("user");
+	    String role = loginUser.getRole();
 
-		// 初期表示用に10行の空のフォームを準備する
-		List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
-		for (int i = 0; i < 3; i++) {
-			dailyReportDetailFormList.add(new DailyReportDetailForm());
+	    // 初期表示用に10行の空のフォームを準備する
+	    List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
+	    if (!"2".equals(role)) {
+	        for (int i = 0; i < 3; i++) {
+	            dailyReportDetailFormList.add(new DailyReportDetailForm());
+	        }
+	    }else {
+	    	//roleが2の時、申請一覧を表示
+			model.addAttribute("dailyReport", dailyReportService.findAllReport());
+			//却下と承認ボタンを非活性に設定
+			model.addAttribute("checkReject", false);
+			model.addAttribute("checkApproval", false);
 		}
 
-		// DailyReportForm を初期化してモデルに追加
-		DailyReportForm dailyReportForm = new DailyReportForm();
-		dailyReportForm.setDailyReportDetailFormList(dailyReportDetailFormList);
+	    // DailyReportForm を初期化してモデルに追加
+	    DailyReportForm dailyReportForm = new DailyReportForm();
+	    dailyReportForm.setDailyReportDetailFormList(dailyReportDetailFormList);
 
-		// 上部にステータスを表示
-		model.addAttribute("statusText", "未提出");
-		model.addAttribute("loginUser", loginUser);
-		model.addAttribute("dailyReportForm", dailyReportForm);
+	    model.addAttribute("loginUser", loginUser);
+	    model.addAttribute("dailyReportForm", dailyReportForm);
 		return "report/dailyReport";
 	}
 
@@ -83,11 +90,11 @@ public class DailyReportController {
 		// ステータスを取得
 		Integer status = dailyReportService.searchReportStatus(loginUser, selectDate);
 		String statusText = getStatusText(status);
+		session.setAttribute("statusText", statusText);
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("reportDetails", reportDetail);
 		response.put("statusText", statusText);
-		System.out.println("取得時のデータ:"+reportDetail);
 
 		return ResponseEntity.ok(response);
 	}
@@ -131,10 +138,13 @@ public class DailyReportController {
 
 		// エラーが存在する場合
 		if (!validationErrors.isEmpty()) {
+			// ステータスを取得
+			String statusText = (String) session.getAttribute("statusText");
+			
 			model.addAttribute("registerError", validationErrors);
 			model.addAttribute("loginUser", loginUser);
 			model.addAttribute("dailyReportForm", dailyReportForm);
-			model.addAttribute("statusText", "未提出");
+			model.addAttribute("statusText", statusText);
 			model.addAttribute("selectDate", selectDate);
 			return "report/dailyReport";
 		}

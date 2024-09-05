@@ -29,11 +29,10 @@
         AND date = #{date}
     </select>
     
-    <!-- 日報申請情報を取得 -->
-    <select id="findByReport" resultType="com.example.demo.entity.DailyReportDetail">
-        SELECT * FROM daily_report_detail
-        WHERE user_id = #{userId}
-        AND date = #{date}
-    </select>
+   <!-- 日報情報を削除 -->
+   <delete id="delete" parameterType="com.example.demo.entity.DailyReportDetail">
+  		DELETE FROM daily_report_detail
+   		WHERE id = #{id}
+   </delete>
 
 </mapper>

@@ -32,18 +32,47 @@
 				</div>
 			</td>
 		</tr>
-
+		
 		<!-- 対象日付を指定して表示 メンバー/UM -->
-		<form id="report-form" th:action="@{/report/dailyReport}" method="post" th:if="${loginUser.role != '2'}">
-			<div class="form-group">
-				対象日付:
-				<input type="date" name="selectDate" th:value="${selectDate}" onchange="fetchReport()" id="dateInput">
-			</div>
+		<form id="report-form" th:action="@{/report/dailyReport}" method="post" >
+			 <div class="form-group" th:if="${loginUser.role != '2'}">
+                対象日付:
+                <input type="date" name="selectDate" th:value="${selectDate}" onchange="fetchReport()" id="dateInput">
+            </div>
 
-			<div class="button-group">
-				<button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit"
-					class="button" disabled>提出</button>
-			</div>
+			 <div class="button-group">
+                <button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit" class="button">提出</button>
+                <button type="submit" th:if="${loginUser.role == '2'}" 
+     	         	th:attr="disabled=${checkReject == false}" class="button"
+					th:classappend="${checkReject == false ? 'disabled-form' : ''}"
+                	name="rejected" onClick="return confirm('却下します。よろしいですか？')">却下</button>
+                <button type="submit" th:if="${loginUser.role == '2'}" 
+                	th:attr="disabled=${checkApproval == false}" class="button"
+					th:classappend="${checkApproval == false ? 'disabled-form' : ''}"
+                	name="approval" onClick="return confirm('承認します。よろしいですか？')">承認</button>
+            </div>
+		
+		
+		<!-- 申請一覧 マネージャのみ -->
+		<div class="manager-table-container" th:if="${loginUser.role == '2'}">
+                <table class="table table-hover manager-table" border="1" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>承認申請者</th>
+                            <th>申請対象日</th>
+<!--                            <th>申請日</th>-->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="report : ${dailyReport}">
+                            <td><a th:href="@{/report/dailyReport/detail(id=${report.id})}" th:text="${report.userName}">申請者</a></td>
+                            <td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請対象日</td>
+                           <!-- <td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請日</td>-->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
 
 			<!-- 登録時入力エラーメッセージ表示 -->
 			<div th:if="${registerError}" class="alert alert-danger register-message" role="alert">
@@ -80,7 +109,7 @@
 				</tbody>
 			</table>
 			<tfoot>
-                    <tr>
+                    <tr th:if="${loginUser.role != '2'}">
                         <td><button id="add" type="button">＋</button></td>
                     </tr>
             </tfoot>

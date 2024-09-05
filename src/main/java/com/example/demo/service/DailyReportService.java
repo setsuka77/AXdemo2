@@ -10,6 +10,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.DailyReportDto;
 import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
 import com.example.demo.entity.Users;
@@ -25,6 +26,14 @@ public class DailyReportService {
 	private DailyReportDetailMapper dailyReportDetailMapper;
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
+	
+	/**
+	 * ステータスが1の申請一覧を取得する
+	 * @return ステータスが1の月次勤怠申請のリスト
+	 */
+	public List<DailyReportDto> findAllReport() {
+		return dailyReportMapper.findByStatus();
+	}
 	
 	/**
 	 * 日報登録情報を取得
@@ -139,7 +148,7 @@ public class DailyReportService {
 				dailyReportDetail.setContent(dailyForm.getContent());
 				
 				//idが存在しない場合は新規登録
-				if(dailyReportDetail.getId() == null || dailyReportDetail.getId() == 0) {
+				if(dailyReportDetail.getId() == null) {
 					//日報情報を登録
 					dailyReportDetailMapper.insert(dailyReportDetail);
 					System.out.println("インサートできてる");				
@@ -148,6 +157,15 @@ public class DailyReportService {
 					dailyReportDetailMapper.update(dailyReportDetail);
 					System.out.println("アップデートできてる");
 				}
+			}
+			if(dailyForm.getTime() == null && (dailyForm.getContent() == null || dailyForm.getContent().isEmpty())
+					&& dailyForm.getId() != null) {
+				DailyReportDetail dailyReportDetail = new DailyReportDetail();
+				dailyReportDetail.setId(dailyForm.getId());
+				
+				//日報情報を削除
+				dailyReportDetailMapper.delete (dailyReportDetail);
+				System.out.println("削除できてる");
 			}
 		}
 		return "日報が提出されました。";
@@ -186,8 +204,5 @@ public class DailyReportService {
 		}
 		return true;
 	}
-
-
 	
-
 }
