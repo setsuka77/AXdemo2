@@ -56,10 +56,14 @@
 				</div>
 
 				<div class="button-group">
-					<button type="submit" name="register" class="button" onClick="return confirmRegistration()">新規登録</button>
-					<button type="submit" name="update" class="button" onClick="return confirmUpdate()">部署名変更</button>
-					<button type="submit" name="deactivate" class="button" onClick="return confirmDeactivate()">部署停止</button>
-					<button type="submit" name="restart" class="button" onClick="return confirmRestart()">再開</button>
+					<button type="submit" id="register" name="register" class="button" onClick="return confirmRegistration()"
+						disabled>新規登録</button>
+					<button type="submit" id="update" name="update" class="button" onClick="return confirmUpdate()"
+						disabled>部署名変更</button>
+					<button type="submit" id="deactivate" name="deactivate" class="button" onClick="return confirmDeactivate()"
+						disabled>部署停止</button>
+					<button type="submit" id="restart" name="restart" class="button" onClick="return confirmRestart()"
+						disabled>再開</button>
 				</div>
 
 
@@ -94,6 +98,74 @@
 					.catch(error => console.error('Error:', error));
 			}
 		});
+		
+		//ボタンの活性、非活性
+		document.addEventListener("DOMContentLoaded", function () {
+			const searchInput = document.getElementById("newDepartment");
+			const dropdown = document.getElementById("currentDepartment");
+
+			const registerButton = document.getElementById("register");
+			const updateButton = document.getElementById("update");
+			const deactivateButton = document.getElementById("deactivate");
+			const restartButton = document.getElementById("restart");
+
+			// 初期化
+			disableAllButtons();
+
+			// 入力や選択の監視
+			searchInput.addEventListener("input", handleFormState);
+			dropdown.addEventListener("change", handleFormState);
+
+			function handleFormState() {
+				const searchValue = searchInput.value.trim();
+				const dropdownValue = dropdown.value;
+
+				disableAllButtons();
+
+				// 検索欄のみ入力されている場合、新規登録ボタンを活性化
+				if (searchValue !== "" && dropdownValue === "") {
+					enableButton(registerButton);
+				}
+
+				// 検索欄が入力されていて、プルダウンも選択されている場合
+				if (searchValue !== "" && dropdownValue !== "") {
+					enableButton(updateButton);
+            		enableButton(deactivateButton);
+				
+					// 検索欄が入力されていて、プルダウンも選択されているが同じ値の場合
+					if ( searchValue == dropdownValue) {
+	            		disableButton(updateButton);
+					}
+				}
+
+				// プルダウンで「[停止中]」の名前が含まれている場合は再開ボタンを活性化
+				if (dropdownValue.includes("[停止中]")) {
+					disableAllButtons(); // 他のボタンをすべて無効に
+            		enableButton(restartButton);
+				}
+			}
+
+			// すべてのボタンを無効化する関数
+			function disableAllButtons() {
+				disableButton(registerButton);
+        		disableButton(updateButton);
+       			disableButton(deactivateButton);
+        		disableButton(restartButton);
+			}
+
+			// ボタンを活性化する関数
+			function enableButton(button) {
+				button.disabled = false;
+				button.classList.remove('disabled-form');
+			}
+
+			// ボタンを非活性化する関数
+			function disableButton(button) {
+				button.disabled = true;
+				button.classList.add('disabled-form');
+			}
+		});
+
 
 
 		// 部署のプルダウンメニューから選択された値をテキストフィールドに反映
@@ -128,45 +200,6 @@
 			const currentDepartment = document.getElementById('currentDepartment').value;
 			return confirm(`選択中の部署: ${currentDepartment}\nこの部署を再開します。よろしいですか？`);
 		}
-
-
-
-		//＊＊ボタンの活性非活性ができるまでの必須チェック＊＊//
-		document.addEventListener("DOMContentLoaded", function () {
-			// フォームの要素を取得
-			const departmentForm = document.getElementById("departmentForm");
-
-			// エラーメッセージを表示する関数
-			const showError = (input, errorElement, message) => {
-				if (input.value.trim() === "") {
-					errorElement.textContent = message;
-					errorElement.style.display = "block";
-					return false;
-				} else {
-					errorElement.style.display = "none";
-					return true;
-				}
-			};
-			// フォームが送信されたときの処理
-			departmentForm.addEventListener("submit", function (event) {
-				// 部署名の入力フィールドとエラーメッセージ要素を取得
-				const newDepartmentInput = document.getElementById("newDepartment");
-				const newDepartmentError = document.getElementById("errorNewDepartment");
-
-				// ボタンが「新規登録」か「部署名変更」だった場合、必須入力チェックを行う
-				const registerButtonClicked = document.querySelector("button[name='register']:focus");
-				const updateButtonClicked = document.querySelector("button[name='update']:focus");
-
-				if (registerButtonClicked || updateButtonClicked) {
-					const isDepartmentValid = showError(newDepartmentInput, errorNewDepartment, "部署名を入力してください。");
-
-					// 入力が無効な場合、フォームの送信を中止
-					if (!isDepartmentValid) {
-						event.preventDefault();
-					}
-				}
-			});
-		});
 
 	</script>
 
