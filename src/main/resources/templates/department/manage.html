@@ -26,35 +26,40 @@
 			<!-- 部署管理フォーム -->
 			<form id="departmentForm" th:action="@{/department/manage}" method="post" th:object="${departmentForm}">
 
-				<table>
+				<!-- 成功メッセージ表示 -->
+				<div th:if="${successMessage}" class="alert alert-success" role="alert">
+					<p th:utext="${successMessage}"></p>
+				</div>
 
-					<!-- 新規部署名入力 -->
-					<tr>
-						<td><label for="newDepartment">部署名</label></td>
-						<td>
-							<input type="text" id="newDepartment" name="newDepartment" onkeyup="searchDepartment()"
-								autocomplete="off" />
-							<div class="error-message" id="errorNewDepartment"></div>
-						</td>
-						<!--<td><small>新規登録の場合は新規部署名を入力</small></td>-->
-					</tr>
+				<!-- 新規部署名入力 -->
+				<div class="input-group">
+					<label for="newDepartment">部署名</label>
+					<input type="text" id="newDepartment" name="newDepartment" onkeyup="searchDepartment()"
+						autocomplete="off" />
+					<div class="error-message" id="errorNewDepartment"></div>
+				</div>
 
-					<!-- 登録済の部署表示選択プルダウン、各種ボタン -->
-					<tr>
-						<td><label for="currentDepartment">登録済の部署</label></td>
-						<td>
-							<select name="currentDepartment" id="currentDepartment">
-								<option value="">選択してください</option>
-								<option th:each="department : ${departments}" th:value="${department.name}"
-									th:text="${department.name}">選択肢</option>
-							</select>
-						</td>
-						<td><button type="submit" name="register" class="button">新規登録</button></td>
-						<td><button type="submit" name="update" class="button">部署名変更</button></td>
-						<td><button type="submit" name="deactivate" class="button">停止</button></td>
-					</tr>
+				<!-- 登録済の部署表示選択プルダウン -->
+				<div class="input-group">
+					<label for="currentDepartment">登録済部署</label>
 
-				</table>
+					<select name="currentDepartment" id="currentDepartment">
+						<option value="">選択してください</option>
+						<option th:each="department : ${departments}" th:value="${department.name}"
+							th:text="${department.name}">選択肢</option>
+					</select>
+				</div>
+				<!-- エラーメッセージ表示 -->
+				<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+					<p th:utext="${errorMessage}"></p>
+				</div>
+				
+				<div class="button-group">
+					<button type="submit" name="register" class="button">新規登録</button>
+					<button type="submit" name="update" class="button">部署名変更</button>
+					<button type="submit" name="deactivate" class="button">停止</button>
+				</div>
+
 			</form>
 
 		</div>

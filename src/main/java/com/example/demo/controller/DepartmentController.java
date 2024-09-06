@@ -55,32 +55,76 @@ public class DepartmentController {
     @GetMapping("/department/search")
     @ResponseBody
     public List<DepartmentDto> searchDepartment(@RequestParam String name) {
-    	System.out.println("検索をかけている" + name);
+    	System.out.println("検索をかけている=" + name);
         // 部署名で前方一致検索を行い、結果を返す
         return departmentMapper.findByNameLike(name + "%");
     }
-    
 	
+    
+    /**
+     * 部署管理画面 新規部署登録処理
+     * 
+     * @param departmentForm
+     * @param redirectAttributes
+     * @param model
+     * @return
+     */
     @PostMapping(path = "/department/manage", params = "register")
-    public String registerDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
+    public String registerDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes, Model model) {
+        // 入力された部署名が既に登録されているかチェック
+        Department existingDepartment = departmentMapper.findByName(departmentForm.getNewDepartment());
+        
+        if (existingDepartment != null) {
+            // 部署名が既に存在する場合、エラーメッセージをモデルに追加して返す
+            model.addAttribute("errorMessage", "この部署名は既に登録されています。新たな部署名を入力してください。");
+            return "department/manage";
+        }
+
         // 新規部署登録処理
         departmentMapper.insert(departmentForm.toEntity());
+        redirectAttributes.addFlashAttribute("successMessage", departmentForm.getNewDepartment() + "を登録しました。");
         return "redirect:/department/manage";
     }
 
+    /**
+     * 部署管理画面 既存部署名更新処理
+     * 
+     * @param departmentForm
+     * @param redirectAttributes
+     * @param model
+     * @return
+     */
     @PostMapping(path = "/department/manage", params = "update")
-    public String updateDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
+    public String updateDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes, Model model) {
+        // 入力された新部署名が既に登録されているかチェック
+        Department existingDepartment = departmentMapper.findByName(departmentForm.getNewDepartment());
+        
+        if (existingDepartment != null) {
+            // 部署名が既に存在する場合、エラーメッセージをモデルに追加して返す
+            model.addAttribute("errorMessage", "この部署名は既に登録されています。新たな部署名を入力してください。");
+            return "department/manage";
+        }
+
         // 部署名変更更新処理
-    	if (departmentForm.getDepartmentId() != null) {
+        if (departmentForm.getDepartmentId() != null) {
             departmentForm.setName(departmentForm.getNewDepartment());
             departmentMapper.update(departmentForm.toEntity());
+            redirectAttributes.addFlashAttribute("successMessage", departmentForm.getCurrentDepartment() + "を更新しました。");
         }
         return "redirect:/department/manage";
     }
 
 
+    /**
+     * 部署管理画面 既存部署停止 論理削除処理
+     * 
+     * @param currentDepartment
+     * @param departmentForm
+     * @param redirectAttributes
+     * @return
+     */
     @PostMapping(path = "/department/manage", params = "deactivate")
-    public String deactivateDepartment(@RequestParam("currentDepartment") String currentDepartment, RedirectAttributes redirectAttributes) {
+    public String deactivateDepartment(@RequestParam("currentDepartment") String currentDepartment, DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
     	Department searchDepartment = departmentMapper.findByName(currentDepartment);
     	System.out.println(searchDepartment);
     	
@@ -91,8 +135,9 @@ public class DepartmentController {
         // 部署停止
         System.out.println(department);
         // 停止状態に変更
-		departmentMapper.update(department);
+		departmentMapper.deactivate(department);
         System.out.println("停止できた");
+        redirectAttributes.addFlashAttribute("successMessage", departmentForm.getCurrentDepartment() + "を停止しました。");
         return "redirect:/department/manage";
     }
 
