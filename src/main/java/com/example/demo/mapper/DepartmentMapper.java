@@ -30,21 +30,40 @@ public interface DepartmentMapper {
      */
 	List<DepartmentDto> findAllStop();
 	
-	// 部署名部分一致検索用メソッドの追加
+	/**
+	 * 稼働中部署名 部分一致検索用DTOリスト取得
+	 * 
+	 * @param name
+	 * @return
+	 */
     List<DepartmentDto> findByNameLike(@Param("name") String name);
+    
+    /**
+     * 部署名でID検索
+     *
+     * @return departmentId
+     */
+    Department findByName(@Param("currentDepartment") String currentDepartment);
 	
 	/**
-	 * 部署情報 登録
+	 * 新規登録ボタン押下時 登録処理
 	 *
-	 * @param dailyReport 
+	 * @param department
 	 */
 	void insert(Department department);
 	
 	/**
-	 * 部署情報 更新
+	 * 部署名変更ボタン押下時 更新処理
 	 *
-	 * @param dailyReport 
+	 * @param department 
 	 */
 	void update(Department department);
+	
+	/**
+	 * 部署停止ボタン押下時 論理削除処理
+	 *
+	 * @param department
+	 */
+	void deactivate(Department department);
 
 }

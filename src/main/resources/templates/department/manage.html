@@ -24,7 +24,7 @@
 			</tr>
 
 			<!-- 部署管理フォーム -->
-			<form th:action="@{/department/manage}" method="post" th:object="${departmentForm}">
+			<form id="departmentForm" th:action="@{/department/manage}" method="post" th:object="${departmentForm}">
 
 				<table>
 
@@ -32,8 +32,9 @@
 					<tr>
 						<td><label for="newDepartment">部署名</label></td>
 						<td>
-							<input type="text" id="newDepartment" name="newDepartment" 
-								onkeyup="searchDepartment()" autocomplete="off"/>
+							<input type="text" id="newDepartment" name="newDepartment" onkeyup="searchDepartment()"
+								autocomplete="off" />
+							<div class="error-message" id="errorNewDepartment"></div>
 						</td>
 						<!--<td><small>新規登録の場合は新規部署名を入力</small></td>-->
 					</tr>
@@ -44,9 +45,8 @@
 						<td>
 							<select name="currentDepartment" id="currentDepartment">
 								<option value="">選択してください</option>
-								<option th:each="department : ${departments}" 
-										value="${department.name}"
-										th:text="${department.name}">選択肢</option>
+								<option th:each="department : ${departments}" th:value="${department.name}"
+									th:text="${department.name}">選択肢</option>
 							</select>
 						</td>
 						<td><button type="submit" name="register" class="button">新規登録</button></td>
@@ -61,32 +61,72 @@
 	</div>
 
 	<script>
-		
-		//リアルタイムで検索結果を表示
+		// リアルタイムで検索結果を表示
 		document.getElementById('newDepartment').addEventListener('input', function () {
 			const name = this.value;
+			const currentDepartment = document.getElementById('currentDepartment').value;
 
-			// Fetch APIで検索リクエストを送信
-			fetch(`/login/department/search?name=${name}`)
-				.then(response => response.json())
-				.then(data => {
-					const select = document.getElementById('currentDepartment');
-					select.innerHTML = '<option value="">選択してください</option>'; // クリア
+			// プルダウンが選択されていないときのみ検索を実行
+			if (currentDepartment === "") {
+				// Fetch APIで検索リクエストを送信
+				fetch(`/login/department/search?name=${name}`)
+					.then(response => response.json())
+					.then(data => {
+						const select = document.getElementById('currentDepartment');
+						select.innerHTML = '<option value="">選択してください</option>'; // クリア
 
-					// 検索結果をプルダウンに表示
-					data.forEach(department => {
-						const option = document.createElement('option');
-						option.value = department.name;
-						option.textContent = department.name;
-						select.appendChild(option);
-						
-					});
-					
-				})
-				.catch(error => console.error('Error:', error));
+						// 検索結果をプルダウンに表示
+						data.forEach(department => {
+							const option = document.createElement('option');
+							option.value = department.name;
+							option.textContent = department.name;
+							select.appendChild(option);
+						});
+					})
+					.catch(error => console.error('Error:', error));
+			}
 		});
-		
+
+		// 必須入力チェック
+		document.addEventListener("DOMContentLoaded", function () {
+			// フォームの要素を取得
+			const departmentForm = document.getElementById("departmentForm");
+
+			// エラーメッセージを表示する関数
+			const showError = (input, errorElement, message) => {
+				if (input.value.trim() === "") {
+					errorElement.textContent = message;
+					errorElement.style.display = "block";
+					return false;
+				} else {
+					errorElement.style.display = "none";
+					return true;
+				}
+			};
+
+			// フォームが送信されたときの処理
+			departmentForm.addEventListener("submit", function (event) {
+				// 部署名の入力フィールドとエラーメッセージ要素を取得
+				const newDepartmentInput = document.getElementById("newDepartment");
+				const newDepartmentError = document.getElementById("errorNewDepartment");
+
+				// ボタンが「新規登録」か「部署名変更」だった場合、必須入力チェックを行う
+				const registerButtonClicked = document.querySelector("button[name='register']:focus");
+				const updateButtonClicked = document.querySelector("button[name='update']:focus");
+
+				if (registerButtonClicked || updateButtonClicked) {
+					const isDepartmentValid = showError(newDepartmentInput, errorNewDepartment, "部署名を入力してください。");
+
+					// 入力が無効な場合、フォームの送信を中止
+					if (!isDepartmentValid) {
+						event.preventDefault();
+					}
+				}
+			});
+		});
+
 	</script>
+
 
 </body>
 

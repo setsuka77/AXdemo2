@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.DepartmentDto;
+import com.example.demo.entity.Department;
 import com.example.demo.entity.Users;
 import com.example.demo.form.DepartmentForm;
 import com.example.demo.mapper.DepartmentMapper;
@@ -30,14 +31,14 @@ public class DepartmentController {
 	 * @param session
 	 * @param model
 	 * @param redirectAttributes
-	 * @return ユーザ管理画面
+	 * @return 部署管理画面
 	 */
 	@GetMapping("/department/manage")
 	public String userManage(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		
-	    // 全ての部署情報を取得(プルダウン用)
+	    // 稼働中の全ての部署情報を取得(プルダウン用)
 	    List<DepartmentDto> departments = departmentMapper.findAllWork();
 		
 		model.addAttribute("loginUser", loginUser);
@@ -63,25 +64,39 @@ public class DepartmentController {
     @PostMapping(path = "/department/manage", params = "register")
     public String registerDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
         // 新規部署登録処理
-    	departmentForm.setIsActive((byte) 1);
         departmentMapper.insert(departmentForm.toEntity());
         return "redirect:/department/manage";
     }
 
     @PostMapping(path = "/department/manage", params = "update")
     public String updateDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
-        // 部署名変更処理
-        departmentMapper.update(departmentForm.toEntity());
+        // 部署名変更更新処理
+    	if (departmentForm.getDepartmentId() != null) {
+            departmentForm.setName(departmentForm.getNewDepartment());
+            departmentMapper.update(departmentForm.toEntity());
+        }
         return "redirect:/department/manage";
     }
 
+
     @PostMapping(path = "/department/manage", params = "deactivate")
-    public String deactivateDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
-        // 部署停止処理
-        departmentForm.setIsActive((byte) 0);  // 停止状態に変更
-        departmentMapper.update(departmentForm.toEntity());
+    public String deactivateDepartment(@RequestParam("currentDepartment") String currentDepartment, RedirectAttributes redirectAttributes) {
+    	Department searchDepartment = departmentMapper.findByName(currentDepartment);
+    	System.out.println(searchDepartment);
+    	
+    	Department department = new Department();
+    	department.setDepartmentId(searchDepartment != null ? searchDepartment.getDepartmentId() : null);
+    	department.setName(currentDepartment);
+    	department.setIsActive((byte) 0);
+        // 部署停止
+        System.out.println(department);
+        // 停止状態に変更
+		departmentMapper.update(department);
+        System.out.println("停止できた");
         return "redirect:/department/manage";
     }
+
+
 
 	
 	/**

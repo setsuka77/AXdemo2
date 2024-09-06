@@ -15,20 +15,33 @@
 		WHERE is_active = 0
 	</select>
 	
-	<!-- 部署名検索 -->
+	<!-- プルダウン表示用 部署名前方一致検索 -->
     <select id="findByNameLike" resultType="com.example.demo.dto.DepartmentDto">
     	SELECT * FROM department 
     	WHERE name LIKE #{name} AND is_active = 1
 	</select>
 	
-	<!-- 登録ボタン押下　部署情報 -->
+	<!-- 部署名で部署ID検索 -->
+	<select id="findByName" resultType="com.example.demo.entity.Department">
+		SELECT * FROM department
+    	WHERE name = #{currentDepartment}
+	</select>
+	
+	<!-- 新規登録ボタン押下時 登録処理 -->
 	<insert id="insert" parameterType="com.example.demo.entity.Department">
 	INSERT INTO department (department_id, name, is_active)
 	VALUES (#{departmentId},#{name},#{isActive})
 	</insert>
 	
-	<!-- 更新ボタン押下　部署情報 -->
+	<!-- 部署名変更ボタン押下時　更新処理 -->
 	<update id="update" parameterType="com.example.demo.entity.Department">
+        UPDATE department
+        SET name = #{name}, is_active = #{isActive}
+        WHERE department_id = #{departmentId}
+    </update>
+    
+    <!-- 部署停止ボタン押下時　論理削除処理 -->
+	<update id="deactivate" parameterType="com.example.demo.entity.Department">
         UPDATE department
         SET name = #{name}, is_active = #{isActive}
         WHERE department_id = #{departmentId}
