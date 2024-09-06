@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -97,15 +98,21 @@ public class DepartmentController {
      * @return
      */
     @PostMapping(path = "/department/manage", params = "update")
-    public String updateDepartment(@RequestParam("newDepartment") String newDepartment,
-    		@RequestParam("currentDepartment") String currentDepartment,RedirectAttributes redirectAttributes, Model model) {
+    public String updateDepartment(@ModelAttribute DepartmentForm departmentForm,
+    		RedirectAttributes redirectAttributes, Model model) {
+    	String newDepartment = departmentForm.getNewDepartment();
+        String currentDepartment = departmentForm.getCurrentDepartment();
+
         // 入力された新部署名が既に登録されているかチェック
         Department searchDepartment = departmentMapper.findByName(currentDepartment);
-        System.out.println(searchDepartment);
-        
-        if (currentDepartment == newDepartment) {
+        System.out.println("探してきたやつ:"+searchDepartment);
+
+        if (currentDepartment.equals(newDepartment)) {
             // 部署名が既に存在する場合、エラーメッセージをモデルに追加して返す
             model.addAttribute("errorMessage", "この部署名は既に登録されています。新たな部署名を入力してください。");
+            // 全ての部署情報を取得(プルダウン用)
+    	    List<DepartmentDto> departments = departmentMapper.findAll();    		
+    		model.addAttribute("departments", departments);
             return "department/manage";
         }
 
@@ -117,7 +124,7 @@ public class DepartmentController {
         System.out.println(department);
         
         departmentMapper.update(department);
-        redirectAttributes.addFlashAttribute("successMessage", currentDepartment + "を更新しました。");
+        redirectAttributes.addFlashAttribute("successMessage", currentDepartment + "を" + newDepartment +"に更新しました。");
         
         return "redirect:/department/manage";
     }
