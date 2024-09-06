@@ -16,6 +16,13 @@ import com.example.demo.entity.Department;
 public interface DepartmentMapper {
 	
 	/**
+	 * 部署情報用DTOリスト取得
+     * 
+     * @return 部署情報用DTOリスト
+	 */
+	List<DepartmentDto> findAll();
+	
+	/**
      * 稼働中部署情報用DTOリスト取得
      * 
      * @return 稼働中部署情報用DTOリスト

@@ -39,7 +39,7 @@ public class DepartmentController {
 		Users loginUser = (Users) session.getAttribute("user");
 		
 	    // 稼働中の全ての部署情報を取得(プルダウン用)
-	    List<DepartmentDto> departments = departmentMapper.findAllWork();
+	    List<DepartmentDto> departments = departmentMapper.findAll();
 		
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("departments", departments);
@@ -124,24 +124,21 @@ public class DepartmentController {
      * @return
      */
     @PostMapping(path = "/department/manage", params = "deactivate")
-    public String deactivateDepartment(@RequestParam("currentDepartment") String currentDepartment, DepartmentForm departmentForm, RedirectAttributes redirectAttributes) {
+    public String deactivateDepartment(@RequestParam("currentDepartment") String currentDepartment, RedirectAttributes redirectAttributes) {
     	Department searchDepartment = departmentMapper.findByName(currentDepartment);
     	System.out.println(searchDepartment);
     	
     	Department department = new Department();
-    	department.setDepartmentId(searchDepartment != null ? searchDepartment.getDepartmentId() : null);
-    	department.setName(currentDepartment);
+    	department.setDepartmentId(searchDepartment.getDepartmentId());
+    	department.setName(currentDepartment + " [停止中]");
     	department.setIsActive((byte) 0);
-        // 部署停止
         System.out.println(department);
         // 停止状態に変更
-		departmentMapper.deactivate(department);
+		departmentMapper.update(department);
         System.out.println("停止できた");
-        redirectAttributes.addFlashAttribute("successMessage", departmentForm.getCurrentDepartment() + "を停止しました。");
+        redirectAttributes.addFlashAttribute("successMessage", currentDepartment + "を停止しました。");
         return "redirect:/department/manage";
     }
-
-
 
 	
 	/**

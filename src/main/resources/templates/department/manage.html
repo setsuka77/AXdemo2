@@ -46,7 +46,8 @@
 					<select name="currentDepartment" id="currentDepartment">
 						<option value="">選択してください</option>
 						<option th:each="department : ${departments}" th:value="${department.name}"
-							th:text="${department.name}">選択肢</option>
+							th:text="${department.name}"
+							th:attr="disabled=${#strings.contains(department.name, ' [停止中]') ? 'disabled' : null}">選択肢</option>
 					</select>
 				</div>
 				<!-- エラーメッセージ表示 -->
@@ -90,6 +91,13 @@
 					})
 					.catch(error => console.error('Error:', error));
 			}
+		});
+		
+		
+		// 部署のプルダウンメニューから選択された値をテキストフィールドに反映
+		document.getElementById('currentDepartment').addEventListener('change', function () {
+			var selectedDepartment = this.value;
+			document.getElementById('newDepartment').value = selectedDepartment; // テキストフィールドに反映
 		});
 
 		// 必須入力チェック
