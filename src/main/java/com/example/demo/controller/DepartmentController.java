@@ -38,7 +38,9 @@ public class DepartmentController {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		
-	    // 稼働中の全ての部署情報を取得(プルダウン用)
+		// 稼働中の全ての部署情報を取得(プルダウン用)
+	    //List<DepartmentDto> departments = departmentMapper.findAllWork();
+	    // 全ての部署情報を取得(プルダウン用)
 	    List<DepartmentDto> departments = departmentMapper.findAll();
 		
 		model.addAttribute("loginUser", loginUser);
@@ -95,22 +97,28 @@ public class DepartmentController {
      * @return
      */
     @PostMapping(path = "/department/manage", params = "update")
-    public String updateDepartment(DepartmentForm departmentForm, RedirectAttributes redirectAttributes, Model model) {
+    public String updateDepartment(@RequestParam("newDepartment") String newDepartment,
+    		@RequestParam("currentDepartment") String currentDepartment,RedirectAttributes redirectAttributes, Model model) {
         // 入力された新部署名が既に登録されているかチェック
-        Department existingDepartment = departmentMapper.findByName(departmentForm.getNewDepartment());
+        Department searchDepartment = departmentMapper.findByName(currentDepartment);
+        System.out.println(searchDepartment);
         
-        if (existingDepartment != null) {
+        if (currentDepartment == newDepartment) {
             // 部署名が既に存在する場合、エラーメッセージをモデルに追加して返す
             model.addAttribute("errorMessage", "この部署名は既に登録されています。新たな部署名を入力してください。");
             return "department/manage";
         }
 
         // 部署名変更更新処理
-        if (departmentForm.getDepartmentId() != null) {
-            departmentForm.setName(departmentForm.getNewDepartment());
-            departmentMapper.update(departmentForm.toEntity());
-            redirectAttributes.addFlashAttribute("successMessage", departmentForm.getCurrentDepartment() + "を更新しました。");
-        }
+        Department department = new Department();
+    	department.setDepartmentId(searchDepartment.getDepartmentId());
+    	department.setName(newDepartment);
+    	department.setIsActive((byte) 1);
+        System.out.println(department);
+        
+        departmentMapper.update(department);
+        redirectAttributes.addFlashAttribute("successMessage", currentDepartment + "を更新しました。");
+        
         return "redirect:/department/manage";
     }
 
