@@ -2,6 +2,7 @@ package com.example.demo.form;
 
 import com.example.demo.entity.Department;
 
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 /*
@@ -18,6 +19,7 @@ public class DepartmentForm {
 	private Byte isActive;
 	
 	/** 新規部署名 */
+	@Size(max = 25, message = "新しい部署名は20文字以内にしてください。")
     private String newDepartment;
     
     /** 登録済部署名 */

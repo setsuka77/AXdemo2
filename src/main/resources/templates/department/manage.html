@@ -46,20 +46,22 @@
 					<select name="currentDepartment" id="currentDepartment">
 						<option value="">選択してください</option>
 						<option th:each="department : ${departments}" th:value="${department.name}"
-							th:text="${department.name}"
-							th:attr="disabled=${#strings.contains(department.name, ' [停止中]') ? 'disabled' : null}">選択肢</option>
+							th:text="${department.name}">選択肢
+						</option>
 					</select>
 				</div>
 				<!-- エラーメッセージ表示 -->
 				<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
 					<p th:utext="${errorMessage}"></p>
 				</div>
-				
+
 				<div class="button-group">
-					<button type="submit" name="register" class="button">新規登録</button>
-					<button type="submit" name="update" class="button">部署名変更</button>
-					<button type="submit" name="deactivate" class="button">停止</button>
+					<button type="submit" name="register" class="button" onClick="return confirmRegistration()">新規登録</button>
+					<button type="submit" name="update" class="button" onClick="return confirmUpdate()">部署名変更</button>
+					<button type="submit" name="deactivate" class="button" onClick="return confirmDeactivate()">部署停止</button>
+					<button type="submit" name="restart" class="button" onClick="return confirmRestart()">再開</button>
 				</div>
+
 
 			</form>
 
@@ -92,15 +94,44 @@
 					.catch(error => console.error('Error:', error));
 			}
 		});
-		
-		
+
+
 		// 部署のプルダウンメニューから選択された値をテキストフィールドに反映
 		document.getElementById('currentDepartment').addEventListener('change', function () {
 			var selectedDepartment = this.value;
 			document.getElementById('newDepartment').value = selectedDepartment; // テキストフィールドに反映
 		});
 
-		// 必須入力チェック
+
+		//登録ボタン押下時確認ダイアログ
+		function confirmRegistration() {
+			const newDepartment = document.getElementById('newDepartment').value;
+			const currentDepartment = document.getElementById('currentDepartment').value;
+			return confirm(`部署名: ${newDepartment}\nこの内容で登録します。よろしいですか？`);
+		}
+
+		//部署名変更ボタン押下時確認ダイアログ
+		function confirmUpdate() {
+			const newDepartment = document.getElementById('newDepartment').value;
+			const currentDepartment = document.getElementById('currentDepartment').value;
+			return confirm(`部署名: ${newDepartment}\n選択中の登録済部署: ${currentDepartment}\nこの部署名を変更します。よろしいですか？`);
+		}
+
+		//停止ボタン押下時確認ダイアログ
+		function confirmDeactivate() {
+			const currentDepartment = document.getElementById('currentDepartment').value;
+			return confirm(`選択中の部署: ${currentDepartment}\nこの部署を停止します。よろしいですか？`);
+		}
+
+		//再開ボタン押下時確認ダイアログ
+		function confirmRestart() {
+			const currentDepartment = document.getElementById('currentDepartment').value;
+			return confirm(`選択中の部署: ${currentDepartment}\nこの部署を再開します。よろしいですか？`);
+		}
+
+
+
+		//＊＊ボタンの活性非活性ができるまでの必須チェック＊＊//
 		document.addEventListener("DOMContentLoaded", function () {
 			// フォームの要素を取得
 			const departmentForm = document.getElementById("departmentForm");
@@ -116,7 +147,6 @@
 					return true;
 				}
 			};
-
 			// フォームが送信されたときの処理
 			departmentForm.addEventListener("submit", function (event) {
 				// 部署名の入力フィールドとエラーメッセージ要素を取得
