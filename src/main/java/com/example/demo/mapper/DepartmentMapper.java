@@ -47,7 +47,7 @@ public interface DepartmentMapper {
 	
 	/**
 	 * 新規登録ボタン押下時 登録処理
-	 *
+	 *　
 	 * @param department
 	 */
 	void insert(Department department);
