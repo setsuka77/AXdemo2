@@ -103,9 +103,10 @@ public class LoginController {
      * @return ログイン画面へのリダイレクト
      */
     @RequestMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout(HttpSession session,RedirectAttributes redirectAttributes) {
         // セッションを無効化してログアウト
         session.invalidate();
+        redirectAttributes.addFlashAttribute("successMessage", "正常にログオフされました。");
         return "redirect:/"; // ログイン画面にリダイレクト
     }
     

@@ -35,6 +35,10 @@
 				<div th:if="${error}" class="alert alert-danger" role="alert">
 					<p th:utext="${error}"></p>
 				</div>
+				<!-- 成功メッセージ表示 -->
+				<div th:if="${successMessage}" class="alert alert-success" role="alert">
+					<p th:utext="${successMessage}"></p>
+				</div>
 
 				<div class="button-group login-button-group">
 					<button type="submit">ログイン</button>
