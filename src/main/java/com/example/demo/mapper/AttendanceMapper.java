@@ -31,16 +31,8 @@ public interface AttendanceMapper {
 	List<AttendanceDto> findAttendanceByUserIdAndDateRange(@Param("userId") Integer userId, @Param("startDate") Date startDate,@Param("endDate") Date endDate);
 	
 	
-	/*
-	 * 勤怠登録情報登録
-	 * 
-	 * @return 登録結果
-	 */
-	 void insert(List<Attendance> attendances);
-	
-	
 	/**
-	 * 勤怠情報（受講生入力）更新
+	 * 勤怠情報（受講生入力）登録/更新
 	 * 
 	 * @param Attendance
 	 * @return 更新結果

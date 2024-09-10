@@ -16,14 +16,10 @@
 		<div class="menu-container">
 			<h2>処理メニュー</h2>
 
-
-
 			<div class="info-container">
 				<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
 				<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
 			</div>
-
-
 
 			<!-- 管理者用のメニュー -->
 			<div th:if="${role} == 'admin'">

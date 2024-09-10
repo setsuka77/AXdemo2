@@ -125,19 +125,19 @@ function confirmRegistration() {
 function confirmUpdate() {
 	const newDepartment = document.getElementById('newDepartment').value;
 	const currentDepartment = document.getElementById('currentDepartment').value;
-	return confirm(`部署名: ${newDepartment}\n選択中の登録済部署: ${currentDepartment}\nこの部署名を変更します。よろしいですか？`);
+	return confirm(`部署名: ${newDepartment}\n選択中の登録済部署: ${currentDepartment}\n選択中の部署名を変更します。よろしいですか？`);
 }
 
 //停止ボタン押下時確認ダイアログ
 function confirmDeactivate() {
 	const currentDepartment = document.getElementById('currentDepartment').value;
-	return confirm(`選択中の部署: ${currentDepartment}\nこの部署を停止します。よろしいですか？`);
+	return confirm(`選択中の部署: ${currentDepartment}\n選択中の部署を停止します。よろしいですか？`);
 }
 
 //再開ボタン押下時確認ダイアログ
 function confirmRestart() {
 	const currentDepartment = document.getElementById('currentDepartment').value;
-	return confirm(`選択中の部署: ${currentDepartment}\nこの部署を再開します。よろしいですか？`);
+	return confirm(`選択中の部署: ${currentDepartment}\n選択中の部署を再開します。よろしいですか？`);
 }
 
 

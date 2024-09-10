@@ -111,7 +111,6 @@ main {
 	background-color: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	overflow-x: auto; /*横スクロールを許可 */
 }
 
 /* ===========================================
@@ -550,6 +549,9 @@ input.note {
 /* メディアクエリ (800px以下のスクリーン) */
 /* ======================================== */
 @media ( max-width : 800px) {
+	h2 {
+		font-size: 20px;
+	}
 	.container {
 		flex-direction: column; /* 縦方向のレイアウトに変更*/
 	}
@@ -570,7 +572,7 @@ input.note {
 
 	/* テーブルカラムのレスポンシブ対応 */
 	th, td {
-		padding: 8px;
+		padding: 6px;
 		font-size: 16px;
 	}
 	th.time-column, td.time-column {
