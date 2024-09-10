@@ -198,14 +198,25 @@ public class AttendanceService {
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
 		Integer userId = loginUser.getId();
 		
+		// 先頭と最後の Date を取得
+		java.sql.Date startDate = new java.sql.Date(dailyAttendanceList.get(0).getDate().getTime());
+	    java.sql.Date endDate = new java.sql.Date(dailyAttendanceList.get(dailyAttendanceList.size() - 1).getDate().getTime());
+
+	    // Date 範囲で勤怠情報を取得 (既存の情報)
+	    List<AttendanceDto> existingAttendances = attendanceMapper.findAttendanceByUserIdAndDateRange(userId, startDate, endDate);
+
+	    // dateをキー、AttendanceDtoを値とする
+	    Map<Date, AttendanceDto> existingAttendanceMap = existingAttendances.stream()
+	        .collect(Collectors.toMap(AttendanceDto::getDate, attendance -> attendance));
+
 		List<Attendance> attendanceList = new ArrayList<>();
 
 		for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
 			Date date = dailyForm.getDate();
 
 			if (dailyForm.getStatus() != null) {
-				// 勤怠情報を検索してIDを取得
-				Attendance searchAttendance = attendanceMapper.findByDateAndUserId(date, userId);
+				// 既存の勤怠情報があるかどうか確認する
+	            AttendanceDto searchAttendance = existingAttendanceMap.get(date);
 
 				// 新しい勤怠オブジェクトを作成
 				Attendance attendance = new Attendance();
