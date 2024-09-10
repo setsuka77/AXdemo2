@@ -6,7 +6,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>部署管理登録 | Analix社内管理システム</title>
 	<link rel="stylesheet" href="/login/css/styles.css">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -14,11 +13,7 @@
 
 	<div class="container">
 		<div class="form-container">
-			<tr>
-				<div class="header-button">
-					<h2>部署管理</h2>
-				</div>
-			</tr>
+				<h2>部署管理</h2>
 
 			<!-- 部署管理フォーム -->
 			<form id="departmentForm" th:action="@{/department/manage}" method="post" th:object="${departmentForm}">
@@ -55,12 +50,12 @@
 				</div>
 
 				<div class="button-group">
-					<button type="submit" id="register" name="register" class="button" onClick="return confirmRegistration()"
-						disabled>新規登録</button>
+					<button type="submit" id="register" name="register" class="button"
+						onClick="return confirmRegistration()" disabled>新規登録</button>
 					<button type="submit" id="update" name="update" class="button" onClick="return confirmUpdate()"
 						disabled>部署名変更</button>
-					<button type="submit" id="deactivate" name="deactivate" class="button" onClick="return confirmDeactivate()"
-						disabled>部署停止</button>
+					<button type="submit" id="deactivate" name="deactivate" class="button"
+						onClick="return confirmDeactivate()" disabled>部署停止</button>
 					<button type="submit" id="restart" name="restart" class="button" onClick="return confirmRestart()"
 						disabled>部署再開</button>
 				</div>

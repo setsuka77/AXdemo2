@@ -10,21 +10,20 @@
 </head>
 
 <body>
+	<header th:replace="~{common/header :: header}"></header>
+
 	<div class="container">
 		<div class="menu-container">
-			<div class="menu-header-button">
-				<h2>処理メニュー</h2>
-				<a th:href="@{/logout}"><button>ログオフ</button></a>
+			<h2>処理メニュー</h2>
+
+
+
+			<div class="info-container">
+				<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+				<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
 			</div>
 
-			<tr>
-				<td>
-					<div class="info-container">
-						<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
-						<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					</div>
-				</td>
-			</tr>
+
 
 			<!-- 管理者用のメニュー -->
 			<div th:if="${role} == 'admin'">

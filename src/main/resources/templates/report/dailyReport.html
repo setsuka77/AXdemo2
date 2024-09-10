@@ -10,111 +10,110 @@
 </head>
 
 <body>
-	<div class="dailyReport-container">
-		<tr>
-			<div class="header-button">
-				<form th:action="@{/report/dailyReport}" method="post">
-					<button type="submit" name="back" class="button">メニュー</button>
-				</form>
-				<h2>日報管理</h2>
-				<a th:href="@{/logout}"><button>ログオフ</button></a>
-			</div>
-		</tr>
+	<header th:replace="~{common/header :: header}"></header>
+	<div class="container">
+		<div class="data-list-container">
 
-		<tr>
-			<td>
-				<div class="info-container">
-					<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
-					<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
-					<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"
-							id="statusText"></span>
+			<h2>日報管理</h2>
+
+			<tr>
+				<td>
+					<div class="info-container">
+						<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+						<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+						<div class="info-item" th:if="${loginUser.role != '2'}">ステータス: <span th:text="${statusText}"
+								id="statusText"></span>
+						</div>
 					</div>
+				</td>
+			</tr>
+
+			<!-- 対象日付を指定して表示 メンバー/UM -->
+			<form id="report-form" th:action="@{/report/dailyReport}" method="post">
+				<div class="form-group" th:if="${loginUser.role != '2'}">
+					対象日付:
+					<input type="date" name="selectDate" th:value="${selectDate}" onchange="fetchReport()"
+						id="dateInput">
 				</div>
-			</td>
-		</tr>
-		
-		<!-- 対象日付を指定して表示 メンバー/UM -->
-		<form id="report-form" th:action="@{/report/dailyReport}" method="post" >
-			 <div class="form-group" th:if="${loginUser.role != '2'}">
-                対象日付:
-                <input type="date" name="selectDate" th:value="${selectDate}" onchange="fetchReport()" id="dateInput">
-            </div>
 
-			 <div class="button-group">
-                <button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit" class="button">提出</button>
-                <button type="submit" th:if="${loginUser.role == '2'}" 
-     	         	th:attr="disabled=${checkReject == false}" class="button"
-					th:classappend="${checkReject == false ? 'disabled-form' : ''}"
-                	name="rejected" onClick="return confirm('却下します。よろしいですか？')">却下</button>
-                <button type="submit" th:if="${loginUser.role == '2'}" 
-                	th:attr="disabled=${checkApproval == false}" class="button"
-					th:classappend="${checkApproval == false ? 'disabled-form' : ''}"
-                	name="approval" onClick="return confirm('承認します。よろしいですか？')">承認</button>
-            </div>
-		
-		
-		<!-- 申請一覧 マネージャのみ -->
-		<div class="manager-table-container" th:if="${loginUser.role == '2'}">
-                <table class="table table-hover manager-table" border="1" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>承認申請者</th>
-                            <th>申請対象日</th>
-<!--                            <th>申請日</th>-->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="report : ${dailyReport}">
-                            <td><a th:href="@{/report/dailyReport/detail(id=${report.id})}" th:text="${report.userName}">申請者</a></td>
-                            <td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請対象日</td>
-                           <!-- <td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請日</td>-->
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+				<div class="button-group">
+					<button type="submit" th:if="${loginUser.role != '2'}" name="submit" id="submit"
+						class="button">提出</button>
+					<button type="submit" th:if="${loginUser.role == '2'}" th:attr="disabled=${checkReject == false}"
+						class="button" th:classappend="${checkReject == false ? 'disabled-form' : ''}" name="rejected"
+						onClick="return confirm('却下します。よろしいですか？')">却下</button>
+					<button type="submit" th:if="${loginUser.role == '2'}" th:attr="disabled=${checkApproval == false}"
+						class="button" th:classappend="${checkApproval == false ? 'disabled-form' : ''}" name="approval"
+						onClick="return confirm('承認します。よろしいですか？')">承認</button>
+				</div>
 
 
-			<!-- 登録時入力エラーメッセージ表示 -->
-			<div th:if="${registerError}" class="alert alert-danger register-message" role="alert">
-				<p th:utext="${registerError}"></p>
-			</div>
-			<!-- 登録完了メッセージ表示 -->
-			<div th:if="${message}" class="alert alert-success register-message" role="alert">
-				<p th:utext="${message}"></p>
-			</div>
+				<!-- 申請一覧 マネージャのみ -->
+				<div class="manager-table-container" th:if="${loginUser.role == '2'}">
+					<table class="table table-hover manager-table" border="1" cellspacing="0">
+						<thead>
+							<tr>
+								<th>承認申請者</th>
+								<th>申請対象日</th>
+								<!--                            <th>申請日</th>-->
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="report : ${dailyReport}">
+								<td><a th:href="@{/report/dailyReport/detail(id=${report.id})}"
+										th:text="${report.userName}">申請者</a></td>
+								<td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請対象日</td>
+								<!-- <td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請日</td>-->
+							</tr>
+						</tbody>
+					</table>
+				</div>
 
-			<table class="table table-hover" border="1" cellspacing="0" id="report">
-				<thead>
-					<tr>
-						<th>作業時間(h)</th>
-						<th>作業内容</th>
+
+				<!-- 登録時入力エラーメッセージ表示 -->
+				<div th:if="${registerError}" class="alert alert-danger register-message" role="alert">
+					<p th:utext="${registerError}"></p>
+				</div>
+				<!-- 登録完了メッセージ表示 -->
+				<div th:if="${message}" class="alert alert-success register-message" role="alert">
+					<p th:utext="${message}"></p>
+				</div>
+
+				<table class="table table-hover" border="1" cellspacing="0" id="report">
+					<thead>
+						<tr>
+							<th>作業時間(h)</th>
+							<th>作業内容</th>
+						</tr>
+					</thead>
+					<tbody id="reportBody">
+						<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}"
+							th:classappend="${detail.errorFlag ? 'error-field' : ''}">
+							<td>
+								<input type="number" class="working-time"
+									th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
+									th:value="${detail.time}" id="time" min="1" step="1"> h
+							</td>
+							<td class="textarea-wrapper">
+								<textarea id="content"
+									th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
+									th:text="${detail.content}" class="textarea note" rows="2" cols="60"></textarea>
+								<div class="char-counter" id="charCounter">0 / 50</div>
+							</td>
+							<input type="hidden" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].id'"
+								th:value="${detail.id}">
+						</tr>
+					</tbody>
+				</table>
+				<tfoot>
+					<tr th:if="${loginUser.role != '2'}">
+						<td><button id="add" type="button">＋</button></td>
 					</tr>
-				</thead>
-				<tbody id="reportBody">
-					<tr th:each="detail, iterStat : ${dailyReportForm.dailyReportDetailFormList}"
-						th:classappend="${detail.errorFlag ? 'error-field' : ''}">
-						<td>
-							<input type="number" class="working-time"
-								th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
-								th:value="${detail.time}" id="time" min="1" step="1"> h
-						</td>
-						<td class="textarea-wrapper">
-							<textarea id="content"
-								th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].content'"
-								th:text="${detail.content}" class="textarea note" rows="2" cols="60"></textarea>
-							<div class="char-counter" id="charCounter">0 / 50</div>
-						</td>
-			            <input type="hidden" th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].id'" th:value="${detail.id}" >
-					</tr>
-				</tbody>
-			</table>
-			<tfoot>
-                    <tr th:if="${loginUser.role != '2'}">
-                        <td><button id="add" type="button">＋</button></td>
-                    </tr>
-            </tfoot>
-		</form>
+				</tfoot>
+			</form>
+		</div>
 	</div>
+
 </body>
 
 </html>
