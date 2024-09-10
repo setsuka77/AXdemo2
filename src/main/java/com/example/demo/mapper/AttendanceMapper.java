@@ -36,8 +36,7 @@ public interface AttendanceMapper {
 	 * 
 	 * @return 登録結果
 	 */
-	//登録できたらtrue、失敗したらfalseが入る
-	Boolean insert(Attendance attendance);
+	 void insert(List<Attendance> attendances);
 	
 	
 	/**
@@ -46,7 +45,7 @@ public interface AttendanceMapper {
 	 * @param Attendance
 	 * @return 更新結果
 	 */
-	Boolean update(Attendance attendance);
+	 void upsert(List<Attendance> attendances);
 
 	
 	/**

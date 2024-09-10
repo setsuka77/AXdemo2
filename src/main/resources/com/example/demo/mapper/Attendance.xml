@@ -30,26 +30,19 @@
 
 
 	<!-- 勤怠登録情報登録 -->
-	<insert id="insert"
-		parameterType="com.example.demo.entity.Attendance">
-		INSERT INTO attendance (user_id, status, date, start_time, end_time,remarks)
-		VALUES (#{userId}, #{status}, #{date}, #{startTime}, #{endTime},
-		#{remarks})
-	</insert>
+<insert id="upsert" parameterType="java.util.List">
+    INSERT INTO attendance (id, user_id, date, status, start_time, end_time, remarks)
+    VALUES
+    <foreach collection="list" item="attendance" separator=",">
+        (#{attendance.id}, #{attendance.userId}, #{attendance.date}, #{attendance.status}, #{attendance.startTime}, #{attendance.endTime}, #{attendance.remarks})
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+        status = VALUES(status),
+        start_time = VALUES(start_time),
+        end_time = VALUES(end_time),
+        remarks = VALUES(remarks)
+</insert>
 
-	<!-- 勤怠登録情報更新 -->
-	<update id="update"
-		parameterType="com.example.demo.entity.Attendance">
-		UPDATE attendance
-		SET
-		user_id = #{userId},
-		status =#{status},
-		date = #{date},
-		start_time = #{startTime},
-		end_time =#{endTime},
-		remarks = #{remarks}
-		WHERE id = #{id}
-	</update>
 
 
 

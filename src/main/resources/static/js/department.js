@@ -77,8 +77,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			disableAllButtons(); // 他のボタンをすべて無効に
 			enableButton(restartButton);
 		}
-	}
+		
+		// 検索欄が入力されていて、プルダウンも選択されている場合
+		if (searchValue === "" && dropdownValue !== "") {
+			enableButton(deactivateButton);
+			}
+		}
 
+	
 	// すべてのボタンを無効化する関数
 	function disableAllButtons() {
 		disableButton(registerButton);

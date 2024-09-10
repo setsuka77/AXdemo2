@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -197,52 +196,34 @@ public class AttendanceService {
 	 */
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser) {
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
-	    Integer userId = loginUser.getId();
-	    
-	    //フォームから startDate と endDate を取得
-	    Date utilStartDate = dailyAttendanceList.get(0).getDate();
-	    Date utilEndDate = dailyAttendanceList.get(dailyAttendanceList.size() - 1).getDate();
+		Integer userId = loginUser.getId();
+		
+		List<Attendance> attendanceList = new ArrayList<>();
 
-	    java.sql.Date startDate = new java.sql.Date(utilStartDate.getTime());
-	    java.sql.Date endDate = new java.sql.Date(utilEndDate.getTime());
+		for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
+			Date date = dailyForm.getDate();
 
-	    // ユーザーの勤怠情報を日付ごとに取得してマッピングする
-	    Map<Date, AttendanceDto> existingAttendances = attendanceMapper.findAttendanceByUserIdAndDateRange(userId, startDate, endDate).stream()
-	    	    .collect(Collectors.toMap(AttendanceDto::getDate, Function.identity()));
-	    
-	    for (DailyAttendanceForm dailyForm : dailyAttendanceList) {
-	        // 出勤簿から日付とユーザーIDを取得
-	        java.sql.Date date = new java.sql.Date(dailyForm.getDate().getTime()); // 日付型を変換
-	        AttendanceDto attendanceDto = existingAttendances.get(date);
+			if (dailyForm.getStatus() != null) {
+				// 勤怠情報を検索してIDを取得
+				Attendance searchAttendance = attendanceMapper.findByDateAndUserId(date, userId);
 
-	        if (dailyForm.getStatus() != null) {
-	        	   // 出勤簿から日付とユーザーIDを取得
-	            java.sql.Date date1 = new java.sql.Date(dailyForm.getDate().getTime()); // 日付型を変換
-	            AttendanceDto existingAttendanceDto = existingAttendances.get(date);
-	            if (existingAttendanceDto == null) {
-	                // 新規の勤怠情報を作成
-	                Attendance attendance = new Attendance();
-	                attendance.setUserId(userId);
-	                attendance.setDate(date1);
-	                attendance.setStatus(dailyForm.getStatus());  // フォームからステータスを設定
-	                attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));  // フォームから開始時間を設定
-	                attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));  // フォームから終了時間を設定
-	                attendance.setRemarks(dailyForm.getRemarks());  // フォームから備考を設定
-	                attendanceMapper.insert(attendance);  // 新規に登録
-	            } else {
-	                // 既存の勤怠情報を更新
-	                Attendance attendance = new Attendance(); // AttendanceDto を基に新しい Attendance を作成
-	                attendance.setId(existingAttendanceDto.getId()); // ID を設定
-	                attendance.setUserId(userId);
-	                attendance.setDate(date1);
-	                attendance.setStatus(dailyForm.getStatus());
-	                attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
-	                attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
-	                attendance.setRemarks(dailyForm.getRemarks());
-	                attendanceMapper.update(attendance);  // 既存データを更新
-	            }
-	        }
+				// 新しい勤怠オブジェクトを作成
+				Attendance attendance = new Attendance();
+				attendance.setId(searchAttendance != null ? searchAttendance.getId() : null);
+				attendance.setUserId(userId);
+				attendance.setDate(dailyForm.getDate());
+				attendance.setStatus(dailyForm.getStatus());
+				attendance.setStartTime(dateUtil.stringToTime(dailyForm.getStartTime()));
+				attendance.setEndTime(dateUtil.stringToTime(dailyForm.getEndTime()));
+				attendance.setRemarks(dailyForm.getRemarks());
+
+				attendanceList.add(attendance);
+			}
 		}
+		 if (!attendanceList.isEmpty()) {
+		        attendanceMapper.upsert(attendanceList);
+		    }
+		
 		return "勤怠情報が登録されました。";
 	}
 
