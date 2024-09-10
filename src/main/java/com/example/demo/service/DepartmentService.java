@@ -103,7 +103,7 @@ public class DepartmentService {
 	 * 
 	 * @param currentDepartment 再開する部署の名前
 	 */
-	public void restartDepartment(String currentDepartment) {
+	public String restartDepartment(String currentDepartment) {
 		Department searchDepartment = departmentMapper.findByName(currentDepartment);
 
 		if (searchDepartment != null) {
@@ -115,6 +115,10 @@ public class DepartmentService {
 			department.setIsActive((byte) 1);
 
 			departmentMapper.update(department);
+			// 再開後の部署名を返す
+			return newName;
 		}
+		// 部署が見つからない場合は null を返す
+		return null;
 	}
 }

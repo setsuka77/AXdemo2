@@ -17,6 +17,31 @@ body {
 	font-family: Arial, sans-serif; /* フォントファミリーを設定 */
 }
 
+/* ヘッダーを固定表示する */
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height:80px;
+    background-color: #fff; /* 背景色を変更 */
+    z-index: 1000; /* ヘッダーが他の要素より前に表示されるようにする */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* ヘッダーの影 */
+}
+
+/* ヘッダー内のボタンとコンテンツのスタイル */
+.header-button {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items: center;
+}
+
+/* メインコンテンツがヘッダーの下に表示されるように、上部に余白を追加 */
+main {
+    padding-top: 70px; /* ヘッダーの高さに応じて調整 */
+}
+
 /* ===========================================
  * コンテナスタイル
  * ======================================== */
@@ -208,6 +233,30 @@ textarea {
 .disabled-form {
 	pointer-events: none; /* フォーム全体を非活性にする */
 	opacity: 0.5; /* 非活性状態を視覚的に表示 */
+}
+
+/* 部署管理画面 プルダウン内項目スタイル */
+#currentDepartment option {
+    color: black; /* 通常の文字色 */
+}
+
+/* [停止中] の文字列を含むオプションのスタイル */
+#currentDepartment option.stop {
+    color: gray; /* 灰色 */
+    background: #e7e7e7;
+    
+}
+
+/* ユーザ管理画面 プルダウン内項目スタイル */
+#departmentId option {
+    color: black; /* 通常の文字色 */
+}
+
+/* [停止中] の文字列を含むオプションのスタイル */
+#departmentId option.stop {
+    color: gray; /* 灰色 */
+    background: #e7e7e7;
+    
 }
 
 /* ボタンスタイル */

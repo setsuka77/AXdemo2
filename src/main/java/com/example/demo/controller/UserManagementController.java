@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.DepartmentDto;
 import com.example.demo.dto.UserManagementDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.UserManagementForm;
+import com.example.demo.service.DepartmentService;
 import com.example.demo.service.UserManagementService;
 
 import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +26,8 @@ public class UserManagementController {
 
 	@Autowired
 	private UserManagementService userManagementService;
+	@Autowired
+	private DepartmentService departmentService;
 
 	/**
 	 * ユーザ管理画面 初期表示
@@ -41,6 +46,10 @@ public class UserManagementController {
 			redirectAttributes.addFlashAttribute("error", "アクセス権限がありません。");
 			return "redirect:/";
 		}
+
+		// 全ての部署情報を取得(プルダウン用)
+		List<DepartmentDto> departments = departmentService.findAllDepartments();
+		model.addAttribute("departments", departments);
 
 		// 登録ボタンを初期表示時に非活性に設定
 		model.addAttribute("checkRegister",
@@ -87,6 +96,10 @@ public class UserManagementController {
 			return "redirect:/userManagement/manage";
 		}
 
+		// 全ての部署情報を取得(プルダウン用)
+		List<DepartmentDto> departments = departmentService.findAllDepartments();
+		model.addAttribute("departments", departments);
+
 		model.addAttribute("userForm", userForm);
 		return "userManagement/manage";
 	}
@@ -102,9 +115,12 @@ public class UserManagementController {
 	 * @throws ParseException
 	 */
 	@PostMapping("/register")
-	public String registerOrUpdateUser(@Valid @ModelAttribute UserManagementForm userForm,
-			BindingResult bindingResult, HttpSession session, Model model, RedirectAttributes redirectAttributes)
-			throws ParseException {
+	public String registerOrUpdateUser(@Valid @ModelAttribute UserManagementForm userForm, BindingResult bindingResult,
+			HttpSession session, Model model, RedirectAttributes redirectAttributes) throws ParseException {
+
+		// 全ての部署情報を取得(プルダウン用)
+		List<DepartmentDto> departments = departmentService.findAllDepartments();
+		model.addAttribute("departments", departments);
 
 		// ユーザ名が既に登録されているかチェック（IDが存在しない場合）
 		String userNameError = userManagementService.checkUserNameConflict(userForm.getName(), userForm.getId());

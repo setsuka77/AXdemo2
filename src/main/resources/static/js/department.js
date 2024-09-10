@@ -18,6 +18,12 @@ document.getElementById('newDepartment').addEventListener('input', function() {
 					const option = document.createElement('option');
 					option.value = department.name;
 					option.textContent = department.name;
+					
+					// [停止中] を含む場合はクラスを追加
+                    if (department.name.includes('[停止中]')) {
+                        option.classList.add('stop');
+                    }
+					
 					select.appendChild(option);
 				});
 			})
@@ -55,11 +61,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		// 検索欄が入力されていて、プルダウンも選択されている場合
 		if (searchValue !== "" && dropdownValue !== "") {
+			enableButton(registerButton);
 			enableButton(updateButton);
 			enableButton(deactivateButton);
 
 			// 検索欄が入力されていて、プルダウンも選択されているが同じ値の場合
 			if (searchValue == dropdownValue) {
+				disableButton(registerButton);
 				disableButton(updateButton);
 			}
 		}
@@ -104,7 +112,6 @@ document.getElementById('currentDepartment').addEventListener('change', function
 //登録ボタン押下時確認ダイアログ
 function confirmRegistration() {
 	const newDepartment = document.getElementById('newDepartment').value;
-	const currentDepartment = document.getElementById('currentDepartment').value;
 	return confirm(`部署名: ${newDepartment}\nこの内容で登録します。よろしいですか？`);
 }
 

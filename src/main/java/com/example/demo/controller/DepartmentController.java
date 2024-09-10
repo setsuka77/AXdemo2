@@ -157,20 +157,11 @@ public class DepartmentController {
      */
     @PostMapping(path = "/department/manage", params = "restart")
     public String restartDepartment(@RequestParam("currentDepartment") String currentDepartment, RedirectAttributes redirectAttributes) {
-        // 再開状態に変更
-        departmentService.restartDepartment(currentDepartment);
-        redirectAttributes.addFlashAttribute("successMessage", currentDepartment + "を再開しました。");
+    	// 再開状態に変更し、更新後の部署名を取得
+    	String newName = departmentService.restartDepartment(currentDepartment);
+        if (newName != null) {
+        redirectAttributes.addFlashAttribute("successMessage", newName + "を再開しました。");
+        }
         return "redirect:/department/manage";
-    }
-
-    /**
-     * 「メニュー」ボタン押下
-     * 
-     * @param redirectAttributes
-     * @return 処理メニュー画面
-     */
-    @PostMapping(path = "/department/manage", params = "back")
-    public String backMenu(RedirectAttributes redirectAttributes) {
-        return "redirect:/index";
     }
 }

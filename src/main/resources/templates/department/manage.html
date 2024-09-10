@@ -10,16 +10,13 @@
 </head>
 
 <body>
+	<header th:replace="~{common/header :: header}"></header>
 
 	<div class="container">
 		<div class="form-container">
 			<tr>
 				<div class="header-button">
-					<form th:action="@{/department/manage}" method="post">
-						<button type="submit" name="back" class="button">メニュー</button>
-					</form>
 					<h2>部署管理</h2>
-					<a th:href="@{/logout}"><button>ログオフ</button></a>
 				</div>
 			</tr>
 
@@ -32,8 +29,9 @@
 				</div>
 
 				<!-- 新規部署名入力 -->
+				<label><b>部署名</b></label>
 				<div class="input-group">
-					<label for="newDepartment">部署名</label>
+					<label for="newDepartment">検索/登録</label>
 					<input type="text" id="newDepartment" name="newDepartment" onkeyup="searchDepartment()"
 						autocomplete="off" />
 				</div>
@@ -46,7 +44,8 @@
 					<select name="currentDepartment" id="currentDepartment">
 						<option value="">選択してください</option>
 						<option th:each="department : ${departments}" th:value="${department.name}"
-							th:text="${department.name}">選択肢
+							th:text="${department.name}"
+							th:classappend="${department.name.contains('[停止中]') ? ' stop' : ''}">選択肢
 						</option>
 					</select>
 				</div>
@@ -63,7 +62,7 @@
 					<button type="submit" id="deactivate" name="deactivate" class="button" onClick="return confirmDeactivate()"
 						disabled>部署停止</button>
 					<button type="submit" id="restart" name="restart" class="button" onClick="return confirmRestart()"
-						disabled>再開</button>
+						disabled>部署再開</button>
 				</div>
 
 

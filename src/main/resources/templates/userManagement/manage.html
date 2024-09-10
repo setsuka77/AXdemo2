@@ -10,17 +10,13 @@
 </head>
 
 <body>
-
+	<header th:replace="~{common/header :: header}"></header>
 
 	<div class="container">
 		<div class="form-container">
 			<tr>
 				<div class="header-button">
-					<form th:action="@{/userManagement/manage}" method="post">
-						<button type="submit" name="back" class="button">メニュー</button>
-					</form>
 					<h2>ユーザ管理</h2>
-					<a th:href="@{/logout}"><button>ログオフ</button></a>
 				</div>
 			</tr>
 
@@ -77,11 +73,12 @@
 				</div>
 				<div class="input-group">
 					<label for="departmentId">所属部署</label>
-					<select id="departmentId" name="departmentId">
-						<option value="" disabled selected>選択してください</option>
-						<option value="1" th:selected="${userForm.departmentId == 1}">管理部</option>
-						<option value="2" th:selected="${userForm.departmentId == 2}">ソリューション事業部</option>
-						<option value="3" th:selected="${userForm.departmentId == 3}">システム開発事業部</option>
+					<select id="departmentId" name="departmentId" th:field="*{departmentId}">
+						<option value="">選択してください</option>
+						<option th:each="department : ${departments}" th:value="${department.departmentId}"
+							th:text="${department.name}"
+							th:classappend="${department.name.contains('[停止中]') ? ' stop' : ''}">選択肢
+						</option>
 					</select>
 				</div>
 				<div class="input-group">
