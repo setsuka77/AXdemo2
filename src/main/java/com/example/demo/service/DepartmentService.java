@@ -67,6 +67,12 @@ public class DepartmentService {
 			return "この部署名は既に登録されています。新たな部署名を入力してください。";
 		}
 
+		// 入力された部署名が既に登録されているかチェック
+		Department existingDepartment = departmentMapper.findByName(departmentForm.getNewDepartment());
+		if (existingDepartment != null) {
+			return "この部署名は既に登録されています。新たな部署名を入力してください。";
+		}
+
 		// プルダウン選択した部署のIDを取得
 		Department searchDepartment = departmentMapper.findByName(currentDepartment);
 		// 部署情報を更新
