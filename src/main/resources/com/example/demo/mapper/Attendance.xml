@@ -44,8 +44,6 @@
 </insert>
 
 
-
-
 	<!-- Select SQL by User ID and Date Range -->
 	<select id="findAttendancesByUserIdAndDateRange"
 		parameterType="map" resultType="com.example.demo.entity.Attendance">

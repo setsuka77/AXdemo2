@@ -61,15 +61,6 @@ function updateDepartments(name) {
 }
 
 
-
-
-
-
-
-
-
-
-
 //ボタンの活性、非活性
 document.addEventListener("DOMContentLoaded", function() {
 	const searchInput = document.getElementById("newDepartment");

@@ -59,11 +59,18 @@ function updateStatusText(statusText) {
 
 // レポートが承認済みの場合、提出ボタンを無効化する
 function toggleSubmitButton(statusText) {
-	 console.log(`Status text: ${statusText }`); // ここで確認
 	const submitButton = document.getElementById('submit');
 	const isApproved = statusText === '承認済み';
-	console.log(`Is Approved: ${isApproved}`);
-	submitButton.disabled = isApproved;
+	
+	if(isApproved == true){
+		disableButton(submitButton);
+	}
+	// ボタンを非活性化する関数
+	function disableButton(button) {
+		button.disabled = true;
+		button.classList.add('disabled-form');
+	}
+	
 }
 
 // フォームに取得したデータを埋め込む
@@ -159,7 +166,6 @@ function autoAddRows(count) {
 	}
 }
 
-
 // テキストエリアの高さを調整する
 function adjustHeight(textarea) {
 	textarea.style.height = 'auto';
@@ -210,9 +216,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	// テキストエリアの高さ調整と文字数カウンター
 	document.querySelectorAll(".textarea").forEach(textarea => {
+		const currentLength = textarea.value.length;
+		updateCharCounter(textarea, currentLength);  // 文字数カウントを更新
 		adjustHeight(textarea);
 		textarea.addEventListener('input', () => {
-			const currentLength = textarea.value.length;
 			updateCharCounter(textarea, currentLength);
 			adjustHeight(textarea);
 		});
