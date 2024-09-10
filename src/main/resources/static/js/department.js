@@ -1,35 +1,74 @@
 
-// リアルタイムで検索結果を表示
+document.addEventListener('DOMContentLoaded', function() {
+	// ページロード時に全ての部署を表示
+	updateDepartments('');
+});
+
 document.getElementById('newDepartment').addEventListener('input', function() {
 	const name = this.value;
-	const currentDepartment = document.getElementById('currentDepartment').value;
-
-	// プルダウンが選択されていないときのみ検索を実行
-	if (currentDepartment === "") {
-		// Fetch APIで検索リクエストを送信
-		fetch(`/login/department/search?name=${name}`)
-			.then(response => response.json())
-			.then(data => {
-				const select = document.getElementById('currentDepartment');
-				select.innerHTML = '<option value="">選択してください</option>'; // クリア
-
-				// 検索結果をプルダウンに表示
-				data.forEach(department => {
-					const option = document.createElement('option');
-					option.value = department.name;
-					option.textContent = department.name;
-					
-					// [停止中] を含む場合はクラスを追加
-                    if (department.name.includes('[停止中]')) {
-                        option.classList.add('stop');
-                    }
-					
-					select.appendChild(option);
-				});
-			})
-			.catch(error => console.error('Error:', error));
-	}
+	updateDepartments(name);
 });
+
+function updateDepartments(name) {
+	const select = document.getElementById('currentDepartment');
+	const currentDepartment = select.value;  // 現在の選択値を保持
+
+	// Fetch APIで検索リクエストを送信
+	fetch(`/login/department/search?name=${name}`)
+		.then(response => response.json())
+		.then(data => {
+
+			// すべてのオプションを削除
+			select.innerHTML = '';
+
+			// 「選択してください」のオプションを追加
+			const defaultOption = document.createElement('option');
+			defaultOption.value = '';
+			defaultOption.textContent = '選択してください';
+			select.appendChild(defaultOption);
+
+			let foundCurrentOption = false; // 現在の選択オプションが見つかったかのフラグ
+
+			data.forEach(department => {
+				const option = document.createElement('option');
+				option.value = department.name;
+				option.textContent = department.name;
+
+				// [停止中] を含む場合にクラスを追加
+				if (department.name.includes('[停止中]')) {
+					option.classList.add('stop');
+				}
+
+				// 以前選択されていた部署を再設定
+				if (department.name === currentDepartment) {
+					option.selected = true;
+					foundCurrentOption = true;
+				}
+
+				select.appendChild(option);
+			});
+
+			// 現在の選択オプションが見つからない場合に追加する
+			if (!foundCurrentOption && currentDepartment) {
+				const option = document.createElement('option');
+				option.value = currentDepartment;
+				option.textContent = currentDepartment;
+				option.selected = true;
+				select.appendChild(option);
+			}
+		})
+		.catch(error => console.error('Error:', error));
+}
+
+
+
+
+
+
+
+
+
+
 
 //ボタンの活性、非活性
 document.addEventListener("DOMContentLoaded", function() {
@@ -77,14 +116,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			disableAllButtons(); // 他のボタンをすべて無効に
 			enableButton(restartButton);
 		}
-		
+
 		// 検索欄が入力されていて、プルダウンも選択されている場合
 		if (searchValue === "" && dropdownValue !== "") {
 			enableButton(deactivateButton);
-			}
 		}
+	}
 
-	
+
 	// すべてのボタンを無効化する関数
 	function disableAllButtons() {
 		disableButton(registerButton);
