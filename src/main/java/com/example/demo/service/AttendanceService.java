@@ -278,7 +278,7 @@ public class AttendanceService {
 			    }
 
 			    if (isTimeNotAllowed && (startTime != null && !startTime.isEmpty() || endTime != null && !endTime.isEmpty())) {
-			        errorMessage.append(dailyForm.getFormattedDate()).append(" 出退勤時間が不要な勤務状況を選択しています。勤務状況を変更してください。<br>");
+			        errorMessage.append(dailyForm.getFormattedDate()).append(" は出退勤時間が不要です。勤務状況か出退勤時間を変更してください。<br>");
 			        hasErrors = true;
 			        dailyForm.setErrorFlag(true);
 			    }
