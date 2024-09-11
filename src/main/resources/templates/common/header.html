@@ -17,7 +17,7 @@
 			
 			<h2>Analix社内管理システム</h2>
 
-			<a th:href="@{/logout}"><button>ログオフ</button></a>
+			<a th:href="@{/logout}" onClick="return confirm('本当にログオフしますか？')"><button>ログオフ</button></a>
 		</div>
 	</header>
 </body>

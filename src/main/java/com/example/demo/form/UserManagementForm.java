@@ -9,24 +9,24 @@ import lombok.Data;
 public class UserManagementForm {
 
 	/** ユーザ名 */
-	@NotBlank(message = "ユーザ名 : 20文字以内の全角文字のみで入力してください。")
-	@Pattern(regexp = "^[\\u3000-\\uFFFD]{1,20}$", message = "ユーザ名 : 20文字以内の全角文字のみで入力してください。")
+	@NotBlank(message = "{validation.userManagementForm.name}")
+	@Pattern(regexp = "^[\\u3000-\\uFFFD]{1,20}$", message = "{validation.userManagementForm.name}")
 	private String name;
 	/** ユーザーID */
 	private Integer id;
 	/** パスワード */
-	@NotBlank(message = "パスワード : 16桁以下の半角英数字で入力してください。")
-    @Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "パスワード : 16桁以下の半角英数字で入力してください。")
+	@NotBlank(message = "{validation.userManagementForm.password}")
+    @Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "{validation.userManagementForm.password}")
 	private String password;
 	/** 役職 */
-	@NotBlank(message = "権限 : 権限を選択してください。")
+	@NotBlank(message = "{notBlank.userManagementForm.role}")
 	private String role;
 	/** 部署ID */
-	@NotNull(message = "所属部署 : 所属部署を選択してください。")
+	@NotNull(message = "{notNull.userManagementForm.departmentId}")
 	private Integer departmentId;
 	/** 有効開始日 */
-	@NotBlank(message = "利用開始日 : YYYY/MM/DD のフォーマットで入力してください。")
-	@Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "利用開始日 : YYYY/MM/DD のフォーマットで入力してください。")
+	@NotBlank(message = "{validation.userManagementForm.startDate}")
+	@Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "{validation.userManagementForm.startDate}")
 	@DateTimeFormat(pattern = "YYYY/MM/DD") // 入力フォームのフォーマットに合わせる
 	private String startDate;
 	

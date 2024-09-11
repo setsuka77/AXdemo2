@@ -9,10 +9,10 @@ import lombok.Data;
 public class LoginForm {
 	
 	/** ユーザーID */
-	@Pattern(regexp = "^[0-9]{1,16}$", message = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。")
+	@Pattern(regexp = "^[0-9]{1,16}$", message = "{pattern.loginForm.idAndPass}")
 	private String id;
 	/** パスワード */
-	@Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "ユーザーID、パスワードが不正、もしくはユーザーが無効です。")
+	@Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "{pattern.loginForm.idAndPass}")
 	private String password;
 	/** 氏名 */
 	private String name;
