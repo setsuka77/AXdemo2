@@ -6,6 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>勤怠管理登録 | Analix社内管理システム</title>
 	<link rel="stylesheet" href="/login/css/styles.css">
+	<script
+		src="https://cdn.jsdelivr.net/gh/osamutake/japanese-holidays-js@v1.0.10/lib/japanese-holidays.min.js"></script>
 </head>
 
 <body>
@@ -43,7 +45,7 @@
 								th:selected="${month == selectMonth}"></option>
 						</select>
 						<span>月</span>
-						<button type="submit" name="display" class="button">表示</button>
+						<button type="submit" id="display" name="display" class="button">表示</button>
 						<span id="year-error" class="error-message attendanceError">表示させたい年月を指定してください。</span>
 
 					</div>
@@ -122,17 +124,15 @@
 					<tbody id="attendance-details">
 						<tr th:each="calendar, iterStat : ${calendar}"
 							th:classappend="${(calendar.date.isEqual(today) ? 'highlight' : ' ') + (attendanceForm != null && attendanceForm.dailyAttendanceList[iterStat.index].errorFlag == true ? 'error-field' : ' ')}">
-							<td th:text="${calendar.getFormattedDate()}">
-								<input type="hidden" name="date" th:value="${calendar.date}" />
-							</td>
-							<td th:text="${calendar.dayOfWeek}"
+							<td th:text="${calendar.getFormattedDate()}" id="date"></td>
+							<td id="dayOfWeek" th:text="${calendar.dayOfWeek}"
 								th:classappend="${calendar.isSaturday} ? 'saturday' : (${calendar.isSunday} ? 'sunday' : '')">
 							</td>
 							<td>
 								<!-- null,falseだと入力可能、trueは入力不可 -->
 								<select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'"
-									class="form-control"
-									th:attr="disabled=${loginUser.role == '2'}" th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
+									class="form-control" th:attr="disabled=${loginUser.role == '2'}"
+									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 									<option value="" hidden> </option>
 									<option value="0"
 										th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">
@@ -187,22 +187,19 @@
 							<td>
 								<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].startTime'"
 									th:value="${attendanceForm.dailyAttendanceList[iterStat.index].startTime}"
-									class="form-control input-time"
-									th:attr="disabled=${loginUser.role == '2'}"
+									class="form-control input-time" th:attr="disabled=${loginUser.role == '2'}"
 									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 							</td>
 							<td>
 								<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].endTime'"
 									th:value="${attendanceForm.dailyAttendanceList[iterStat.index].endTime}"
-									class="form-control input-time"
-									th:attr="disabled=${loginUser.role == '2'}"
+									class="form-control input-time" th:attr="disabled=${loginUser.role == '2'}"
 									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 							</td>
 							<td>
 								<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].remarks'"
 									th:value="${attendanceForm.dailyAttendanceList[iterStat.index].remarks}"
-									class="form-control note"
-									th:attr="disabled=${loginUser.role == '2'}"
+									class="form-control note" th:attr="disabled=${loginUser.role == '2'}"
 									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 							</td>
 						</tr>
@@ -227,6 +224,27 @@
 				return true; // フォームの送信を許可
 			}
 		}
+		
+		// 選択された日付を基準に祝日を取得
+		const year = document.getElementById('year').value;
+		const holidays = JapaneseHolidays.getHolidaysOf(year);
+
+		// 祝日の日付をセットにしておく
+		const holidayDates = new Set(holidays.map(holiday => `${String(holiday.month).padStart(2, '0')}/${String(holiday.date).padStart(2, '0')}`));
+		console.log(holidayDates);
+
+		// 日付が祝日かどうかをチェックしてクラスを適用
+		document.querySelectorAll('#attendance-details tr').forEach(row => {
+			const dateText = row.querySelector('td[id="date"]').textContent.trim(); // 日付のテキストを取得
+			const [month, day] = dateText.split('/').map(part => part.padStart(2, '0')); // "M/d" を "MM/DD" に変換
+			const formattedDate = `${month}/${day}`; // フォーマットを "MM/DD" に
+
+			if (holidayDates.has(formattedDate)) {
+				const dayOfWeekCell = row.querySelector('td[id="dayOfWeek"]');
+				dayOfWeekCell.classList.add('sunday'); // 祝日クラスを追加
+			}
+		});
+
 
 		// hidden フィールドの値を更新するための JavaScript(ボタン押下時振り分け)
 		document.getElementById('year').addEventListener('change', function () {
