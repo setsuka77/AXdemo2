@@ -132,7 +132,7 @@
 								<!-- null,falseだと入力可能、trueは入力不可 -->
 								<select th:name="'dailyAttendanceList[' + ${iterStat.index} + '].status'"
 									class="form-control"
-									th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
+									th:attr="disabled=${loginUser.role == '2'}" th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 									<option value="" hidden> </option>
 									<option value="0"
 										th:selected="${attendanceForm.dailyAttendanceList[iterStat.index].status == 0}">
@@ -188,19 +188,22 @@
 								<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].startTime'"
 									th:value="${attendanceForm.dailyAttendanceList[iterStat.index].startTime}"
 									class="form-control input-time"
-									th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
+									th:attr="disabled=${loginUser.role == '2'}"
+									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 							</td>
 							<td>
 								<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].endTime'"
 									th:value="${attendanceForm.dailyAttendanceList[iterStat.index].endTime}"
 									class="form-control input-time"
-									th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
+									th:attr="disabled=${loginUser.role == '2'}"
+									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 							</td>
 							<td>
 								<input type="text" th:name="'dailyAttendanceList[' + ${iterStat.index} + '].remarks'"
 									th:value="${attendanceForm.dailyAttendanceList[iterStat.index].remarks}"
 									class="form-control note"
-									th:attr="disabled=${isFormEditable == null ? false : isFormEditable}">
+									th:attr="disabled=${loginUser.role == '2'}"
+									th:classappend="${loginUser.role == '2'} ? 'manage-form' : ''">
 							</td>
 						</tr>
 					</tbody>

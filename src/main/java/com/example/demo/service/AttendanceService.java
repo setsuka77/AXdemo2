@@ -266,14 +266,23 @@ public class AttendanceService {
 				continue;
 			}
 			
-			// 勤務状況に応じた出退勤時間のチェック
-	        if (status != null && (status == 0 || status == 3 || status == 6 || status == 7 || status == 8 || status == 10)) {
-	            if ((startTime == null || startTime.isEmpty()) || (endTime == null || endTime.isEmpty())) {
-	                errorMessage.append(dailyForm.getFormattedDate()).append(" の勤務時間を入力してください。<br>");
-	                hasErrors = true;
-	                dailyForm.setErrorFlag(true);
-	            }
-	        }
+			// ステータスに応じたチェック
+			if (status != null) {
+			    boolean isTimeRequired = (status == 0 || status == 3 || status == 6 || status == 7 || status == 8 || status == 10);
+			    boolean isTimeNotAllowed = (status == 1 || status == 2 || status == 4 || status == 5 || status == 9 || status == 11);
+
+			    if (isTimeRequired && (startTime == null || startTime.isEmpty() || endTime == null || endTime.isEmpty())) {
+			        errorMessage.append(dailyForm.getFormattedDate()).append(" の出退勤時間を入力してください。<br>");
+			        hasErrors = true;
+			        dailyForm.setErrorFlag(true);
+			    }
+
+			    if (isTimeNotAllowed && (startTime != null && !startTime.isEmpty() || endTime != null && !endTime.isEmpty())) {
+			        errorMessage.append(dailyForm.getFormattedDate()).append(" 出退勤時間が不要な勤務状況を選択しています。勤務状況を変更してください。<br>");
+			        hasErrors = true;
+			        dailyForm.setErrorFlag(true);
+			    }
+			}
 
 			// 出勤時間チェック
 			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
@@ -313,7 +322,7 @@ public class AttendanceService {
 
 			// ステータス必須チェック
 			if (status == null) {
-				errorMessage.append(dailyForm.getFormattedDate()).append(" のステータス : 選択してください。<br>");
+				errorMessage.append(dailyForm.getFormattedDate()).append(" の勤務状況 : 選択してください。<br>");
 				hasErrors = true;
 				dailyForm.setErrorFlag(true);
 			}
