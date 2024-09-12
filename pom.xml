@@ -105,6 +105,19 @@
 			<version>3.5.10</version>
 		</dependency>
 
+		<!-- Spring Batch Starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-batch</artifactId>
+		</dependency>
+
+		<!-- H2 Database (for in-memory database during development) -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 		<!-- Spring Security -->
 		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
