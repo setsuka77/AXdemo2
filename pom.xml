@@ -105,10 +105,16 @@
 			<version>3.5.10</version>
 		</dependency>
 
-		<!-- Spring Batch Starter -->
+		<!--		 Spring Batch Starter 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-batch</artifactId>
+		</dependency>
+-->
+		<!-- Spring Mail Starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 		<!-- H2 Database (for in-memory database during development) -->
