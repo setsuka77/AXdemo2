@@ -55,7 +55,7 @@
 							<tr>
 								<th>承認申請者</th>
 								<th>申請対象日</th>
-								<!--                            <th>申請日</th>-->
+								<th>申請日</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -63,7 +63,7 @@
 								<td><a th:href="@{/report/dailyReport/detail(id=${report.id})}"
 										th:text="${report.userName}">申請者</a></td>
 								<td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請対象日</td>
-								<!-- <td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請日</td>-->
+							<td th:text="${#dates.format(report.updateDate, 'yyyy年M月dd日')}">申請日</td>
 							</tr>
 						</tbody>
 					</table>
@@ -78,8 +78,14 @@
 				<div th:if="${message}" class="alert alert-success register-message" role="alert">
 					<p th:utext="${message}"></p>
 				</div>
+				
 
 				<table class="table table-hover" border="1" cellspacing="0" id="report">
+					<!-- 申請一覧に戻るボタンを表示する条件 -->
+					<span th:if="${loginUser.role == '2' and 
+						dailyReportForm.dailyReportDetailFormList != null and dailyReportForm.dailyReportDetailFormList.size() > 0}">
+						<a href="javascript:history.back()">⇐申請一覧に戻る</a>
+					</span>
 					<thead>
 						<tr>
 							<th>作業時間(h)</th>

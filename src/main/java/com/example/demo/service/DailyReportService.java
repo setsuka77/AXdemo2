@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -192,8 +193,8 @@ public class DailyReportService {
 		report.setId(searchReport != null ? searchReport.getId() : null);
 		report.setUserId(userId);
 		report.setDate(submitDate);
-		//daily_reportのstatusを変更する
 		report.setStatus(status);
+		report.setUpdateDate(java.sql.Date.valueOf(LocalDate.now()));
 		
 		if(report.getId() == null) {
 			//日報申請を登録
@@ -204,5 +205,31 @@ public class DailyReportService {
 		}
 		return true;
 	}
+
+	public DailyReportForm setForm(Integer userId, Date date) {
+	    // 日報情報を取得
+	    List<DailyReportDetail> details = dailyReportDetailMapper.findByUserIdAndDate(userId, date);
+	    
+	    // DailyReportForm のインスタンスを作成
+	    DailyReportForm dailyReportForm = new DailyReportForm();
+	    
+	    // DailyReportDetail を DailyReportDetailForm に変換する
+	    List<DailyReportDetailForm> detailFormList = new ArrayList<>();
+	    for (DailyReportDetail detail : details) {
+	        DailyReportDetailForm detailForm = new DailyReportDetailForm();
+	        detailForm.setId(detail.getId());
+	        detailForm.setUserId(detail.getUserId());
+	        detailForm.setDate(detail.getDate());
+	        detailForm.setTime(detail.getTime());
+	        detailForm.setContent(detail.getContent());
+	        detailFormList.add(detailForm);
+	    }
+	    
+	    // DailyReportForm に変換したリストを設定
+	    dailyReportForm.setDailyReportDetailFormList(detailFormList);
+	    
+	    return dailyReportForm;
+	}
+
 	
 }

@@ -383,6 +383,7 @@ public class AttendanceService {
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
 		// ステータスを承認済みに設定
 		req.setStatus(status);
+		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		monthlyAttendanceReqMapper.updateStatus(req);
 		// メッセージ追加
 		String userName = req.getUserName();
@@ -405,6 +406,7 @@ public class AttendanceService {
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
 		// ステータスを却下済みに設定
 		req.setStatus(status);
+		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		monthlyAttendanceReqMapper.updateStatus(req);
 		// メッセージ追加
 		String userName = req.getUserName();

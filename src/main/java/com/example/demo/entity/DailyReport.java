@@ -18,4 +18,9 @@ public class DailyReport {
 	private Date date;
 	/** 申請状況 */
 	private Integer status;
+	
+	/** 申請日 */
+	private Date updateDate;
+	/** ユーザーの名前*/
+	private String UserName;
 }

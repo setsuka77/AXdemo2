@@ -22,6 +22,15 @@ public interface DailyReportMapper {
 	DailyReport findByUserIdAndDate(@Param("userId") Integer userId, @Param("date") Date date);
 	
 	/**
+	 * 日報申請情報 取得
+	 *
+	 * @param userId 
+	 * @param date 
+	 * @return 指定されたユーザーIDと日付に一致する日報申請情報のリスト
+	 */
+	DailyReport findById(Integer id);
+	
+	/**
 	 * 承認待ちの日報情報をすべて取得
 	 * 
 	 * @return 承認待ちの申請情報一覧

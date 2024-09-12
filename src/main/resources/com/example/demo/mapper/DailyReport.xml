@@ -20,17 +20,30 @@
     	JOIN users u ON report.user_id = u.id
     	WHERE report.status = 1
     </select>
+    
+    <select id="findById" resultType="com.example.demo.entity.DailyReport">
+        SELECT
+		u.name AS userName,
+		u.id AS userId,
+		report.*
+		FROM
+		daily_report report
+		JOIN
+		users u ON report.user_id = u.id
+		WHERE
+		report.id = #{id}
+    </select>
 
     <!-- 提出ボタン押下　日報申請 -->
     <insert id="insert" parameterType="com.example.demo.entity.DailyReport">
-        INSERT INTO daily_report (user_id, date, status)
-        VALUES (#{userId}, #{date}, #{status})
+        INSERT INTO daily_report (user_id, date, status, update_date)
+        VALUES (#{userId}, #{date}, #{status},#{updateDate})
     </insert>
 
     <!-- 提出ボタン押下　日報申請更新 -->
     <update id="update" parameterType="com.example.demo.entity.DailyReport">
         UPDATE daily_report
-        SET date = #{date}, status = #{status}
+        SET date = #{date}, status = #{status}, update_date = #{updateDate}
         WHERE id = #{id}
     </update>
 

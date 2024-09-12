@@ -15,13 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
 import com.example.demo.entity.Users;
 import com.example.demo.form.DailyReportDetailForm;
 import com.example.demo.form.DailyReportForm;
+import com.example.demo.mapper.DailyReportMapper;
 import com.example.demo.service.DailyReportService;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +34,8 @@ public class DailyReportController {
 
 	@Autowired
 	private DailyReportService dailyReportService;
+	@Autowired
+	private DailyReportMapper dailyReportMapper;
 
 	/**
 	 * 日報登録画面 初期表示
@@ -158,6 +163,39 @@ public class DailyReportController {
 
 		return "redirect:/report/dailyReport";
 	}
+	
+	/**
+	 * 日報登録画面 マネージャ権限 日報申請の詳細表示
+	 * 
+	 * @param id      日報ID
+	 * @param model
+	 * @param session
+	 * @return 日報登録画面
+	 */
+	@GetMapping(path = "/report/dailyReport/detail")
+	public String getDailyReport(@RequestParam("id") Integer id, Model model, HttpSession session) {
+	    // ユーザー情報の取得
+	    Users loginUser = (Users) session.getAttribute("user");
+
+	    // 申請Idで日報情報を取得
+	    DailyReport dailyReport = dailyReportMapper.findById(id);
+	    // 日報情報から日付とユーザーIDを取得
+	    Integer userId = dailyReport.getUserId();
+	    java.util.Date utilDate = dailyReport.getDate();
+	    java.sql.Date date = new java.sql.Date(utilDate.getTime());
+
+	    // 日報情報を取得
+		DailyReportForm dailyReportForm = dailyReportService.setForm(userId,date);  
+
+	    // モデルに属性を追加
+		model.addAttribute("dailyReport",dailyReport);
+	    model.addAttribute("dailyReportForm", dailyReportForm);
+	    model.addAttribute("loginUser", loginUser);
+
+	    return "report/dailyReport";
+	}
+
+	
 
 	/**
 	 * 「メニュー」ボタン押下

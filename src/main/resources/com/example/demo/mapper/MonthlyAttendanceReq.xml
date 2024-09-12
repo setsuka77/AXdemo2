@@ -86,11 +86,10 @@
 	<!-- 却下、承認ボタン押下時ステータス更新 -->
 	<update id="updateStatus"
 		parameterType="com.example.demo.entity.MonthlyAttendanceReq">
-		UPDATE monthly_attendance_req SET status = #{status}
+		UPDATE monthly_attendance_req 
+		SET status = #{status},
+		date = #{date}
 		WHERE id = #{id}
 	</update>
-
-
-
 
 </mapper>
