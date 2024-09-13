@@ -8,7 +8,8 @@
 		resultType="com.example.demo.entity.DailyReport">
 		SELECT * FROM daily_report
 		WHERE user_id = #{userId}
-		AND date = #{date}
+		AND date
+		= #{date}
 	</select>
 
 	<!-- ステータスが1の日報申請情報を取得 -->
@@ -18,9 +19,11 @@
 		u.name AS userName,
 		u.id AS userId,
 		report.*
-		FROM daily_report report
+		FROM
+		daily_report report
 		JOIN users u ON report.user_id = u.id
-		WHERE report.status = 1
+		WHERE
+		report.status = 1
 	</select>
 
 	<!-- 提出してないユーザーの情報を取得 -->
@@ -28,10 +31,11 @@
 		resultType="com.example.demo.dto.UsersDto">
 		SELECT u.*
 		FROM users u
-		WHERE u.id NOT IN (
+		WHERE u.role IN (3, 4) <!-- role が 3 または 4 のユーザー -->
+		AND u.id NOT IN (
 		SELECT r.user_id
 		FROM daily_report r
-		WHERE r.date = #{date}
+		WHERE r.date = #{date} <!-- 指定の日付で日報が提出されているか確認 -->
 		)
 	</select>
 
@@ -47,13 +51,15 @@
 		JOIN
 		users u ON report.user_id = u.id
 		WHERE
-		report.id = #{id}
+		report.id
+		= #{id}
 	</select>
 
 	<!-- 提出ボタン押下　日報申請 -->
 	<insert id="insert"
 		parameterType="com.example.demo.entity.DailyReport">
-		INSERT INTO daily_report (user_id, date, status, update_date)
+		INSERT INTO daily_report (user_id, date, status,
+		update_date)
 		VALUES (#{userId}, #{date}, #{status},#{updateDate})
 	</insert>
 
@@ -61,7 +67,8 @@
 	<update id="update"
 		parameterType="com.example.demo.entity.DailyReport">
 		UPDATE daily_report
-		SET date = #{date}, status = #{status}, update_date = #{updateDate}
+		SET date = #{date}, status =
+		#{status}, update_date = #{updateDate}
 		WHERE id = #{id}
 	</update>
 

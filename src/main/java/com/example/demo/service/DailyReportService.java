@@ -242,6 +242,7 @@ public class DailyReportService {
         Date date = Date.valueOf(previousDay);
         //前日の日報を提出していないユーザーを検索
         List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
+        System.out.println(users);
 	}
 	
 }
