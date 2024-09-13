@@ -11,11 +11,13 @@ public class SendMailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendNotificationEmail(String to, String subject, String text) {
+    public void sendSimpleMail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
+        message.setFrom("no-reply@axsystem.com"); // 差出人のアドレスを指定
         message.setSubject(subject);
         message.setText(text);
+
         mailSender.send(message);
     }
 }
