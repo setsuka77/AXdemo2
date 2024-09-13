@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
 import com.example.demo.dto.MonthlyAttendanceReqDto;
+import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.Attendance;
 import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
@@ -415,6 +416,20 @@ public class AttendanceService {
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 
 		return userName + "の" + formattedDate + "における承認申請が却下されました。";
+	}
+	
+	/**
+	 * 勤怠提出の有無確認
+	 * 
+	 */
+	public void checkAttendance() {
+		// 先月の年月を取得
+		YearMonth lastMonth = YearMonth.now().minusMonths(1);
+		LocalDate lastDate = lastMonth.atDay(1);
+
+        //前日の日報を提出していないユーザーを検索
+        List<UsersDto> users = monthlyAttendanceReqMapper.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
+        System.out.println("勤怠：" + users);
 	}
 
 }

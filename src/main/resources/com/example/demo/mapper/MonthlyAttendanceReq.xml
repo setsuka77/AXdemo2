@@ -91,5 +91,19 @@
 		date = #{date}
 		WHERE id = #{id}
 	</update>
+	
+	<!-- 提出してないユーザーの情報を取得 -->
+	<select id="findUsersWithoutAttendance"
+		resultType="com.example.demo.dto.UsersDto">
+		SELECT u.*
+		FROM users u
+		WHERE u.role IN (3, 4) <!-- role が 3 または 4 のユーザー -->
+		AND u.id NOT IN (
+		SELECT req.user_id
+		FROM monthly_attendance_req req
+		WHERE req.target_year_month = #{date} <!-- 指定の日付で日報が提出されているか確認 -->
+		)
+	</select>
+	
 
 </mapper>

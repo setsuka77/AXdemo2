@@ -1,11 +1,13 @@
 package com.example.demo.mapper;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.demo.dto.MonthlyAttendanceReqDto;
+import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.MonthlyAttendanceReq;
 
 /*
@@ -71,5 +73,10 @@ public interface MonthlyAttendanceReqMapper {
 	 * @param req 更新する申請情報
 	 */
 	void updateStatus(MonthlyAttendanceReq req);
+	
+	/**
+	 * 勤怠未提出者情報　取得
+	 */
+	List<UsersDto> findUsersWithoutAttendance(@Param("date") Date date);
 
 }
