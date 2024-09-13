@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.demo.dto.DailyReportDto;
+import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.DailyReport;
 
 @Mapper
@@ -29,6 +30,11 @@ public interface DailyReportMapper {
 	 * @return 指定されたユーザーIDと日付に一致する日報申請情報のリスト
 	 */
 	DailyReport findById(Integer id);
+	
+	/**
+	 * 日報未提出者情報　取得
+	 */
+	List<UsersDto> findUsersWithoutReport(@Param("date") Date date);
 	
 	/**
 	 * 承認待ちの日報情報をすべて取得

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.DailyReportDto;
+import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
 import com.example.demo.entity.Users;
@@ -231,5 +232,16 @@ public class DailyReportService {
 	    return dailyReportForm;
 	}
 
+	/**
+	 * 日報提出の有無確認
+	 * 
+	 */
+	public void checkDailyReport() {
+		// 前日の日付を取得
+        LocalDate previousDay = LocalDate.now().minusDays(1);
+        Date date = Date.valueOf(previousDay);
+        //前日の日報を提出していないユーザーを検索
+        List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
+	}
 	
 }

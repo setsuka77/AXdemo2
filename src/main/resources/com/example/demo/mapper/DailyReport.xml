@@ -4,25 +4,41 @@
 <mapper namespace="com.example.demo.mapper.DailyReportMapper">
 
 	<!-- 日報申請情報を取得 -->
-    <select id="findByUserIdAndDate" resultType="com.example.demo.entity.DailyReport">
-        SELECT * FROM daily_report
-        WHERE user_id = #{userId}
-        AND date = #{date}
-    </select>
-    
-    <!-- ステータスが1の日報申請情報を取得 -->
-    <select id="findByStatus" resultType="com.example.demo.dto.DailyReportDto">
-        SELECT
-	        u.name AS userName,
-	        u.id AS userId,
-	        report.*
-   		FROM daily_report report
-    	JOIN users u ON report.user_id = u.id
-    	WHERE report.status = 1
-    </select>
-    
-    <select id="findById" resultType="com.example.demo.entity.DailyReport">
-        SELECT
+	<select id="findByUserIdAndDate"
+		resultType="com.example.demo.entity.DailyReport">
+		SELECT * FROM daily_report
+		WHERE user_id = #{userId}
+		AND date = #{date}
+	</select>
+
+	<!-- ステータスが1の日報申請情報を取得 -->
+	<select id="findByStatus"
+		resultType="com.example.demo.dto.DailyReportDto">
+		SELECT
+		u.name AS userName,
+		u.id AS userId,
+		report.*
+		FROM daily_report report
+		JOIN users u ON report.user_id = u.id
+		WHERE report.status = 1
+	</select>
+
+	<!-- 提出してないユーザーの情報を取得 -->
+	<select id="findUsersWithoutReport"
+		resultType="com.example.demo.dto.UsersDto">
+		SELECT u.*
+		FROM users u
+		WHERE u.id NOT IN (
+		SELECT r.user_id
+		FROM daily_report r
+		WHERE r.date = #{date}
+		)
+	</select>
+
+	<!-- IDで申請情報を取得 -->
+	<select id="findById"
+		resultType="com.example.demo.entity.DailyReport">
+		SELECT
 		u.name AS userName,
 		u.id AS userId,
 		report.*
@@ -32,20 +48,22 @@
 		users u ON report.user_id = u.id
 		WHERE
 		report.id = #{id}
-    </select>
+	</select>
 
-    <!-- 提出ボタン押下　日報申請 -->
-    <insert id="insert" parameterType="com.example.demo.entity.DailyReport">
-        INSERT INTO daily_report (user_id, date, status, update_date)
-        VALUES (#{userId}, #{date}, #{status},#{updateDate})
-    </insert>
+	<!-- 提出ボタン押下　日報申請 -->
+	<insert id="insert"
+		parameterType="com.example.demo.entity.DailyReport">
+		INSERT INTO daily_report (user_id, date, status, update_date)
+		VALUES (#{userId}, #{date}, #{status},#{updateDate})
+	</insert>
 
-    <!-- 提出ボタン押下　日報申請更新 -->
-    <update id="update" parameterType="com.example.demo.entity.DailyReport">
-        UPDATE daily_report
-        SET date = #{date}, status = #{status}, update_date = #{updateDate}
-        WHERE id = #{id}
-    </update>
+	<!-- 提出ボタン押下　日報申請更新 -->
+	<update id="update"
+		parameterType="com.example.demo.entity.DailyReport">
+		UPDATE daily_report
+		SET date = #{date}, status = #{status}, update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
 
 
 </mapper>
