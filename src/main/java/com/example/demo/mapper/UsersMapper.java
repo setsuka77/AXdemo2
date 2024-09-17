@@ -78,8 +78,15 @@ public interface UsersMapper {
 	 * @param user 更新するユーザ情報
 	 */
 	void updateUser(UserManagementDto user);
+	
+	/**
+	 * バッチ処理 メール送信先情報取得
+	 * 
+	 */
+	List<Users> findUsersByRole(String role);
 
-	/*
+	/**
+	 * バッチ処理
 	 * マネージャー権限のユーザー情報取得
 	 */
 	List<UsersDto> findManagers();

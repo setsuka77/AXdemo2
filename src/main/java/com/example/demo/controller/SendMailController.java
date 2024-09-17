@@ -12,14 +12,19 @@ public class SendMailController {
     @Autowired
     private SendMailService sendMailService;
 
+    /**
+     * テストメール用
+     * http://localhost:8080/login/sendMail?to=受信するメアド
+     * 上記URLを直打ちで送信
+     * @param to
+     * @return メール送信可否表示
+     */
     @GetMapping("/sendMail")
     public String sendMail(
-        @RequestParam("to") String to,
-        @RequestParam("subject") String subject,
-        @RequestParam("text") String text) {
+        @RequestParam("to") String to) {
         
         try {
-            sendMailService.sendSimpleMail(to, subject, text);
+            sendMailService.sendSimpleMail(to);
             return "メールが正常に送信されました。";
         } catch (Exception e) {
             e.printStackTrace();

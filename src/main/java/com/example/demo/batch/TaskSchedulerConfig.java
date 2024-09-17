@@ -6,27 +6,51 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.service.AttendanceService;
 import com.example.demo.service.DailyReportService;
+import com.example.demo.service.SendMailService;
 
 @Component
 public class TaskSchedulerConfig {
+
+	@Autowired
+	private DailyReportService dailyReportService;
+	@Autowired
+	private AttendanceService attendanceService;
 	
 	@Autowired
-    private DailyReportService dailyReportService;
+	private SendMailService sendMailService;
+
 	@Autowired
-    private AttendanceService attendanceService;
+	private LogService logService; // ログサービス
 
-    @Autowired
-    private LogService logService;  // ログサービス
+	/**
+	 *  毎日18時10分にバッチ処理を実行、プッシュ通知を送信
+	 */
+	// @Scheduled(cron = "0 10 18 * * ?")
+	// @Scheduled(cron = "0 */2 * * * ?")
+	public void sendNotifications() {
+		try {
+			dailyReportService.checkDailyReport();
+			attendanceService.checkAttendance();
+			logService.logInfo("チェックできたよ");
+		} catch (Exception e) {
+			logService.logError("エラーが出てるよ", e);
+		}
+	}
 
-    // 毎日午前18時にバッチ処理を実行
-    //@Scheduled(cron = "0 0 18 * * ?")
-    @Scheduled(cron = "0 */2 * * * ?")
-    public void performDailyReportCheck() {
+	/**
+     * 毎日午前9時半に日報未提出の社員にメールを送信するバッチ処理
+     */
+    // @Scheduled(cron = "0 30 9 * * ?") // 毎日午前9時半に実行
+	// @Scheduled(cron = "0 */2 * * * ?")
+    public void performDailyReportSendMail() {
         try {
-            dailyReportService.checkDailyReport();
-            attendanceService.checkAttendance();
+            // 役職に基づいてメール送信
+            sendMailService.sendAttendanceAndReportReminderMail("2"); // ここで適切なロールを指定
+
+            // ログ出力
             logService.logInfo("チェックできたよ");
         } catch (Exception e) {
+            // エラーログ出力
             logService.logError("エラーが出てるよ", e);
         }
     }

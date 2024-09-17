@@ -29,5 +29,11 @@ public class UserManagementForm {
 	@Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "{validation.userManagementForm.startDate}")
 	@DateTimeFormat(pattern = "YYYY/MM/DD") // 入力フォームのフォーマットに合わせる
 	private String startDate;
+	/** メールアドレス */
+	private String email;
+	/** 電話番号 */
+	private String phoneNumber;
+	/** よみ */
+	private String nameKana;
 	
 }

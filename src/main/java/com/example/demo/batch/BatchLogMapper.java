@@ -8,11 +8,32 @@ import java.util.List;
 public interface BatchLogMapper {
 
 
-    void insertBatchLog(BatchLog batchLog);
+    /**
+     * バッチ実行結果記録
+     * 
+     * @param batchLog
+     */
+	void insertBatchLog(BatchLog batchLog);
 
-    BatchLog findBatchLogById(Long id);
+    /**
+     * バッチ履歴ID検索
+     * 
+     * @param id
+     * @return
+     */
+	BatchLog findBatchLogById(Long id);
 
-    void updateBatchLog(BatchLog batchLog);
+    /**
+     * バッチ履歴の更新(一応)
+     * 
+     * @param batchLog
+     */
+	void updateBatchLog(BatchLog batchLog);
 
-    List<BatchLog> findAllBatchLogs();
+    /**
+     * バッチ履歴一覧取得
+     * 
+     * @return
+     */
+	List<BatchLog> findAllBatchLogs();
 }

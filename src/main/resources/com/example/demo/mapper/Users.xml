@@ -55,12 +55,21 @@
 		UPDATE users SET password = #{password}, role = #{role},
 		department_id = #{departmentId},
 		start_date =#{startDate}
-		WHERE id = #{id}
+		WHERE id =
+		#{id}
 	</update>
+
+
+	<!-- バッチ処理で使用 -->
+	<select id="findUsersByRole"
+		resultType="com.example.demo.entity.Users">
+		SELECT * FROM users
+		WHERE role = #{role}
+	</select>
 	
 	<select id="findManagers"
 		resultType="com.example.demo.dto.UsersDto">
-		 SELECT * FROM users WHERE role = 2
+		SELECT * FROM users WHERE role = 2
 	</select>
 
 </mapper>

@@ -23,5 +23,11 @@ public class Users {
 	private Integer departmentId;
 	/** 有効開始日 */
 	private Date startDate;
+	/** メールアドレス */
+	private String email;
+	/** 電話番号 */
+	private String phoneNumber;
+	/** よみ */
+	private String nameKana;
 }
 
