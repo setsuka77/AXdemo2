@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.demo.mapper.UserNotificationsMapper">
+<mapper
+	namespace="com.example.demo.mapper.UserNotificationsMapper">
 
 	<!-- お知らせ情報をuserに紐づける -->
 	<insert id="insert"
 		parameterType="com.example.demo.entity.UserNotifications">
-		INSERT INTO user_notifications (user_id, notification_id,  is_read, created_at)
-		VALUES (#{userId}, #{notificationId}, #{isRead},#{createdAt})
+		INSERT INTO user_notifications (user_id,
+		notification_id, is_read, is_visible)
+		VALUES (#{userId},
+		#{notificationId}, #{isRead},#{isVisible})
 	</insert>
+
+	<!-- 該当ユーザーのお知らせがあるか確認 -->
+	<select id="findUserNotification" resultType="com.example.demo.entity.UserNotifications">
+		SELECT un.id, un.is_read, un.is_visible
+		FROM
+		user_notifications un
+		JOIN notifications n ON un.notification_id = n.id
+		WHERE un.user_id = #{userId}
+		AND n.target_date = #{date}
+		AND n.notification_type = #{notificationType}
+	</select>
+
+	<!-- お知らせ情報を更新する -->
+	<update id="update" parameterType="com.example.demo.entity.UserNotifications">
+		UPDATE user_notifications un
+		JOIN notifications n ON un.notification_id = n.id
+		SET un.is_read = true, un.is_visible = false
+		WHERE un.id = #{id}
+	</update>
+
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,8 +46,9 @@ public class NotificationsService {
 	 * @param users 前日提出していないユーザーのリスト
 	 * @param previousDay 前日の日付
 	 */
-	public void createNotificationForUsers(List<UsersDto> users, LocalDate previousDay,String notificationType,String content) {
-        Long notificationId = createNotification(content,notificationType);
+	public void createNotificationForUsers(List<UsersDto> users, LocalDate previousDay,
+			String notificationType,String content,Date targetDate) {
+        Long notificationId = createNotification(content,notificationType,targetDate);
 
 		users.forEach(user -> linkNotificationToUser(user.getId(), notificationId,notificationType));
 		System.out.println("社員通知");
@@ -57,9 +59,9 @@ public class NotificationsService {
      * 
      * @param content 通知の内容
      */
-    public void createManagerNotification(String content,String notificationType) {
+    public void createManagerNotification(String content,String notificationType,Date targetDate) {
         List<UsersDto> managers = usersMapper.findManagers();
-        Long notificationId = createNotification(content,notificationType);
+        Long notificationId = createNotification(content,notificationType,targetDate);
         
 
         managers.forEach(manager -> linkNotificationToUser(manager.getId(), notificationId,notificationType));
@@ -72,11 +74,12 @@ public class NotificationsService {
 	* @param content 通知の内容
 	* @return 作成された通知のID
 	*/
-	public Long createNotification(String content,String notificationType) {
+	public Long createNotification(String content,String notificationType,Date targetDate) {
 		Notifications notifications = new Notifications();
 		notifications.setContent(content);
 		notifications.setNotificationType(notificationType);
 		notifications.setCreatedAt(LocalDateTime.now());
+		notifications.setTargetDate(targetDate);
 
 		notificationsMapper.insert(notifications);
 		
@@ -94,9 +97,21 @@ public class NotificationsService {
 		userNotifications.setUserId(userId);
 		userNotifications.setNotificationId(notificationId);
 		userNotifications.setIsRead(false);
-		userNotifications.setCreatedAt(LocalDateTime.now());
+		userNotifications.setIsVisible(true);
 
 		userNotificationsMapper.insert(userNotifications);
+	}
+	
+	/*
+	 * 既存の通知がある場合はフラグを更新する
+	 */
+	public void checkNotifications(Integer userId, java.util.Date date,String notificationType) {
+		UserNotifications existingNotification = userNotificationsMapper.findUserNotification(userId,date,notificationType);
+		// 既存の通知がある場合はフラグを更新
+	    if (existingNotification != null) {
+	    	 userNotificationsMapper.update(existingNotification.getId());
+	    }
+		
 	}
 	
 }

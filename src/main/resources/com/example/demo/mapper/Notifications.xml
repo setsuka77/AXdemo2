@@ -7,8 +7,8 @@
 	<insert id="insert"
 		parameterType="com.example.demo.entity.Notifications"
 		useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO notifications (content, notification_type, created_at)
-		VALUES (#{content}, #{notificationType}, #{createdAt})
+		INSERT INTO notifications (content, notification_type, created_at, target_date)
+		VALUES (#{content}, #{notificationType}, #{createdAt}, #{targetDate})
 	</insert>
 
 

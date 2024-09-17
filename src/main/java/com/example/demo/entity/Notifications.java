@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import lombok.Data;
 
@@ -15,5 +16,7 @@ public class Notifications {
     private String notificationType;
     /** 作成日時 */
     private LocalDateTime createdAt;	
+    /**　対象日 */
+    private Date targetDate;
 
 }

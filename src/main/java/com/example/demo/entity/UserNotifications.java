@@ -18,4 +18,5 @@ public class UserNotifications {
     /** 受信日時 */
     private LocalDateTime createdAt;
     /** お知らせ表示フラグ */
+    private Boolean isVisible;
 }

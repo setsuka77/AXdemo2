@@ -13,5 +13,11 @@ public interface UserNotificationsMapper {
 	 * @param userNotifications 登録するお知らせ情報
 	 */
 	 void insert(UserNotifications userNotifications);
+	 
+	// 該当ユーザーのお知らせがあるか確認
+	    UserNotifications findUserNotification(Integer userId,java.util.Date date,String notificationType);
+
+	    // お知らせ情報を更新する
+	    void update(Long id);
 
 }

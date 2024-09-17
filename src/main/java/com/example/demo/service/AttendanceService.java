@@ -234,6 +234,10 @@ public class AttendanceService {
 				attendance.setRemarks(dailyForm.getRemarks());
 
 				attendanceList.add(attendance);
+
+				// 既存の UserNotifications を userId と targetDate,notificationType で検索
+				String notificationType ="勤怠未提出";
+				notificationService.checkNotifications(userId, date,notificationType);
 			}
 		}
 		if (!attendanceList.isEmpty()) {
@@ -358,6 +362,10 @@ public class AttendanceService {
 		req.setTargetYearMonth(java.sql.Date.valueOf(startDate.withDayOfMonth(1)));
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		req.setStatus(1); // 承認待ち
+		
+		// 既存の UserNotifications を userId と targetDate,notificationType で検索
+		String notificationType ="勤怠申請未提出";
+		notificationService.checkNotifications(user.getId(),java.sql.Date.valueOf(startDate.withDayOfMonth(1)),notificationType);
 
 		if (existingReq != null) {
 			req.setId(existingReq.getId()); // 更新するためにIDを設定
@@ -367,7 +375,6 @@ public class AttendanceService {
 			monthlyAttendanceReqMapper.insert(req); // 新規申請登録処理
 			return "承認申請が完了しました。";
 		}
-
 	}
 
 	/**
@@ -452,13 +459,13 @@ public class AttendanceService {
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "勤怠未提出";
 			String content = formattedDate + "の勤怠が提出されていません";
-			notificationService.createNotificationForUsers(users, previousDay, notificationType, content);
+			notificationService.createNotificationForUsers(users, previousDay, notificationType, content,date);
 
 			// マネージャーに未提出ユーザー数のお知らせ
 			int missingReportCount = users.size();
 			if (missingReportCount > 0) {
 				String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人未提出です";
-				notificationService.createManagerNotification(managerContent, notificationType);
+				notificationService.createManagerNotification(managerContent, notificationType,date);
 			}
 		}
 		// 今日が月初の場合のみ通知作成
@@ -469,14 +476,14 @@ public class AttendanceService {
         	List<UsersDto> users = monthlyAttendanceReqMapper.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
             String content = "先月の勤怠が申請されていません。";
             String notificationType = "勤怠申請未提出";
-            notificationService.createNotificationForUsers(users, previousDay, notificationType, content);
+            notificationService.createNotificationForUsers(users, previousDay, notificationType, content,java.sql.Date.valueOf(lastDate));
             // マネージャーに未提出ユーザー数のお知らせ
          // 日付のフォーマット用フォーマッターを作成
     		DateTimeFormatter formatterMonth = DateTimeFormatter.ofPattern("yyyy年M月");
     		String formattedDate = lastMonth.format(formatterMonth);
             int missingReportCount = users.size();
             String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人申請されていません。";
-            notificationService.createManagerNotification(managerContent, notificationType);
+            notificationService.createManagerNotification(managerContent, notificationType,java.sql.Date.valueOf(lastDate));
        // }
         System.out.println("勤怠申請通知作成済み" );
 	}

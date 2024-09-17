@@ -170,6 +170,9 @@ public class DailyReportService {
 				dailyReportDetailMapper.delete(dailyReportDetail);
 				System.out.println("削除できてる");
 			}
+			// 既存の UserNotifications を userId と targetDate,notificationType で検索
+			String notificationType ="日報未提出";
+			notificationService.checkNotifications(userId,submitDate,notificationType);
 		}
 		return "日報が提出されました。";
 	}
@@ -253,13 +256,13 @@ public class DailyReportService {
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "日報未提出";
 			String content = previousDay + "の日報が提出されていません";
-			notificationService.createNotificationForUsers(users, previousDay,notificationType,content);
+			notificationService.createNotificationForUsers(users, previousDay,notificationType,content,date);
 
 			// マネージャーに未提出ユーザー数のお知らせ
 			int missingReportCount = users.size();
 			if (missingReportCount > 0) {
 				String managerContent = previousDay + "の日報が" + missingReportCount + "人未提出です";
-				notificationService.createManagerNotification(managerContent,notificationType);
+				notificationService.createManagerNotification(managerContent,notificationType,date);
 			}
 		}
         System.out.println("日報通知作成済み" );
