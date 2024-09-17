@@ -28,6 +28,8 @@ public class DailyReportService {
 	private DailyReportDetailMapper dailyReportDetailMapper;
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
+	@Autowired
+	private NotificationsService notificationService;
 	
 	/**
 	 * ステータスが1の申請一覧を取得する
@@ -243,6 +245,19 @@ public class DailyReportService {
         //前日の日報を提出していないユーザーを検索
         List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
         System.out.println("日報：" + users);
+        
+     // 各ユーザーにお知らせを作成
+        users.forEach(user -> {
+            String content = previousDay + "の日報が提出されていません";
+            notificationService.createNotificationForUser(user.getId(), content);
+        });
+
+        // マネージャーに未提出ユーザー数のお知らせ
+        int missingReportCount = users.size();
+        if (missingReportCount > 0) {
+            String managerContent = previousDay + "の日報が" + missingReportCount + "人未提出です";
+            notificationService.createManagerNotification(managerContent);
+        }
 	}
 	
 }

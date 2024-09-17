@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -10,6 +11,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.LocalDateTypeHandler;
 
 import com.example.demo.dto.UserManagementDto;
+import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.Users;
 
 /*
@@ -76,5 +78,10 @@ public interface UsersMapper {
 	 * @param user 更新するユーザ情報
 	 */
 	void updateUser(UserManagementDto user);
+
+	/*
+	 * マネージャー権限のユーザー情報取得
+	 */
+	List<UsersDto> findManagers();
 
 }

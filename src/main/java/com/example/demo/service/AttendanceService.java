@@ -427,7 +427,7 @@ public class AttendanceService {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		LocalDate lastDate = lastMonth.atDay(1);
 
-        //前日の日報を提出していないユーザーを検索
+        //先月の勤怠を提出していないユーザーを検索
         List<UsersDto> users = monthlyAttendanceReqMapper.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
         System.out.println("勤怠：" + users);
 	}
