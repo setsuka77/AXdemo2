@@ -1,6 +1,7 @@
 package com.example.demo.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.service.AttendanceService;
@@ -19,7 +20,7 @@ public class TaskSchedulerConfig {
 
     // 毎日午前18時にバッチ処理を実行
     //@Scheduled(cron = "0 0 18 * * ?")
-    //@Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
     public void performDailyReportCheck() {
         try {
             dailyReportService.checkDailyReport();

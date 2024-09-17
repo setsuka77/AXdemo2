@@ -14,8 +14,6 @@ public class Notifications {
     /** 通知の種類 */
     private String notificationType;
     /** 作成日時 */
-    private LocalDateTime createdAt;
-	
-	
+    private LocalDateTime createdAt;	
 
 }

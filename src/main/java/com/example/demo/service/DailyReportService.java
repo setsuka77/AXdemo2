@@ -23,14 +23,14 @@ import com.example.demo.mapper.DailyReportMapper;
 
 @Service
 public class DailyReportService {
-	
+
 	@Autowired
 	private DailyReportDetailMapper dailyReportDetailMapper;
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
 	@Autowired
 	private NotificationsService notificationService;
-	
+
 	/**
 	 * ステータスが1の申請一覧を取得する
 	 * @return ステータスが1の月次勤怠申請のリスト
@@ -38,7 +38,7 @@ public class DailyReportService {
 	public List<DailyReportDto> findAllReport() {
 		return dailyReportMapper.findByStatus();
 	}
-	
+
 	/**
 	 * 日報登録情報を取得
 	 * 
@@ -46,16 +46,16 @@ public class DailyReportService {
 	 * @param selectDate
 	 * @return 指定されたユーザーIDと日付に一致する日報申請情報
 	 */
-	public List<DailyReportDetail> searchReport(Users loginUser,String selectDate){
+	public List<DailyReportDetail> searchReport(Users loginUser, String selectDate) {
 		Integer userId = loginUser.getId();
-		Date submitDate= Date.valueOf(selectDate);
-		
+		Date submitDate = Date.valueOf(selectDate);
+
 		//日報情報を検索してIDを取得
 		List<DailyReportDetail> searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
 
 		return searchReport;
 	}
-	
+
 	/**
 	 * 日報ステータスの取得
 	 * 
@@ -69,65 +69,64 @@ public class DailyReportService {
 
 		// loginUserとdateで申請があるか確認
 		DailyReport searchReport = dailyReportMapper.findByUserIdAndDate(userId, submitDate);
-		
+
 		DailyReport report = new DailyReport();
-		if(searchReport == null) {
+		if (searchReport == null) {
 			report.setStatus(0);
-		}else {
+		} else {
 			report.setStatus(searchReport.getStatus());
 		}
-		
+
 		return report.getStatus();
 	}
-	
+
 	/**
-     * 入力チェックメソッド
-     * @param dailyReportForm
-     * @param selectDate
-     * @return エラーメッセージ（エラーがない場合は空文字列）
-     */
+	 * 入力チェックメソッド
+	 * @param dailyReportForm
+	 * @param selectDate
+	 * @return エラーメッセージ（エラーがない場合は空文字列）
+	 */
 	public String validateDailyReport(DailyReportForm dailyReportForm, String selectDate) {
-		  Set<String> errorMessages = new LinkedHashSet<>();
+		Set<String> errorMessages = new LinkedHashSet<>();
 
 		//対象日付のチェック
-		if (selectDate == null|| selectDate.isEmpty()) {
+		if (selectDate == null || selectDate.isEmpty()) {
 			errorMessages.add("日付が選択されていません。");
 		}
 		//対象日付が現在の日付より未来かどうかのチェック
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate selectedDate = LocalDate.parse(selectDate, formatter);
-        LocalDate today = LocalDate.now();
-        if (selectedDate.isAfter(today)) {
-            errorMessages.add("本日か過去の日付を選択してください。");
-        }
+		LocalDate today = LocalDate.now();
+		if (selectedDate.isAfter(today)) {
+			errorMessages.add("本日か過去の日付を選択してください。");
+		}
 
 		//作業時間と作業内容のチェック
 		List<DailyReportDetailForm> dailyReportDetailFormList = dailyReportForm.getDailyReportDetailFormList();
 		for (DailyReportDetailForm detailForm : dailyReportDetailFormList) {
-		    boolean hasTime = detailForm.getTime() != null;
-		    boolean hasContent = detailForm.getContent() != null && !detailForm.getContent().isEmpty();
+			boolean hasTime = detailForm.getTime() != null;
+			boolean hasContent = detailForm.getContent() != null && !detailForm.getContent().isEmpty();
 
-		    // 片方だけ入力されている場合
-		    if (hasTime && !hasContent) {
-		        errorMessages.add("作業内容が入力されていません。");
-		        detailForm.setErrorFlag(true);
-		    } else if (!hasTime && hasContent) {
-		        errorMessages.add("作業時間が入力されていません。");
-		        detailForm.setErrorFlag(true);
-		    }
-		    
-		    //50字以上入力されている場合
-		    if (hasContent && detailForm.getContent().length() > 50) {
-		        errorMessages.add("作業内容は50字以内で入力してください。");
-		        detailForm.setErrorFlag(true);
-		    }
-		    
+			// 片方だけ入力されている場合
+			if (hasTime && !hasContent) {
+				errorMessages.add("作業内容が入力されていません。");
+				detailForm.setErrorFlag(true);
+			} else if (!hasTime && hasContent) {
+				errorMessages.add("作業時間が入力されていません。");
+				detailForm.setErrorFlag(true);
+			}
+
+			//50字以上入力されている場合
+			if (hasContent && detailForm.getContent().length() > 50) {
+				errorMessages.add("作業内容は50字以内で入力してください。");
+				detailForm.setErrorFlag(true);
+			}
+
 		}
 		return String.join("<br>", errorMessages);
 	}
-	
-	
-   /**
+
+	/**
 	* 日報登録画面　日報登録処理
 	* 
 	* @param dailyReportForm 
@@ -135,14 +134,14 @@ public class DailyReportService {
 	* @param selectDate 
 	* @return 処理結果のメッセージ
 	*/
-	public String submitDailyReport(DailyReportForm dailyReportForm, Users loginUser,String selectDate) {
+	public String submitDailyReport(DailyReportForm dailyReportForm, Users loginUser, String selectDate) {
 		List<DailyReportDetailForm> dailyReportDetailFormList = dailyReportForm.getDailyReportDetailFormList();
 		Integer userId = loginUser.getId();
-		Date submitDate= Date.valueOf(selectDate);
-		
-		for(DailyReportDetailForm dailyForm : dailyReportDetailFormList) {
-			if(dailyForm.getTime() != null && dailyForm.getContent() != null) {
-				
+		Date submitDate = Date.valueOf(selectDate);
+
+		for (DailyReportDetailForm dailyForm : dailyReportDetailFormList) {
+			if (dailyForm.getTime() != null && dailyForm.getContent() != null) {
+
 				//新しい日報オブジェクトを作成
 				DailyReportDetail dailyReportDetail = new DailyReportDetail();
 				dailyReportDetail.setId(dailyForm.getId());
@@ -150,31 +149,31 @@ public class DailyReportService {
 				dailyReportDetail.setDate(submitDate);
 				dailyReportDetail.setTime(dailyForm.getTime());
 				dailyReportDetail.setContent(dailyForm.getContent());
-				
+
 				//idが存在しない場合は新規登録
-				if(dailyReportDetail.getId() == null) {
+				if (dailyReportDetail.getId() == null) {
 					//日報情報を登録
 					dailyReportDetailMapper.insert(dailyReportDetail);
-					System.out.println("インサートできてる");				
-					}else {
+					System.out.println("インサートできてる");
+				} else {
 					//日報情報を更新
 					dailyReportDetailMapper.update(dailyReportDetail);
 					System.out.println("アップデートできてる");
 				}
 			}
-			if(dailyForm.getTime() == null && (dailyForm.getContent() == null || dailyForm.getContent().isEmpty())
+			if (dailyForm.getTime() == null && (dailyForm.getContent() == null || dailyForm.getContent().isEmpty())
 					&& dailyForm.getId() != null) {
 				DailyReportDetail dailyReportDetail = new DailyReportDetail();
 				dailyReportDetail.setId(dailyForm.getId());
-				
+
 				//日報情報を削除
-				dailyReportDetailMapper.delete (dailyReportDetail);
+				dailyReportDetailMapper.delete(dailyReportDetail);
 				System.out.println("削除できてる");
 			}
 		}
 		return "日報が提出されました。";
 	}
-	
+
 	/**
 	 * ステータス変更
 	 * 
@@ -184,13 +183,13 @@ public class DailyReportService {
 	 * @return 申請結果
 	 * 
 	 */
-	public Boolean changeStatus(Users loginUser, String selectDate,int status) {
+	public Boolean changeStatus(Users loginUser, String selectDate, int status) {
 		Integer userId = loginUser.getId();
-		Date submitDate= Date.valueOf(selectDate);
-		
+		Date submitDate = Date.valueOf(selectDate);
+
 		//loginUserとdateで申請があるか確認
 		DailyReport searchReport = dailyReportMapper.findByUserIdAndDate(userId, submitDate);
-		
+
 		//新しい日報オブジェクトを作成
 		DailyReport report = new DailyReport();
 		report.setId(searchReport != null ? searchReport.getId() : null);
@@ -198,11 +197,11 @@ public class DailyReportService {
 		report.setDate(submitDate);
 		report.setStatus(status);
 		report.setUpdateDate(java.sql.Date.valueOf(LocalDate.now()));
-		
-		if(report.getId() == null) {
+
+		if (report.getId() == null) {
 			//日報申請を登録
 			dailyReportMapper.insert(report);
-		}else {
+		} else {
 			//日報申請を更新
 			dailyReportMapper.update(report);
 		}
@@ -210,28 +209,28 @@ public class DailyReportService {
 	}
 
 	public DailyReportForm setForm(Integer userId, Date date) {
-	    // 日報情報を取得
-	    List<DailyReportDetail> details = dailyReportDetailMapper.findByUserIdAndDate(userId, date);
-	    
-	    // DailyReportForm のインスタンスを作成
-	    DailyReportForm dailyReportForm = new DailyReportForm();
-	    
-	    // DailyReportDetail を DailyReportDetailForm に変換する
-	    List<DailyReportDetailForm> detailFormList = new ArrayList<>();
-	    for (DailyReportDetail detail : details) {
-	        DailyReportDetailForm detailForm = new DailyReportDetailForm();
-	        detailForm.setId(detail.getId());
-	        detailForm.setUserId(detail.getUserId());
-	        detailForm.setDate(detail.getDate());
-	        detailForm.setTime(detail.getTime());
-	        detailForm.setContent(detail.getContent());
-	        detailFormList.add(detailForm);
-	    }
-	    
-	    // DailyReportForm に変換したリストを設定
-	    dailyReportForm.setDailyReportDetailFormList(detailFormList);
-	    
-	    return dailyReportForm;
+		// 日報情報を取得
+		List<DailyReportDetail> details = dailyReportDetailMapper.findByUserIdAndDate(userId, date);
+
+		// DailyReportForm のインスタンスを作成
+		DailyReportForm dailyReportForm = new DailyReportForm();
+
+		// DailyReportDetail を DailyReportDetailForm に変換する
+		List<DailyReportDetailForm> detailFormList = new ArrayList<>();
+		for (DailyReportDetail detail : details) {
+			DailyReportDetailForm detailForm = new DailyReportDetailForm();
+			detailForm.setId(detail.getId());
+			detailForm.setUserId(detail.getUserId());
+			detailForm.setDate(detail.getDate());
+			detailForm.setTime(detail.getTime());
+			detailForm.setContent(detail.getContent());
+			detailFormList.add(detailForm);
+		}
+
+		// DailyReportForm に変換したリストを設定
+		dailyReportForm.setDailyReportDetailFormList(detailFormList);
+
+		return dailyReportForm;
 	}
 
 	/**
@@ -240,24 +239,27 @@ public class DailyReportService {
 	 */
 	public void checkDailyReport() {
 		// 前日の日付を取得
-        LocalDate previousDay = LocalDate.now().minusDays(1);
-        Date date = Date.valueOf(previousDay);
-        //前日の日報を提出していないユーザーを検索
-        List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
-        System.out.println("日報：" + users);
-        
-     // 各ユーザーにお知らせを作成
-        users.forEach(user -> {
-            String content = previousDay + "の日報が提出されていません";
-            notificationService.createNotificationForUser(user.getId(), content);
-        });
+		LocalDate previousDay = LocalDate.now().minusDays(1);
+		Date date = Date.valueOf(previousDay);
 
-        // マネージャーに未提出ユーザー数のお知らせ
-        int missingReportCount = users.size();
-        if (missingReportCount > 0) {
-            String managerContent = previousDay + "の日報が" + missingReportCount + "人未提出です";
-            notificationService.createManagerNotification(managerContent);
-        }
+		//土日かどうかチェック
+		Boolean weekEnd = notificationService.isWeekend(previousDay);
+		System.out.println(weekEnd);
+		if (weekEnd) {
+			// 前日の日報を提出していないユーザーを検索
+			List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
+			System.out.println("日報：" + users);
+
+			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
+			notificationService.createNotificationForUsers(users, previousDay);
+
+			// マネージャーに未提出ユーザー数のお知らせ
+			int missingReportCount = users.size();
+			if (missingReportCount > 0) {
+				String managerContent = previousDay + "の日報が" + missingReportCount + "人未提出です";
+				notificationService.createManagerNotification(managerContent);
+			}
+		}
 	}
-	
+
 }

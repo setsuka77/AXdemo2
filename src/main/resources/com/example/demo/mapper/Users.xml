@@ -57,5 +57,10 @@
 		start_date =#{startDate}
 		WHERE id = #{id}
 	</update>
+	
+	<select id="findManagers"
+		resultType="com.example.demo.dto.UsersDto">
+		 SELECT * FROM users WHERE role = 2
+	</select>
 
 </mapper>

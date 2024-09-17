@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
-
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,66 +17,88 @@ import com.example.demo.mapper.UsersMapper;
 
 @Service
 public class NotificationsService {
-	
+
 	@Autowired
-    private NotificationsMapper notificationsMapper;
-    @Autowired
-    private UserNotificationsMapper userNotificationsMapper;
-    @Autowired
-    private UsersMapper usersMapper;
+	private NotificationsMapper notificationsMapper;
+	@Autowired
+	private UserNotificationsMapper userNotificationsMapper;
+	@Autowired
+	private UsersMapper usersMapper;
 	
-    public void createNotificationForUser(Integer userId, String content) {
-    	System.out.println(userId);
-        // notificationsテーブルに新規レコード作成
-        Notifications notifications = new Notifications();
-	        notifications.setContent(content);
-	        notifications.setNotificationType("日報未提出通知");
-	        notifications.setCreatedAt(LocalDateTime.now());
-        
-	        notificationsMapper.insert(notifications);
-	        System.out.println("各ユーザーへ:" + notifications);
-	        //ここまではきてる
+	/**
+	 * 前日が土日かチェック
+	 * 
+	 * @param date チェックする日付
+	 * @return 土日であればtrue、そうでなければfalse
+	 */
+	boolean isWeekend(LocalDate date) {
+	    // 土曜日または日曜日かどうか
+	    if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+	        return false;
+	    }
+	    return true;
+	}
 
-        // user_notificationsテーブルに通知を紐付け
-        UserNotifications userNotifications = new UserNotifications();
-        //System.out.println(userId);
-        //System.out.println(notifications.getId());
-        	userNotifications.setUserId(userId);
-        	userNotifications.setNotificationId(notifications.getId());
-        	userNotifications.setIsRead(false);
-        	userNotifications.setCreatedAt(LocalDateTime.now());
-        	
-        userNotificationsMapper.insert(userNotifications);
-        System.out.println("一般通知:" + userNotifications);
-    }
+	/**
+	 * 日報未提出通知 作成
+	 * 
+	 * @param users 前日の日報を提出していないユーザーのリスト
+	 * @param previousDay 前日の日付
+	 */
+	public void createNotificationForUsers(List<UsersDto> users, LocalDate previousDay) {
+		String content = previousDay + "の日報が提出されていません";
+		Long notificationId = createNotification(content);
 
-    
-    // マネージャー向けの通知を作成
+		users.forEach(user -> linkNotificationToUser(user.getId(), notificationId));
+		System.out.println("社員通知");
+	}
+	
+	/**
+     * マネージャーに日報未提出通知　作成
+     * 
+     * @param content 通知の内容
+     */
     public void createManagerNotification(String content) {
-        // マネージャーユーザーを取得
         List<UsersDto> managers = usersMapper.findManagers();
+        Long notificationId = createNotification(content);
 
-        // 各マネージャーに通知を作成
-        managers.forEach(manager -> {
-            Notifications notifications = new Notifications();
-	            notifications.setContent(content);
-		        notifications.setNotificationType("日報未提出通知");
-		        notifications.setCreatedAt(LocalDateTime.now());
-		        
-		        notificationsMapper.insert(notifications);
-		        System.out.println("各ユーザーへ:" + notifications);
-            
-         // user_notificationsテーブルに通知を紐付け
-            UserNotifications userNotifications = new UserNotifications();
-	            userNotifications.setUserId(manager.getId());
-	        	userNotifications.setNotificationId(notifications.getId());
-	        	userNotifications.setIsRead(false);
-	        	userNotifications.setCreatedAt(LocalDateTime.now());
-        	
-            userNotificationsMapper.insert(userNotifications);
-            System.out.println("マネ通知:" + userNotifications);
-        });
+        managers.forEach(manager -> linkNotificationToUser(manager.getId(), notificationId));
+        System.out.println("マネ通知");
     }
 
-    
+	/**
+	* 新しい通知 作成
+	* 
+	* @param content 通知の内容
+	* @return 作成された通知のID
+	*/
+	public Long createNotification(String content) {
+		Notifications notifications = new Notifications();
+		notifications.setContent(content);
+		notifications.setNotificationType("日報未提出通知");
+		notifications.setCreatedAt(LocalDateTime.now());
+
+		notificationsMapper.insert(notifications);
+		System.out.println("新規通知作成:" + notifications);
+
+		return notifications.getId();
+	}
+
+	/**
+	 * ユーザーと通知を紐付ける
+	 * 
+	 * @param userId 紐付けるユーザーのID
+	 * @param notificationId 紐付ける通知のID
+	 */
+	public void linkNotificationToUser(Integer userId, Long notificationId) {
+		UserNotifications userNotifications = new UserNotifications();
+		userNotifications.setUserId(userId);
+		userNotifications.setNotificationId(notificationId);
+		userNotifications.setIsRead(false);
+		userNotifications.setCreatedAt(LocalDateTime.now());
+
+		userNotificationsMapper.insert(userNotifications);
+		//System.out.println("通知とユーザーの紐付け:" + userNotifications);
+	}
+	
 }
