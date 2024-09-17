@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.demo.dto.AttendanceDto;
+import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.Attendance;
 
 @Mapper
@@ -30,6 +31,10 @@ public interface AttendanceMapper {
      */
 	List<AttendanceDto> findAttendanceByUserIdAndDateRange(@Param("userId") Integer userId, @Param("startDate") Date startDate,@Param("endDate") Date endDate);
 	
+	/**
+	 * 日報未提出者情報　取得
+	 */
+	List<UsersDto> findUsersWithoutReport(@Param("date") Date date);
 	
 	/**
 	 * 勤怠情報（受講生入力）登録/更新

@@ -39,6 +39,8 @@ public class AttendanceService {
 	private DateUtil dateUtil;
 	@Autowired
 	private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
+	@Autowired
+	private NotificationsService notificationService;
 
 	/**
 	 * ステータスが1の申請一覧を取得する
@@ -151,8 +153,8 @@ public class AttendanceService {
 	 * @return ステータスが「却下」または「未申請」の場合は true、それ以外は false
 	 */
 	public boolean checkRegister(String status) {
-        return "却下".equals(status) || "未申請".equals(status); //true
-    }
+		return "却下".equals(status) || "未申請".equals(status); //true
+	}
 
 	/**
 	 * 指定した年月のステータスを取得
@@ -198,17 +200,19 @@ public class AttendanceService {
 	public String registAttendance(AttendanceForm attendanceForm, Users loginUser) {
 		List<DailyAttendanceForm> dailyAttendanceList = attendanceForm.getDailyAttendanceList();
 		Integer userId = loginUser.getId();
-		
+
 		// 先頭と最後の Date を取得
 		java.sql.Date startDate = new java.sql.Date(dailyAttendanceList.get(0).getDate().getTime());
-	    java.sql.Date endDate = new java.sql.Date(dailyAttendanceList.get(dailyAttendanceList.size() - 1).getDate().getTime());
+		java.sql.Date endDate = new java.sql.Date(
+				dailyAttendanceList.get(dailyAttendanceList.size() - 1).getDate().getTime());
 
-	    // Date 範囲で勤怠情報を取得 (既存の情報)
-	    List<AttendanceDto> existingAttendances = attendanceMapper.findAttendanceByUserIdAndDateRange(userId, startDate, endDate);
+		// Date 範囲で勤怠情報を取得 (既存の情報)
+		List<AttendanceDto> existingAttendances = attendanceMapper.findAttendanceByUserIdAndDateRange(userId, startDate,
+				endDate);
 
-	    // dateをキー、AttendanceDtoを値とする
-	    Map<Date, AttendanceDto> existingAttendanceMap = existingAttendances.stream()
-	        .collect(Collectors.toMap(AttendanceDto::getDate, attendance -> attendance));
+		// dateをキー、AttendanceDtoを値とする
+		Map<Date, AttendanceDto> existingAttendanceMap = existingAttendances.stream()
+				.collect(Collectors.toMap(AttendanceDto::getDate, attendance -> attendance));
 
 		List<Attendance> attendanceList = new ArrayList<>();
 
@@ -217,7 +221,7 @@ public class AttendanceService {
 
 			if (dailyForm.getStatus() != null) {
 				// 既存の勤怠情報があるかどうか確認する
-	            AttendanceDto searchAttendance = existingAttendanceMap.get(date);
+				AttendanceDto searchAttendance = existingAttendanceMap.get(date);
 
 				// 新しい勤怠オブジェクトを作成
 				Attendance attendance = new Attendance();
@@ -232,10 +236,10 @@ public class AttendanceService {
 				attendanceList.add(attendance);
 			}
 		}
-		 if (!attendanceList.isEmpty()) {
-		        attendanceMapper.upsert(attendanceList);
-		    }
-		
+		if (!attendanceList.isEmpty()) {
+			attendanceMapper.upsert(attendanceList);
+		}
+
 		return "勤怠情報が登録されました。";
 	}
 
@@ -253,7 +257,7 @@ public class AttendanceService {
 		boolean hasErrors = false;
 
 		// 出退勤時間形式チェック
-	    Pattern timePattern = Pattern.compile("^[0-9]{2}:[0-9]{2}$");
+		Pattern timePattern = Pattern.compile("^[0-9]{2}:[0-9]{2}$");
 
 		for (DailyAttendanceForm dailyForm : attendanceForm.getDailyAttendanceList()) {
 			// すべての項目が未入力の場合はスキップ
@@ -266,23 +270,27 @@ public class AttendanceService {
 					&& (remarks == null || remarks.isEmpty()) && (status == null)) {
 				continue;
 			}
-			
+
 			// ステータスに応じたチェック
 			if (status != null) {
-			    boolean isTimeRequired = (status == 0 || status == 3 || status == 6 || status == 7 || status == 8 || status == 10);
-			    boolean isTimeNotAllowed = (status == 1 || status == 2 || status == 4 || status == 5 || status == 9 || status == 11);
+				boolean isTimeRequired = (status == 0 || status == 3 || status == 6 || status == 7 || status == 8
+						|| status == 10);
+				boolean isTimeNotAllowed = (status == 1 || status == 2 || status == 4 || status == 5 || status == 9
+						|| status == 11);
 
-			    if (isTimeRequired && (startTime == null || startTime.isEmpty() || endTime == null || endTime.isEmpty())) {
-			        errorMessage.append(dailyForm.getFormattedDate()).append(" の出退勤時間を入力してください。<br>");
-			        hasErrors = true;
-			        dailyForm.setErrorFlag(true);
-			    }
+				if (isTimeRequired
+						&& (startTime == null || startTime.isEmpty() || endTime == null || endTime.isEmpty())) {
+					errorMessage.append(dailyForm.getFormattedDate()).append(" の出退勤時間を入力してください。<br>");
+					hasErrors = true;
+					dailyForm.setErrorFlag(true);
+				}
 
-			    if (isTimeNotAllowed && (startTime != null && !startTime.isEmpty() || endTime != null && !endTime.isEmpty())) {
-			        errorMessage.append(dailyForm.getFormattedDate()).append(" は出退勤時間が不要です。勤務状況か出退勤時間を変更してください。<br>");
-			        hasErrors = true;
-			        dailyForm.setErrorFlag(true);
-			    }
+				if (isTimeNotAllowed
+						&& (startTime != null && !startTime.isEmpty() || endTime != null && !endTime.isEmpty())) {
+					errorMessage.append(dailyForm.getFormattedDate()).append(" は出退勤時間が不要です。勤務状況か出退勤時間を変更してください。<br>");
+					hasErrors = true;
+					dailyForm.setErrorFlag(true);
+				}
 			}
 
 			// 出勤時間チェック
@@ -298,27 +306,27 @@ public class AttendanceService {
 				hasErrors = true;
 				dailyForm.setErrorFlag(true);
 			}
-			
+
 			//出勤時間<退勤時間チェック
 			if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
-	            LocalTime startTimeDate = dateUtil.stringToLocalTime(startTime);
-	            LocalTime endTimeDate = dateUtil.stringToLocalTime(endTime);
+				LocalTime startTimeDate = dateUtil.stringToLocalTime(startTime);
+				LocalTime endTimeDate = dateUtil.stringToLocalTime(endTime);
 
-	            if (endTimeDate.isBefore(startTimeDate)) {
-	                errorMessage.append(dailyForm.getFormattedDate())
-	                            .append(" の勤務時間 : 出勤時間より退勤時間の方が早いです<br>");
-	                hasErrors = true;
-	                dailyForm.setErrorFlag(true);
-	            }
+				if (endTimeDate.isBefore(startTimeDate)) {
+					errorMessage.append(dailyForm.getFormattedDate())
+							.append(" の勤務時間 : 出勤時間より退勤時間の方が早いです<br>");
+					hasErrors = true;
+					dailyForm.setErrorFlag(true);
+				}
 			}
 
 			// 備考欄文字種、文字数チェック
 			if (remarks != null && !remarks.isEmpty()) {
-			    if (remarks.matches(".*[\\x00-\\x7F].*") || remarks.length() > 20) {
-			        errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 20文字以内の全角文字のみで入力してください。<br>");
-			        hasErrors = true;
-			        dailyForm.setErrorFlag(true);
-			    }
+				if (remarks.matches(".*[\\x00-\\x7F].*") || remarks.length() > 20) {
+					errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 20文字以内の全角文字のみで入力してください。<br>");
+					hasErrors = true;
+					dailyForm.setErrorFlag(true);
+				}
 			}
 
 			// ステータス必須チェック
@@ -417,19 +425,60 @@ public class AttendanceService {
 
 		return userName + "の" + formattedDate + "における承認申請が却下されました。";
 	}
-	
+
 	/**
 	 * 勤怠提出の有無確認
 	 * 
 	 */
 	public void checkAttendance() {
+		// 日付のフォーマット用フォーマッターを作成
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日");
 		// 先月の年月を取得
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		LocalDate lastDate = lastMonth.atDay(1);
+		// 前日の日付を取得
+		LocalDate previousDay = LocalDate.now().minusDays(1);
+		java.sql.Date date = java.sql.Date.valueOf(previousDay);
 
-        //先月の勤怠を提出していないユーザーを検索
-        List<UsersDto> users = monthlyAttendanceReqMapper.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
-        System.out.println("勤怠：" + users);
+		//土日かどうかチェック
+		Boolean weekEnd = notificationService.isWeekend(previousDay);
+		System.out.println("勤怠用判定;"+weekEnd);
+		if (weekEnd) {
+			String formattedDate = previousDay.format(formatter);
+			// 前日の日報を提出していないユーザーを検索
+			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
+			System.out.println("勤怠：" + users);
+
+			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
+			String notificationType = "勤怠未提出";
+			String content = formattedDate + "の勤怠が提出されていません";
+			notificationService.createNotificationForUsers(users, previousDay, notificationType, content);
+
+			// マネージャーに未提出ユーザー数のお知らせ
+			int missingReportCount = users.size();
+			if (missingReportCount > 0) {
+				String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人未提出です";
+				notificationService.createManagerNotification(managerContent, notificationType);
+			}
+		}
+		// 今日が月初の場合のみ通知作成
+		LocalDate today = LocalDate.now();
+		//開発用にコメントアウトしてます。本番はコメントアウトを消してください
+        //if (today.getDayOfMonth() == 1) {
+    		//先月の勤怠を提出していないユーザーを検索
+        	List<UsersDto> users = monthlyAttendanceReqMapper.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
+            String content = "先月の勤怠が申請されていません。";
+            String notificationType = "勤怠申請未提出";
+            notificationService.createNotificationForUsers(users, previousDay, notificationType, content);
+            // マネージャーに未提出ユーザー数のお知らせ
+         // 日付のフォーマット用フォーマッターを作成
+    		DateTimeFormatter formatterMonth = DateTimeFormatter.ofPattern("yyyy年M月");
+    		String formattedDate = lastMonth.format(formatterMonth);
+            int missingReportCount = users.size();
+            String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人申請されていません。";
+            notificationService.createManagerNotification(managerContent, notificationType);
+       // }
+        System.out.println("勤怠申請通知作成済み" );
 	}
 
 }

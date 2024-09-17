@@ -244,22 +244,25 @@ public class DailyReportService {
 
 		//土日かどうかチェック
 		Boolean weekEnd = notificationService.isWeekend(previousDay);
-		System.out.println(weekEnd);
+		System.out.println("日報用判定;"+weekEnd);
 		if (weekEnd) {
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
 			System.out.println("日報：" + users);
 
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
-			notificationService.createNotificationForUsers(users, previousDay);
+			String notificationType = "日報未提出";
+			String content = previousDay + "の日報が提出されていません";
+			notificationService.createNotificationForUsers(users, previousDay,notificationType,content);
 
 			// マネージャーに未提出ユーザー数のお知らせ
 			int missingReportCount = users.size();
 			if (missingReportCount > 0) {
 				String managerContent = previousDay + "の日報が" + missingReportCount + "人未提出です";
-				notificationService.createManagerNotification(managerContent);
+				notificationService.createManagerNotification(managerContent,notificationType);
 			}
 		}
+        System.out.println("日報通知作成済み" );
 	}
 
 }

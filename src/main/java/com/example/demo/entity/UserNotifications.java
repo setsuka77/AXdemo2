@@ -17,4 +17,5 @@ public class UserNotifications {
     private Boolean isRead;
     /** 受信日時 */
     private LocalDateTime createdAt;
+    /** お知らせ表示フラグ */
 }

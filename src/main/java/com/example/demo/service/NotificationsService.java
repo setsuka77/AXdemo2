@@ -40,29 +40,29 @@ public class NotificationsService {
 	}
 
 	/**
-	 * 日報未提出通知 作成
+	 * 未提出通知 作成(Role=3と4用)
 	 * 
-	 * @param users 前日の日報を提出していないユーザーのリスト
+	 * @param users 前日提出していないユーザーのリスト
 	 * @param previousDay 前日の日付
 	 */
-	public void createNotificationForUsers(List<UsersDto> users, LocalDate previousDay) {
-		String content = previousDay + "の日報が提出されていません";
-		Long notificationId = createNotification(content);
+	public void createNotificationForUsers(List<UsersDto> users, LocalDate previousDay,String notificationType,String content) {
+        Long notificationId = createNotification(content,notificationType);
 
-		users.forEach(user -> linkNotificationToUser(user.getId(), notificationId));
+		users.forEach(user -> linkNotificationToUser(user.getId(), notificationId,notificationType));
 		System.out.println("社員通知");
 	}
 	
 	/**
-     * マネージャーに日報未提出通知　作成
+     * マネージャーに通知　作成
      * 
      * @param content 通知の内容
      */
-    public void createManagerNotification(String content) {
+    public void createManagerNotification(String content,String notificationType) {
         List<UsersDto> managers = usersMapper.findManagers();
-        Long notificationId = createNotification(content);
+        Long notificationId = createNotification(content,notificationType);
+        
 
-        managers.forEach(manager -> linkNotificationToUser(manager.getId(), notificationId));
+        managers.forEach(manager -> linkNotificationToUser(manager.getId(), notificationId,notificationType));
         System.out.println("マネ通知");
     }
 
@@ -72,15 +72,14 @@ public class NotificationsService {
 	* @param content 通知の内容
 	* @return 作成された通知のID
 	*/
-	public Long createNotification(String content) {
+	public Long createNotification(String content,String notificationType) {
 		Notifications notifications = new Notifications();
 		notifications.setContent(content);
-		notifications.setNotificationType("日報未提出通知");
+		notifications.setNotificationType(notificationType);
 		notifications.setCreatedAt(LocalDateTime.now());
 
 		notificationsMapper.insert(notifications);
-		System.out.println("新規通知作成:" + notifications);
-
+		
 		return notifications.getId();
 	}
 
@@ -90,7 +89,7 @@ public class NotificationsService {
 	 * @param userId 紐付けるユーザーのID
 	 * @param notificationId 紐付ける通知のID
 	 */
-	public void linkNotificationToUser(Integer userId, Long notificationId) {
+	public void linkNotificationToUser(Integer userId, Long notificationId,String notificationType) {
 		UserNotifications userNotifications = new UserNotifications();
 		userNotifications.setUserId(userId);
 		userNotifications.setNotificationId(notificationId);
@@ -98,7 +97,6 @@ public class NotificationsService {
 		userNotifications.setCreatedAt(LocalDateTime.now());
 
 		userNotificationsMapper.insert(userNotifications);
-		//System.out.println("通知とユーザーの紐付け:" + userNotifications);
 	}
 	
 }

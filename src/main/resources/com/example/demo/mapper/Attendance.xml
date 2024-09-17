@@ -27,6 +27,19 @@
 		WHERE user_id = #{userId}
 		AND date = #{date}
 	</select>
+	
+		<!-- 提出してないユーザーの情報を取得 -->
+	<select id="findUsersWithoutReport"
+		resultType="com.example.demo.dto.UsersDto">
+		SELECT u.*
+		FROM users u
+		WHERE u.role IN (3, 4) <!-- role が 3 または 4 のユーザー -->
+		AND u.id NOT IN (
+		SELECT a.user_id
+		FROM attendance a
+		WHERE a.date = #{date} <!-- 指定の日付で日報が提出されているか確認 -->
+		)
+	</select>
 
 
 	<!-- 勤怠登録情報登録 -->
