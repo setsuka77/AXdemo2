@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.DailyReportDto;
+import com.example.demo.dto.NotificationsDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
@@ -29,7 +31,7 @@ public class DailyReportService {
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
 	@Autowired
-	private NotificationsService notificationService;
+	private NotificationsService notificationsService;
 
 	/**
 	 * ステータスが1の申請一覧を取得する
@@ -171,8 +173,8 @@ public class DailyReportService {
 				System.out.println("削除できてる");
 			}
 			// 既存の UserNotifications を userId と targetDate,notificationType で検索
-			String notificationType ="日報未提出";
-			notificationService.checkNotifications(userId,submitDate,notificationType);
+			String notificationType = "日報未提出";
+			notificationsService.checkNotifications(userId, submitDate, notificationType);
 		}
 		return "日報が提出されました。";
 	}
@@ -211,6 +213,13 @@ public class DailyReportService {
 		return true;
 	}
 
+	/**
+	 * 指定されたユーザーIDと日付に基づいて日報フォームを設定する。
+	 * 
+	 * @param userId ユーザーのID。
+	 * @param date 日報の対象日付。
+	 * @return 指定されたユーザーと日付に関連する日報の詳細を含むオブジェクト。
+	 */
 	public DailyReportForm setForm(Integer userId, Date date) {
 		// 日報情報を取得
 		List<DailyReportDetail> details = dailyReportDetailMapper.findByUserIdAndDate(userId, date);
@@ -237,17 +246,19 @@ public class DailyReportService {
 	}
 
 	/**
-	 * 日報提出の有無確認
+	 * 日報提出の有無確認(ユーザー用)
 	 * 
 	 */
 	public void checkDailyReport() {
 		// 前日の日付を取得
 		LocalDate previousDay = LocalDate.now().minusDays(1);
 		Date date = Date.valueOf(previousDay);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日");
+		String formattedDate = previousDay.format(formatter);
 
 		//土日かどうかチェック
-		Boolean weekEnd = notificationService.isWeekend(previousDay);
-		System.out.println("日報用判定;"+weekEnd);
+		Boolean weekEnd = notificationsService.notWeekend(previousDay);
+		System.out.println("日報用判定;" + weekEnd);
 		if (weekEnd) {
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
@@ -255,17 +266,51 @@ public class DailyReportService {
 
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "日報未提出";
-			String content = previousDay + "の日報が提出されていません";
-			notificationService.createNotificationForUsers(users, previousDay,notificationType,content,date);
-
-			// マネージャーに未提出ユーザー数のお知らせ
-			int missingReportCount = users.size();
-			if (missingReportCount > 0) {
-				String managerContent = previousDay + "の日報が" + missingReportCount + "人未提出です";
-				notificationService.createManagerNotification(managerContent,notificationType,date);
-			}
+			String content = formattedDate + "の日報が提出されていません";
+			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content, date);
 		}
-        System.out.println("日報通知作成済み" );
+		System.out.println("日報通知作成済み");
+	}
+
+	/**
+	 * 日報提出の有無確認(マネージャー用)
+	 * 
+	 * @return お知らせ情報
+	 */
+	public List<NotificationsDto> checkManagerDailyReport() {
+	    // 前日の日付を取得
+	    LocalDate previousDay = LocalDate.now().minusDays(1);
+	    Date date = Date.valueOf(previousDay);
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日");
+	    String formattedDate = previousDay.format(formatter);
+
+	    // 土日かどうかチェック
+	    Boolean weekEnd = notificationsService.notWeekend(previousDay);
+	    System.out.println("日報用判定;" + weekEnd);
+
+	    List<NotificationsDto> notifications = new ArrayList<>();
+
+	    if (weekEnd) {
+	        // 前日の日報を提出していないユーザーを検索
+	        List<UsersDto> usersWithoutReport = dailyReportMapper.findUsersWithoutReport(date);
+
+	        // マネージャーに未提出ユーザー数のお知らせを作成
+	        int missingReportCount = usersWithoutReport.size();
+	        if (missingReportCount > 0) {
+	            String managerContent = formattedDate + "の日報が" + missingReportCount + "人未提出です ("
+	                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
+
+	            // マネージャーの日報未提出通知を作成
+	            NotificationsDto notificationsDto = new NotificationsDto();
+	            notificationsDto.setContent(managerContent);
+	            notificationsDto.setNotificationType("日報未提出");
+	            notificationsDto.setCreatedAt(LocalDateTime.now());
+
+	            notifications.add(notificationsDto);
+	        }
+	    }
+	    
+	    return notifications;
 	}
 
 }

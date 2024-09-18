@@ -14,7 +14,8 @@
 	</insert>
 
 	<!-- 該当ユーザーのお知らせがあるか確認 -->
-	<select id="findUserNotification" resultType="com.example.demo.entity.UserNotifications">
+	<select id="findUserNotification"
+		resultType="com.example.demo.dto.UserNotificationsDto">
 		SELECT un.id, un.is_read, un.is_visible
 		FROM
 		user_notifications un
@@ -25,12 +26,13 @@
 	</select>
 
 	<!-- お知らせ情報を更新する -->
-	<update id="update" parameterType="com.example.demo.entity.UserNotifications">
+	<update id="update"
+		parameterType="com.example.demo.entity.UserNotifications">
 		UPDATE user_notifications un
-		JOIN notifications n ON un.notification_id = n.id
+		JOIN notifications n ON
+		un.notification_id = n.id
 		SET un.is_read = true, un.is_visible = false
 		WHERE un.id = #{id}
 	</update>
-
 
 </mapper>

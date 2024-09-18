@@ -113,6 +113,18 @@ main {
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* お知らせコンテナ */
+.notice-container{
+	text-align: center;
+	width: 100%; /* 幅を100%に設定 */
+	max-width: 600px; /* 最大幅を600pxに設定 */
+	padding: 20px; /* 内部パディングを設定 */
+	margin-bottom: 20px;
+	background: #fff; /* 背景色を白に設定 */
+	border-radius: 8px; /* 角を丸くする */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
+}
+
 /* ===========================================
  * 見出しのスタイル設定
  * ======================================== */

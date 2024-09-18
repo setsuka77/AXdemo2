@@ -7,9 +7,32 @@
 	<insert id="insert"
 		parameterType="com.example.demo.entity.Notifications"
 		useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO notifications (content, notification_type, created_at, target_date)
-		VALUES (#{content}, #{notificationType}, #{createdAt}, #{targetDate})
+		INSERT INTO notifications
+		(content, notification_type, created_at, target_date)
+		VALUES
+		(#{content}, #{notificationType}, #{createdAt}, #{targetDate})
 	</insert>
+
+	<!-- お知らせ情報をユーザーIDで検索する -->
+	<select id="findByUserId"
+		resultType="com.example.demo.dto.NotificationsDto">
+		SELECT
+		n.id,
+		n.content,
+		n.notification_type AS notificationType,
+		n.created_at AS createdAt,
+		n.target_date AS targetDate
+		FROM
+		notifications n
+		INNER JOIN
+		user_notifications un
+		ON
+		un.notification_id = n.id
+		WHERE
+		un.user_id = #{userId}
+		AND
+		un.is_visible = true
+	</select>
 
 
 </mapper>

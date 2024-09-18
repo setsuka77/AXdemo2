@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.AttendanceDto;
 import com.example.demo.dto.CalendarDto;
 import com.example.demo.dto.MonthlyAttendanceReqDto;
+import com.example.demo.dto.NotificationsDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.Attendance;
 import com.example.demo.entity.MonthlyAttendanceReq;
@@ -40,7 +42,7 @@ public class AttendanceService {
 	@Autowired
 	private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
 	@Autowired
-	private NotificationsService notificationService;
+	private NotificationsService notificationsService;
 
 	/**
 	 * ステータスが1の申請一覧を取得する
@@ -236,8 +238,8 @@ public class AttendanceService {
 				attendanceList.add(attendance);
 
 				// 既存の UserNotifications を userId と targetDate,notificationType で検索
-				String notificationType ="勤怠未提出";
-				notificationService.checkNotifications(userId, date,notificationType);
+				String notificationType = "勤怠未提出";
+				notificationsService.checkNotifications(userId, date, notificationType);
 			}
 		}
 		if (!attendanceList.isEmpty()) {
@@ -362,10 +364,11 @@ public class AttendanceService {
 		req.setTargetYearMonth(java.sql.Date.valueOf(startDate.withDayOfMonth(1)));
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		req.setStatus(1); // 承認待ち
-		
+
 		// 既存の UserNotifications を userId と targetDate,notificationType で検索
-		String notificationType ="勤怠申請未提出";
-		notificationService.checkNotifications(user.getId(),java.sql.Date.valueOf(startDate.withDayOfMonth(1)),notificationType);
+		String notificationType = "勤怠申請未提出";
+		notificationsService.checkNotifications(user.getId(), java.sql.Date.valueOf(startDate.withDayOfMonth(1)),
+				notificationType);
 
 		if (existingReq != null) {
 			req.setId(existingReq.getId()); // 更新するためにIDを設定
@@ -448,8 +451,8 @@ public class AttendanceService {
 		java.sql.Date date = java.sql.Date.valueOf(previousDay);
 
 		//土日かどうかチェック
-		Boolean weekEnd = notificationService.isWeekend(previousDay);
-		System.out.println("勤怠用判定;"+weekEnd);
+		Boolean weekEnd = notificationsService.notWeekend(previousDay);
+		System.out.println("勤怠用判定;" + weekEnd);
 		if (weekEnd) {
 			String formattedDate = previousDay.format(formatter);
 			// 前日の日報を提出していないユーザーを検索
@@ -459,33 +462,87 @@ public class AttendanceService {
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "勤怠未提出";
 			String content = formattedDate + "の勤怠が提出されていません";
-			notificationService.createNotificationForUsers(users, previousDay, notificationType, content,date);
-
-			// マネージャーに未提出ユーザー数のお知らせ
-			int missingReportCount = users.size();
-			if (missingReportCount > 0) {
-				String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人未提出です";
-				notificationService.createManagerNotification(managerContent, notificationType,date);
-			}
+			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content, date);
 		}
 		// 今日が月初の場合のみ通知作成
 		LocalDate today = LocalDate.now();
 		//開発用にコメントアウトしてます。本番はコメントアウトを消してください
-        //if (today.getDayOfMonth() == 1) {
-    		//先月の勤怠を提出していないユーザーを検索
-        	List<UsersDto> users = monthlyAttendanceReqMapper.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
-            String content = "先月の勤怠が申請されていません。";
-            String notificationType = "勤怠申請未提出";
-            notificationService.createNotificationForUsers(users, previousDay, notificationType, content,java.sql.Date.valueOf(lastDate));
-            // マネージャーに未提出ユーザー数のお知らせ
-         // 日付のフォーマット用フォーマッターを作成
-    		DateTimeFormatter formatterMonth = DateTimeFormatter.ofPattern("yyyy年M月");
-    		String formattedDate = lastMonth.format(formatterMonth);
-            int missingReportCount = users.size();
-            String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人申請されていません。";
-            notificationService.createManagerNotification(managerContent, notificationType,java.sql.Date.valueOf(lastDate));
-       // }
-        System.out.println("勤怠申請通知作成済み" );
+		if (today.getDayOfMonth() == 1) {
+			//先月の勤怠を提出していないユーザーを検索
+			List<UsersDto> users = monthlyAttendanceReqMapper
+					.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
+			String content = "先月の勤怠が申請されていません。";
+			String notificationType = "勤怠申請未提出";
+			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content,
+					java.sql.Date.valueOf(lastDate));
+		}
+		System.out.println("勤怠申請通知作成済み");
+	}
+	
+
+	/**
+	 * 勤怠提出の有無確認(マネージャー用)
+	 * 
+	 * @return お知らせ情報
+	 */
+	public List<NotificationsDto> checkManagerAttendance() {
+		// 日付のフォーマット用フォーマッターを作成
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日");
+		// 先月の年月を取得
+		YearMonth lastMonth = YearMonth.now().minusMonths(1);
+		LocalDate lastDate = lastMonth.atDay(1);
+		// 前日の日付を取得
+		LocalDate previousDay = LocalDate.now().minusDays(1);
+		java.sql.Date date = java.sql.Date.valueOf(previousDay);
+		
+		List<NotificationsDto> notifications = new ArrayList<>();
+
+		//土日かどうかチェック
+		Boolean weekEnd = notificationsService.notWeekend(previousDay);
+		System.out.println("勤怠用判定;" + weekEnd);
+		if (weekEnd) {
+			String formattedDate = previousDay.format(formatter);
+			// 前日の日報を提出していないユーザーを検索
+			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
+			System.out.println("勤怠：" + users);
+
+			// マネージャーに未提出ユーザー数のお知らせ
+			int missingReportCount = users.size();
+			if (missingReportCount > 0) {
+				String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人未提出です ("
+						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
+				// マネージャーの勤怠未提出通知を作成
+	            NotificationsDto notificationsDto = new NotificationsDto();
+	            notificationsDto.setContent(managerContent);
+	            notificationsDto.setNotificationType("勤怠未提出");
+	            notificationsDto.setCreatedAt(LocalDateTime.now());
+
+	            notifications.add(notificationsDto);
+			}
+		}
+
+		// 今日が月初の場合のみ通知作成
+		LocalDate today = LocalDate.now();
+		//開発用にコメントアウトしてます。本番はコメントアウトを消してください
+		if (today.getDayOfMonth() == 18) {
+			//先月の勤怠を提出していないユーザーを検索
+			List<UsersDto> users = monthlyAttendanceReqMapper
+					.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
+			// 日付のフォーマット用フォーマッターを作成
+			DateTimeFormatter formatterMonth = DateTimeFormatter.ofPattern("yyyy年M月");
+			String formattedDate = lastMonth.format(formatterMonth);
+			int missingReportCount = users.size();
+			String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人申請されていません("
+					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
+			// マネージャーの日報未提出通知を作成
+            NotificationsDto notificationsDto = new NotificationsDto();
+            notificationsDto.setContent(managerContent);
+            notificationsDto.setNotificationType("勤怠申請未提出");
+            notificationsDto.setCreatedAt(LocalDateTime.now());
+
+            notifications.add(notificationsDto);
+		}
+		return notifications;
 	}
 
 }

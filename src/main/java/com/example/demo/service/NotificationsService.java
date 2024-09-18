@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.NotificationsDto;
+import com.example.demo.dto.UserNotificationsDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.Notifications;
 import com.example.demo.entity.UserNotifications;
@@ -32,7 +34,7 @@ public class NotificationsService {
 	 * @param date チェックする日付
 	 * @return 土日であればtrue、そうでなければfalse
 	 */
-	boolean isWeekend(LocalDate date) {
+	boolean notWeekend(LocalDate date) {
 	    // 土曜日または日曜日かどうか
 	    if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
 	        return false;
@@ -102,16 +104,37 @@ public class NotificationsService {
 		userNotificationsMapper.insert(userNotifications);
 	}
 	
-	/*
+	/**
 	 * 既存の通知がある場合はフラグを更新する
+	 * 
+	 * @param userId 紐付けるユーザーのID
+	 * @param date 対象日
+	 * @param notificationType 通知の種類
 	 */
 	public void checkNotifications(Integer userId, java.util.Date date,String notificationType) {
-		UserNotifications existingNotification = userNotificationsMapper.findUserNotification(userId,date,notificationType);
+		List<UserNotificationsDto> existingNotifications = userNotificationsMapper.findUserNotification(userId,date,notificationType);
+		System.out.println("通知検索結果"+existingNotifications);
 		// 既存の通知がある場合はフラグを更新
-	    if (existingNotification != null) {
-	    	 userNotificationsMapper.update(existingNotification.getId());
+	    if (existingNotifications != null) {
+	    	for (UserNotificationsDto userNotifications : existingNotifications) {
+ 	             // 各通知のIDを使用してフラグを更新
+ 	             userNotificationsMapper.update(userNotifications.getId());
+ 	         }
 	    }
-		
 	}
+
+	/**
+	 * お知らせに表示する通知内容を検索する
+	 * 
+	 * @param userId 検索するユーザーのID
+	 */
+	public List<NotificationsDto> getUserNotifications(Integer userId) {
+		 // ユーザーIDに一致する通知を取得
+        List<NotificationsDto> userNotifications = notificationsMapper.findByUserId(userId);
+        System.out.println("通知内容"+userNotifications);
+        
+        return userNotifications;
+    }
+		
 	
 }

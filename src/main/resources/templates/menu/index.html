@@ -13,6 +13,18 @@
 	<header th:replace="~{common/header :: header}"></header>
 
 	<div class="container">
+		<div class="notice-container">
+			<h3>お知らせ</h3>
+			<table>
+		        <tbody>
+		            <tr th:each="notification : ${notifications}">
+		                <td th:text="${notification.createdAtFormatted}"></td>
+		                <td th:text="${notification.notificationType}"></td>
+		                <td th:text="${notification.content}"></td>
+		            </tr>
+		        </tbody>
+    		</table>	
+		</div>
 		<div class="menu-container">
 			<h2>処理メニュー</h2>
 
