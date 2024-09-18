@@ -105,19 +105,36 @@
 			<version>3.5.10</version>
 		</dependency>
 
-		<!--		 Spring Batch Starter 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-batch</artifactId>
-		</dependency>
--->
 		<!-- Spring Mail Starter -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-<!--		 H2 Database (for in-memory database during development) 
+		<!-- Web Push -->
+		<dependency>
+			<groupId>nl.martijndwars</groupId>
+			<artifactId>web-push</artifactId>
+			<version>5.1.1</version>
+		</dependency>
+
+		<!-- bouncycastle 暗号化プロバイダーライブラリ -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.78.1</version>
+		</dependency>
+
+
+		<!--		 Spring Batch Starter 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-batch</artifactId>
+		</dependency>
+-->
+
+
+		<!--		 H2 Database (for in-memory database during development) 
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -144,8 +161,8 @@
 		</dependency>
 
 	</dependencies>
-	
-	
+
+
 	<build>
 		<plugins>
 			<plugin>
