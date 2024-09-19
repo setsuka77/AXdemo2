@@ -121,6 +121,62 @@ public class DailyReportController {
 	        return "未提出";
 	    }
 	}
+	
+	/**
+	 * お知らせから遷移した場合の画面
+	 * 
+	 * @param model
+	 * @param session
+	 * @param selectDate
+	 * @return 日報登録画面
+	 */
+	@PostMapping(path = "/report/dailyReport", params = "display")
+	public String displayReport(HttpSession session,String selectDate,Model model) {
+		// selectDate が yyyy-MM-dd 形式でない場合に補正する
+	    String formattedDate = formatDate(selectDate);
+	    //Date date = Date.valueOf(formattedDate);
+		// セッションからユーザー情報を取得
+		Users loginUser = (Users) session.getAttribute("user");	
+		//Integer userId = loginUser.getId();
+
+		// 日報情報を取得
+		//DailyReportForm dailyReportForm = dailyReportService.setForm(userId,date);  
+		// 初期表示用に10行の空のフォームを準備する
+	    List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
+	        for (int i = 0; i < 3; i++) {
+	            dailyReportDetailFormList.add(new DailyReportDetailForm());
+	        }
+	    // DailyReportForm を初期化してモデルに追加
+	    DailyReportForm dailyReportForm = new DailyReportForm();
+	    dailyReportForm.setDailyReportDetailFormList(dailyReportDetailFormList);
+		
+		// ステータスを取得
+		Integer status = dailyReportService.searchReportStatus(loginUser, formattedDate);
+		String statusText = getStatusText(status);
+		
+		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("dailyReportForm", dailyReportForm);
+		model.addAttribute("selectDate", formattedDate);
+		model.addAttribute("statusText", statusText);
+		
+		return "report/dailyReport";
+	}
+	
+	/**
+	 * お知らせから遷移する場合、Dateのフォーマットを整える
+	 * @param date
+	 * @return フォーマット化されたDate
+	 */
+	private String formatDate(String date) {
+	    String[] parts = date.split("-");
+	    if (parts.length == 3) {
+	        String year = parts[0];
+	        String month = parts[1].length() == 1 ? "0" + parts[1] : parts[1];
+	        String day = parts[2].length() == 1 ? "0" + parts[2] : parts[2];
+	        return year + "-" + month + "-" + day;
+	    }
+	    return date;
+	}
 
 	/**
 	 * 「提出」ボタン押下
@@ -133,8 +189,7 @@ public class DailyReportController {
 	 */
 	@PostMapping(path = "/report/dailyReport", params = "submit")
 	public String submitReport(HttpSession session,DailyReportForm dailyReportForm, BindingResult result,
-			Model model, String selectDate, RedirectAttributes redirectAttributes) {
-		System.out.println("提出ボタン押下:"+dailyReportForm);
+			Model model, String selectDate) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 
@@ -156,12 +211,15 @@ public class DailyReportController {
 
 		// 登録処理
 		String message = dailyReportService.submitDailyReport(dailyReportForm, loginUser, selectDate);
-		redirectAttributes.addFlashAttribute("message", message);
-
+		model.addAttribute("message", message);
+		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("dailyReportForm", dailyReportForm);
+		model.addAttribute("selectDate", selectDate);
+		model.addAttribute("statusText", "提出済承認前");
 		// status変更
 		dailyReportService.changeStatus(loginUser, selectDate, 1);
 
-		return "redirect:/report/dailyReport";
+		return "report/dailyReport";
 	}
 	
 	/**

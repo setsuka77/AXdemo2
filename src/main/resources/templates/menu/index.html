@@ -225,9 +225,16 @@
         // 年と月を取得
         const year = targetDate.getFullYear();
         const month = targetDate.getMonth() + 1;
+        const date = targetDate.getDate();
         console.log('年:', year);
         console.log('月:', month);
+        console.log('対象日:', targetDate);
         console.log('通知の種類:', notificationType);
+        console.log('対象日:', date);
+        
+        const reportDate = year + '-' + month + '-' + date;
+        
+        console.log('日報用:', reportDate);
 
         if (notificationType.includes('勤怠')) {
             // POST リクエストを送信
@@ -250,7 +257,20 @@
             document.body.appendChild(form);
             form.submit();
         } else if (notificationType.includes('日報')) {
-            window.location.href = `/login/report/dailyReport?date=${targetDate.toISOString().split('T')[0]}`;
+           // POST リクエストを送信
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/login/report/dailyReport?display';
+            
+            const targetDateInput = document.createElement('input');
+            targetDateInput.type = 'hidden';
+            targetDateInput.name = 'selectDate';
+            targetDateInput.value = reportDate;
+            form.appendChild(targetDateInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+            
         } else {
             console.log('Unknown notification type:', notificationType);
         }
