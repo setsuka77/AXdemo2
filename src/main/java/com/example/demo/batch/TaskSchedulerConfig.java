@@ -29,7 +29,7 @@ public class TaskSchedulerConfig {
 	 * 毎日18時10分にバッチ処理を実行、日報勤怠未提出者にプッシュ通知を送信
 	 */
 	// @Scheduled(cron = "0 10 18 * * ?")
-	// @Scheduled(cron = "0 */2 * * * ?")
+	 @Scheduled(cron = "0 */2 * * * ?")
 	public void sendNotifications() {
 		try {
 			//dailyReportService.checkDailyReport();

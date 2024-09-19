@@ -409,8 +409,17 @@ public class AttendanceService {
 		Date targetDate = req.getTargetYearMonth();
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
-
-		return userName + "の" + formattedDate + "における承認申請が承認されました。";
+		String message = userName + "の" + formattedDate + "における承認申請が承認されました。";
+		
+		//通知作成
+		String notificationType = "勤怠申請結果";
+		java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
+		Integer userId = req.getUserId();
+		String content = formattedDate + "における勤怠申請が承認されました。";
+		Long notificationId =notificationsService.createNotification(content,notificationType,targetsqlDate);
+		notificationsService.linkNotificationToUser(userId, notificationId, notificationType);
+		
+		return message;
 	}
 
 	/**
@@ -432,8 +441,17 @@ public class AttendanceService {
 		Date targetDate = req.getTargetYearMonth();
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
-
-		return userName + "の" + formattedDate + "における承認申請が却下されました。";
+		String message = userName + "の" + formattedDate + "における承認申請が却下されました。";
+		
+		//通知作成
+		String notificationType = "勤怠申請結果";
+		java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
+		Integer userId = req.getUserId();
+		String content = formattedDate + "における勤怠申請が却下されました。";
+		Long notificationId =notificationsService.createNotification(content,notificationType,targetsqlDate);
+		notificationsService.linkNotificationToUser(userId, notificationId, notificationType);
+		
+		return message;
 	}
 
 	/**
@@ -458,7 +476,7 @@ public class AttendanceService {
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
 			System.out.println("勤怠：" + users);
-
+		
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "勤怠未提出";
 			String content = formattedDate + "の勤怠が提出されていません";
@@ -466,8 +484,7 @@ public class AttendanceService {
 		}
 		// 今日が月初の場合のみ通知作成
 		LocalDate today = LocalDate.now();
-		//開発用にコメントアウトしてます。本番はコメントアウトを消してください
-		if (today.getDayOfMonth() == 1) {
+		//if (today.getDayOfMonth() == 1) {
 			//先月の勤怠を提出していないユーザーを検索
 			List<UsersDto> users = monthlyAttendanceReqMapper
 					.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
@@ -475,7 +492,7 @@ public class AttendanceService {
 			String notificationType = "勤怠申請未提出";
 			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content,
 					java.sql.Date.valueOf(lastDate));
-		}
+		//}
 		System.out.println("勤怠申請通知作成済み");
 	}
 	
@@ -523,8 +540,7 @@ public class AttendanceService {
 
 		// 今日が月初の場合のみ通知作成
 		LocalDate today = LocalDate.now();
-		//開発用にコメントアウトしてます。本番はコメントアウトを消してください
-		if (today.getDayOfMonth() == 18) {
+		if (today.getDayOfMonth() == 1) {
 			//先月の勤怠を提出していないユーザーを検索
 			List<UsersDto> users = monthlyAttendanceReqMapper
 					.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));

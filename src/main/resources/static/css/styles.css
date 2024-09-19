@@ -282,6 +282,18 @@ textarea {
 	background: #e7e7e7;
 }
 
+/* お知らせリンクのスタイル */
+.notification-link {
+    text-decoration: none; /* 通常時は下線なし */
+    color: rgb(40, 40, 40); /* リンクの色 */
+}
+
+/* お知らせリンクのスタイル(マウスオーバー時)*/
+.notification-link:hover {
+    text-decoration: underline; /* マウスオーバー時に下線を表示 */
+}
+
+
 /* ボタンスタイル */
 /* ======================================== */
 button {

@@ -20,7 +20,12 @@
 					<tr th:each="notification : ${notifications}">
 						<td th:text="${notification.createdAtFormatted}"></td>
 						<td th:text="${notification.notificationType}"></td>
-						<td th:text="${notification.content}"></td>
+						<td>
+							<a href="javascript:void(0);" class="notification-link"
+								th:attr="data-type=${notification.notificationType}, data-date=${#dates.format(notification.targetDate, 'yyyy-MM-dd')}"
+								th:text="${notification.content}">
+							</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -209,6 +214,51 @@
 		}
 		return window.btoa(binary);
 	}
+
+	document.querySelectorAll('.notification-link').forEach(function(link) {
+    link.addEventListener('click', function(event) {
+        event.preventDefault();  // デフォルトのリンク動作を無効化
+
+        const notificationType = link.getAttribute('data-type');
+        const targetDate = new Date(link.getAttribute('data-date'));
+
+        // 年と月を取得
+        const year = targetDate.getFullYear();
+        const month = targetDate.getMonth() + 1;
+        console.log('年:', year);
+        console.log('月:', month);
+        console.log('通知の種類:', notificationType);
+
+        if (notificationType.includes('勤怠')) {
+            // POST リクエストを送信
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/login/attendance/record?display';
+
+            const yearInput = document.createElement('input');
+            yearInput.type = 'hidden';
+            yearInput.name = 'year';
+            yearInput.value = year;
+            form.appendChild(yearInput);
+
+            const monthInput = document.createElement('input');
+            monthInput.type = 'hidden';
+            monthInput.name = 'month';
+            monthInput.value = month;
+            form.appendChild(monthInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        } else if (notificationType.includes('日報')) {
+            window.location.href = `/login/report/dailyReport?date=${targetDate.toISOString().split('T')[0]}`;
+        } else {
+            console.log('Unknown notification type:', notificationType);
+        }
+    });
+});
+
+
+
 </script>
 
 
