@@ -105,7 +105,7 @@ public class PushNotificationService {
                 );
                 try {
                     sendPushNotification(webPushSubscription, message);
-                } catch (GeneralSecurityException | IOException | JoseException | ExecutionException | InterruptedException e) {
+                } catch (Exception e) {
                     // エラーをログに出力
                     e.printStackTrace();
                 }

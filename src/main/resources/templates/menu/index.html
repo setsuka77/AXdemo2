@@ -16,14 +16,14 @@
 		<div class="notice-container">
 			<h3>お知らせ</h3>
 			<table>
-		        <tbody>
-		            <tr th:each="notification : ${notifications}">
-		                <td th:text="${notification.createdAtFormatted}"></td>
-		                <td th:text="${notification.notificationType}"></td>
-		                <td th:text="${notification.content}"></td>
-		            </tr>
-		        </tbody>
-    		</table>	
+				<tbody>
+					<tr th:each="notification : ${notifications}">
+						<td th:text="${notification.createdAtFormatted}"></td>
+						<td th:text="${notification.notificationType}"></td>
+						<td th:text="${notification.content}"></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		<div class="menu-container">
 			<h2>処理メニュー</h2>
@@ -109,5 +109,108 @@
 		</div>
 	</div>
 </body>
+
+<script>
+	// サービスワーカーの登録
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('/login/js/service-worker.js')
+			.then(function (registration) {
+				console.log('ServiceWorker registration successful with scope: ', registration.scope);
+				initializePush(registration);
+			})
+			.catch(function (error) {
+				console.error('ServiceWorker registration failed: ', error);
+			});
+	}
+
+	function initializePush(registration) {
+		if ('PushManager' in window) {
+			registration.pushManager.getSubscription()
+				.then(function (subscription) {
+					if (subscription === null) {
+						// サブスクリプションがない場合、サブスクリプションを取得
+						registerPushSubscription(registration);
+					} else {
+						console.log('Already subscribed.');
+					}
+				})
+				.catch(function (err) {
+					console.error('Error during getSubscription(): ', err);
+				});
+		} else {
+			console.error('PushManager is not available.');
+		}
+	}
+
+	function registerPushSubscription(registration) {
+		const PUBLIC_VAPID_KEY = '[[${publicVapidKey}]]';
+		const applicationServerKey = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
+
+		registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: applicationServerKey
+		})
+			.then(function (subscription) {
+				console.log('User is subscribed.');
+				// サーバにサブスクリプションを送信
+				sendSubscriptionToServer(subscription);
+			})
+			.catch(function (err) {
+				console.error('Failed to subscribe: ', err);
+			});
+	}
+
+	// サーバーサイドから`loginUser.id`をJavaScriptの変数に埋め込む
+	var userId = /*[[${loginUser.id}]]*/ '';
+
+	function sendSubscriptionToServer(subscription) {
+		fetch('/login/subscribe', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				userId: userId,
+				endpoint: subscription.endpoint,
+				keys: {
+					p256dh: arrayBufferToBase64(subscription.getKey('p256dh')),
+					auth: arrayBufferToBase64(subscription.getKey('auth'))
+				}
+			})
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok.');
+				}
+				console.log('Subscription sent to server.');
+			})
+			.catch(error => {
+				console.error('Failed to send subscription to server: ', error);
+			});
+	}
+
+	function urlBase64ToUint8Array(base64String) {
+		const padding = '='.repeat((4 - base64String.length % 4) % 4);
+		const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
+		const rawData = window.atob(base64);
+		const outputArray = new Uint8Array(rawData.length);
+		for (let i = 0; i < rawData.length; ++i) {
+			outputArray[i] = rawData.charCodeAt(i);
+		}
+		return outputArray;
+	}
+
+	function arrayBufferToBase64(buffer) {
+		let binary = '';
+		const bytes = new Uint8Array(buffer);
+		const len = bytes.byteLength;
+		for (let i = 0; i < len; i++) {
+			binary += String.fromCharCode(bytes[i]);
+		}
+		return window.btoa(binary);
+	}
+</script>
+
+
 
 </html>

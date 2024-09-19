@@ -17,12 +17,12 @@
 	</select>
 
 
-	<!-- サブスクリプションを挿入する -->
+	<!-- サブスクリプションを保存する -->
 	<insert id="insertSubscription"
 		parameterType="com.example.demo.entity.PushSubscription">
-		INSERT INTO push_subscription (id, user_id, endpoint, p256dh, auth,
+		INSERT INTO push_subscription (user_id, endpoint, p256dh, auth,
 		created_at, status)
-		VALUES (#{id}, #{userId}, #{endpoint}, #{p256dh}, #{auth}, #{createdAt},
+		VALUES (#{userId}, #{endpoint}, #{p256dh}, #{auth}, #{createdAt},
 		#{status})
 	</insert>
 
@@ -30,5 +30,10 @@
 	<delete id="deleteByUserId" parameterType="Integer">
 		DELETE FROM push_subscription WHERE user_id = #{userId}
 	</delete>
+	
+	<!-- すべてのサブスクリプションを取得する -->
+    <select id="findAll" resultType="com.example.demo.entity.PushSubscription">
+        SELECT * FROM push_subscription
+    </select>
 
 </mapper>

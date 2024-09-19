@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,9 @@ public class MainMenuController {
 	private DailyReportService dailyReportService;
 	@Autowired
 	private AttendanceService attendanceService;
+	
+	@Value("${push.vapid.public-key}")
+    private String publicVapidKey;
 	
 
 	/**
@@ -75,6 +79,7 @@ public class MainMenuController {
         }
         // モデルに通知を追加
         model.addAttribute("notifications", notifications);
+        model.addAttribute("publicVapidKey", publicVapidKey);  // VAPIDキーをモデルに追加
 
 		return "menu/index";
 	}

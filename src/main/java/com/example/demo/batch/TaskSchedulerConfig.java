@@ -1,6 +1,7 @@
 package com.example.demo.batch;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.service.AttendanceService;
@@ -31,13 +32,13 @@ public class TaskSchedulerConfig {
 	// @Scheduled(cron = "0 */2 * * * ?")
 	public void sendNotifications() {
 		try {
-			 dailyReportService.checkDailyReport();
-			 attendanceService.checkAttendance();
+			//dailyReportService.checkDailyReport();
+			//attendanceService.checkAttendance();
 			// 未提出者にプッシュ通知を送信
 			pushNotificationService.sendNotificationToUnsubmittedUsers("未提出通知", "本日の日報を提出してください", "/icon.png");
-			logService.logInfo("チェックできたよ");
+			logService.logInfo("プッシュ通知送信完了");
 		} catch (Exception e) {
-			logService.logError("エラーが出てるよ", e);
+			logService.logError("プッシュ通知送信エラー", e);
 		}
 	}
 

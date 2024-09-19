@@ -8,26 +8,25 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.PushSubscription;
 import com.example.demo.mapper.PushSubscriptionMapper;
 
-
 @Service
 public class PushSubscriptionService {
-	
-	@Autowired
-    private PushSubscriptionMapper pushSubscriptionMapper;
-	
-    
-	public List<PushSubscription> findByUserId(List<Integer> userId) {
-	    return pushSubscriptionMapper.findByUserId(userId);
-	}
-	
-    public void saveSubscription(PushSubscription subscription) {
-        // サブスクリプションを保存
-        pushSubscriptionMapper.insertSubscription(subscription);
-    }
 
-    public void deleteSubscription(Integer id) {
-        // サブスクリプションを削除
-        pushSubscriptionMapper.deleteByUserId(id);
-    }
-    
+	@Autowired
+	private PushSubscriptionMapper pushSubscriptionMapper;
+
+	public List<PushSubscription> findByUserId(List<Integer> userId) {
+		return pushSubscriptionMapper.findByUserId(userId);
+	}
+
+	public void saveSubscription(PushSubscription subscription) {
+
+		// サブスクリプションを保存
+		pushSubscriptionMapper.insertSubscription(subscription);
+	}
+
+	public void deleteSubscription(Integer id) {
+		// サブスクリプションを削除
+		pushSubscriptionMapper.deleteByUserId(id);
+	}
+
 }
