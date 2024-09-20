@@ -118,62 +118,79 @@
 <script>
 	// サービスワーカーの登録
 	if ('serviceWorker' in navigator) {
+		// サービスワーカーのスクリプトを登録
 		navigator.serviceWorker.register('/login/js/service-worker.js')
 			.then(function (registration) {
+				// 登録成功時にスコープをログに表示
 				console.log('ServiceWorker registration successful with scope: ', registration.scope);
+				// プッシュ通知の初期化
 				initializePush(registration);
 			})
 			.catch(function (error) {
+				// 登録失敗時にエラーをログに表示
 				console.error('ServiceWorker registration failed: ', error);
 			});
 	}
 
+	// プッシュ通知の初期化処理
 	function initializePush(registration) {
+		// ブラウザがPushManagerに対応しているか確認
 		if ('PushManager' in window) {
+			// 既存のプッシュ通知のサブスクリプションを取得
 			registration.pushManager.getSubscription()
 				.then(function (subscription) {
 					if (subscription === null) {
-						// サブスクリプションがない場合、サブスクリプションを取得
+						// サブスクリプションがない場合、新たにサブスクリプションを作成
 						registerPushSubscription(registration);
 					} else {
-						console.log('Already subscribed.');
+						// 既にサブスクリプションが存在する場合
+						console.log('既にサブスクリプション登録情報があります。');
 					}
 				})
 				.catch(function (err) {
+					// サブスクリプション取得エラー時の処理
 					console.error('Error during getSubscription(): ', err);
 				});
 		} else {
-			console.error('PushManager is not available.');
+			// PushManagerが利用できない場合のエラーログ
+			console.error('ブラウザがPushManagerに対応していません。');
 		}
 	}
 
+	// 新しいプッシュ通知サブスクリプションを作成
 	function registerPushSubscription(registration) {
-		const PUBLIC_VAPID_KEY = '[[${publicVapidKey}]]';
+		const PUBLIC_VAPID_KEY = '[[${publicVapidKey}]]'; // 公開鍵（VAPID Key）
+		// VAPIDキーをUint8Array形式に変換
 		const applicationServerKey = urlBase64ToUint8Array(PUBLIC_VAPID_KEY);
 
+		// サブスクリプションの作成
 		registration.pushManager.subscribe({
-			userVisibleOnly: true,
+			userVisibleOnly: true, // ユーザーに通知が見えるようにする
 			applicationServerKey: applicationServerKey
 		})
 			.then(function (subscription) {
+				// サブスクリプション成功時のログ
 				console.log('User is subscribed.');
 				// サーバにサブスクリプションを送信
 				sendSubscriptionToServer(subscription);
 			})
 			.catch(function (err) {
+				// サブスクリプション失敗時のエラーログ
 				console.error('Failed to subscribe: ', err);
 			});
 	}
 
-	// サーバーサイドから`loginUser.id`をJavaScriptの変数に埋め込む
+	// サーバーサイドから埋め込まれた`loginUser.id`を取得
 	var userId = /*[[${loginUser.id}]]*/ '';
 
+	// サーバーにサブスクリプション情報を送信
 	function sendSubscriptionToServer(subscription) {
 		fetch('/login/subscribe', {
-			method: 'POST',
+			method: 'POST', // HTTPメソッドはPOSTを使用
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json' // リクエストヘッダーにJSON形式を指定
 			},
+			// サブスクリプションデータをサーバに送信
 			body: JSON.stringify({
 				userId: userId,
 				endpoint: subscription.endpoint,
@@ -185,97 +202,103 @@
 		})
 			.then(response => {
 				if (!response.ok) {
+					// レスポンスがOKでない場合にエラーをスロー
 					throw new Error('Network response was not ok.');
 				}
+				// サブスクリプションの送信成功時のログ
 				console.log('Subscription sent to server.');
 			})
 			.catch(error => {
+				// サブスクリプション送信失敗時のエラーログ
 				console.error('Failed to send subscription to server: ', error);
 			});
 	}
 
+	// Base64URL形式の文字列をUint8Arrayに変換
 	function urlBase64ToUint8Array(base64String) {
-		const padding = '='.repeat((4 - base64String.length % 4) % 4);
-		const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/');
-		const rawData = window.atob(base64);
-		const outputArray = new Uint8Array(rawData.length);
+		const padding = '='.repeat((4 - base64String.length % 4) % 4); // 必要なパディングを追加
+		const base64 = (base64String + padding).replace(/\-/g, '+').replace(/\_/g, '/'); // Base64URLエンコーディングを修正
+		const rawData = window.atob(base64); // base64をデコード
+		const outputArray = new Uint8Array(rawData.length); // Uint8Arrayを作成
 		for (let i = 0; i < rawData.length; ++i) {
-			outputArray[i] = rawData.charCodeAt(i);
+			outputArray[i] = rawData.charCodeAt(i); // デコードしたデータをバイト配列に変換
 		}
 		return outputArray;
 	}
 
+	// ArrayBufferをBase64に変換
 	function arrayBufferToBase64(buffer) {
 		let binary = '';
-		const bytes = new Uint8Array(buffer);
+		const bytes = new Uint8Array(buffer); // バイト配列を作成
 		const len = bytes.byteLength;
 		for (let i = 0; i < len; i++) {
-			binary += String.fromCharCode(bytes[i]);
+			binary += String.fromCharCode(bytes[i]); // バイナリ文字列に変換
 		}
-		return window.btoa(binary);
+		return window.btoa(binary); // Base64エンコードを実行
 	}
+	//ここから↑はプッシュ通知サブスクリプション登録設定
 
-	document.querySelectorAll('.notification-link').forEach(function(link) {
-    link.addEventListener('click', function(event) {
-        event.preventDefault();  // デフォルトのリンク動作を無効化
+	document.querySelectorAll('.notification-link').forEach(function (link) {
+		link.addEventListener('click', function (event) {
+			event.preventDefault();  // デフォルトのリンク動作を無効化
 
-        const notificationType = link.getAttribute('data-type');
-        const targetDate = new Date(link.getAttribute('data-date'));
+			const notificationType = link.getAttribute('data-type');
+			const targetDate = new Date(link.getAttribute('data-date'));
 
-        // 年と月を取得
-        const year = targetDate.getFullYear();
-        const month = targetDate.getMonth() + 1;
-        const date = targetDate.getDate();
-        console.log('年:', year);
-        console.log('月:', month);
-        console.log('対象日:', targetDate);
-        console.log('通知の種類:', notificationType);
-        console.log('対象日:', date);
-        
-        const reportDate = year + '-' + month + '-' + date;
-        
-        console.log('日報用:', reportDate);
+			// 年と月を取得
+			const year = targetDate.getFullYear();
+			const month = targetDate.getMonth() + 1;
+			const date = targetDate.getDate();
+			console.log('年:', year);
+			console.log('月:', month);
+			console.log('対象日:', targetDate);
+			console.log('通知の種類:', notificationType);
+			console.log('対象日:', date);
 
-        if (notificationType.includes('勤怠')) {
-            // POST リクエストを送信
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/login/attendance/record?display';
+			const reportDate = year + '-' + month + '-' + date;
 
-            const yearInput = document.createElement('input');
-            yearInput.type = 'hidden';
-            yearInput.name = 'year';
-            yearInput.value = year;
-            form.appendChild(yearInput);
+			console.log('日報用:', reportDate);
 
-            const monthInput = document.createElement('input');
-            monthInput.type = 'hidden';
-            monthInput.name = 'month';
-            monthInput.value = month;
-            form.appendChild(monthInput);
+			if (notificationType.includes('勤怠')) {
+				// POST リクエストを送信
+				const form = document.createElement('form');
+				form.method = 'POST';
+				form.action = '/login/attendance/record?display';
 
-            document.body.appendChild(form);
-            form.submit();
-        } else if (notificationType.includes('日報')) {
-           // POST リクエストを送信
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/login/report/dailyReport?display';
-            
-            const targetDateInput = document.createElement('input');
-            targetDateInput.type = 'hidden';
-            targetDateInput.name = 'selectDate';
-            targetDateInput.value = reportDate;
-            form.appendChild(targetDateInput);
-            
-            document.body.appendChild(form);
-            form.submit();
-            
-        } else {
-            console.log('Unknown notification type:', notificationType);
-        }
-    });
-});
+				const yearInput = document.createElement('input');
+				yearInput.type = 'hidden';
+				yearInput.name = 'year';
+				yearInput.value = year;
+				form.appendChild(yearInput);
+
+				const monthInput = document.createElement('input');
+				monthInput.type = 'hidden';
+				monthInput.name = 'month';
+				monthInput.value = month;
+				form.appendChild(monthInput);
+
+				document.body.appendChild(form);
+				form.submit();
+			} else if (notificationType.includes('日報')) {
+				// POST リクエストを送信
+				const form = document.createElement('form');
+				form.method = 'POST';
+				form.action = '/login/report/dailyReport?display';
+
+				const targetDateInput = document.createElement('input');
+				targetDateInput.type = 'hidden';
+				targetDateInput.name = 'selectDate';
+				targetDateInput.value = reportDate;
+				form.appendChild(targetDateInput);
+
+				document.body.appendChild(form);
+				form.submit();
+
+			} else {
+				console.log('Unknown notification type:', notificationType);
+			}
+		});
+	});
 
 
 

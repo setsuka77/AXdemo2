@@ -6,7 +6,7 @@
 <mapper
 	namespace="com.example.demo.mapper.PushSubscriptionMapper">
 
-	<!-- サブスクリプションをユーザIDで検索する -->
+	<!-- サブスクリプションをユーザIDで検索 -->
 	<select id="findByUserId" parameterType="java.util.List"
 		resultType="com.example.demo.entity.PushSubscription">
 		SELECT * FROM push_subscription WHERE user_id IN
@@ -16,24 +16,27 @@
 		</foreach>
 	</select>
 
-
-	<!-- サブスクリプションを保存する -->
+	<!-- サブスクリプションを保存 -->
 	<insert id="insertSubscription"
 		parameterType="com.example.demo.entity.PushSubscription">
-		INSERT INTO push_subscription (user_id, endpoint, p256dh, auth,
+		INSERT INTO push_subscription (user_id, endpoint,
+		p256dh, auth,
 		created_at, status)
-		VALUES (#{userId}, #{endpoint}, #{p256dh}, #{auth}, #{createdAt},
+		VALUES (#{userId}, #{endpoint},
+		#{p256dh}, #{auth}, #{createdAt},
 		#{status})
 	</insert>
 
-	<!-- サブスクリプションを削除する -->
+	<!-- サブスクリプションを削除 -->
 	<delete id="deleteByUserId" parameterType="Integer">
-		DELETE FROM push_subscription WHERE user_id = #{userId}
+		DELETE FROM
+		push_subscription WHERE user_id = #{userId}
 	</delete>
-	
-	<!-- すべてのサブスクリプションを取得する -->
-    <select id="findAll" resultType="com.example.demo.entity.PushSubscription">
-        SELECT * FROM push_subscription
-    </select>
+
+	<!-- すべてのサブスクリプションを取得 -->
+	<select id="findAll"
+		resultType="com.example.demo.entity.PushSubscription">
+		SELECT * FROM push_subscription
+	</select>
 
 </mapper>

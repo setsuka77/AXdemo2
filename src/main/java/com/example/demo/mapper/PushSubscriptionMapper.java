@@ -9,14 +9,32 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface PushSubscriptionMapper {
 
-    // サブスクリプションを取得するクエリ
+	/**
+	 * 指定されたユーザーIDリストに基づいてサブスクリプションを取得
+	 *
+	 * @param userId ユーザーIDのリスト
+	 * @return 対応するサブスクリプションのリスト
+	 */
 	List<PushSubscription> findByUserId(@Param("list") List<Integer> userId);
 
-    // サブスクリプションを保存するクエリ
-    void insertSubscription(PushSubscription subscription);
+	/**
+	 * プッシュ通知のサブスクリプションをデータベースに保存
+	 *
+	 * @param subscription 保存するサブスクリプションのデータ
+	 */
+	void insertSubscription(PushSubscription subscription);
 
-    // サブスクリプションを削除するクエリ
-    void deleteByUserId(@Param("userId") Integer userId);
-    
-    List<PushSubscription> findAll();
+	/**
+	 * 指定されたユーザーIDに対応するサブスクリプションを削除
+	 *
+	 * @param userId 削除するユーザーのID
+	 */
+	void deleteByUserId(@Param("userId") Integer userId);
+
+	/**
+	 * すべてのサブスクリプションを取得
+	 *
+	 * @return すべてのサブスクリプションのリスト
+	 */
+	List<PushSubscription> findAll();
 }
