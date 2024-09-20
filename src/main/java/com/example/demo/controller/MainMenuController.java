@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.dto.NotificationsDto;
 import com.example.demo.entity.Users;
-import com.example.demo.service.AttendanceService;
-import com.example.demo.service.DailyReportService;
 import com.example.demo.service.NotificationsService;
 
 import jakarta.servlet.http.HttpSession;
@@ -22,10 +19,6 @@ public class MainMenuController {
 	
 	@Autowired
 	private NotificationsService notificationsService;
-	@Autowired
-	private DailyReportService dailyReportService;
-	@Autowired
-	private AttendanceService attendanceService;
 	
 	@Value("${push.vapid.public-key}")
     private String publicVapidKey;
@@ -61,25 +54,17 @@ public class MainMenuController {
         Integer userId = loginUser.getId();
         List<NotificationsDto> notifications = notificationsService.getUserNotifications(userId);
         
-        // セッションからmanagerNotificationsを取得
-        List<NotificationsDto> existingNotifications = (List<NotificationsDto>) session.getAttribute("managerNotifications");
-
-        if ("manager".equals(role) && existingNotifications == null){
-        	List<NotificationsDto> managerNotifications = new ArrayList<>();
-        	managerNotifications.addAll(dailyReportService.checkManagerDailyReport());
-        	managerNotifications.addAll(attendanceService.checkManagerAttendance());
-            
-            // 既存の通知リストにマネージャー用の通知を追加
-        	notifications.addAll(managerNotifications);
-            //セッションに追加
-            session.setAttribute("managerNotifications", managerNotifications);
-        }else if(existingNotifications != null) {
-            // 既存の通知リストにマネージャー用の通知を追加
+        //マネ権限時のお知らせを取得
+        if ("manager".equals(role)){
+        	// セッションからmanagerNotificationsを取得
+            List<NotificationsDto> existingNotifications = (List<NotificationsDto>) session.getAttribute("managerNotifications");       
+            System.out.println("マネ権限:"+ existingNotifications);
+        	// 既存の通知リストにマネージャー用の通知を追加
         	notifications.addAll(existingNotifications);
         }
         // モデルに通知を追加
         model.addAttribute("notifications", notifications);
-        model.addAttribute("publicVapidKey", publicVapidKey);  // VAPIDキーをモデルに追加
+        model.addAttribute("publicVapidKey", publicVapidKey);  // VAPID公開キーをモデルに追加
 
 		return "menu/index";
 	}

@@ -33,11 +33,12 @@
 		resultType="com.example.demo.dto.UsersDto">
 		SELECT u.*
 		FROM users u
-		WHERE u.role IN (3, 4) <!-- role が 3 または 4 のユーザー -->
-		AND u.id NOT IN (
-		SELECT a.user_id
-		FROM attendance a
-		WHERE a.date = #{date} <!-- 指定の日付で日報が提出されているか確認 -->
+		WHERE u.role IN (3, 4)
+			AND now() >= u.start_date 
+			AND u.id NOT IN (
+			SELECT a.user_id
+			FROM attendance a
+			WHERE a.date = #{date} 
 		)
 	</select>
 

@@ -113,7 +113,6 @@ public class NotificationsService {
 	 */
 	public void checkNotifications(Integer userId, java.util.Date date,String notificationType) {
 		List<UserNotificationsDto> existingNotifications = userNotificationsMapper.findUserNotification(userId,date,notificationType);
-		System.out.println("通知検索結果"+existingNotifications);
 		// 既存の通知がある場合はフラグを更新
 	    if (existingNotifications != null) {
 	    	for (UserNotificationsDto userNotifications : existingNotifications) {
@@ -131,7 +130,6 @@ public class NotificationsService {
 	public List<NotificationsDto> getUserNotifications(Integer userId) {
 		 // ユーザーIDに一致する通知を取得
         List<NotificationsDto> userNotifications = notificationsMapper.findByUserId(userId);
-        System.out.println("通知内容"+userNotifications);
         
         return userNotifications;
     }

@@ -258,18 +258,15 @@ public class DailyReportService {
 
 		//土日かどうかチェック
 		Boolean weekEnd = notificationsService.notWeekend(previousDay);
-		System.out.println("日報用判定;" + weekEnd);
 		if (weekEnd) {
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = dailyReportMapper.findUsersWithoutReport(date);
-			System.out.println("日報：" + users);
 
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "日報未提出";
 			String content = formattedDate + "の日報が提出されていません";
 			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content, date);
 		}
-		System.out.println("日報通知作成済み");
 	}
 
 	/**
@@ -286,10 +283,8 @@ public class DailyReportService {
 
 	    // 土日かどうかチェック
 	    Boolean weekEnd = notificationsService.notWeekend(previousDay);
-	    System.out.println("日報用判定;" + weekEnd);
 
 	    List<NotificationsDto> notifications = new ArrayList<>();
-
 	    if (weekEnd) {
 	        // 前日の日報を提出していないユーザーを検索
 	        List<UsersDto> usersWithoutReport = dailyReportMapper.findUsersWithoutReport(date);

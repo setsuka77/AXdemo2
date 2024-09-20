@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.dto.NotificationsDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.LoginForm;
+import com.example.demo.service.AttendanceService;
+import com.example.demo.service.DailyReportService;
 import com.example.demo.service.LoginService;
 
 import jakarta.servlet.http.HttpSession;
@@ -23,6 +28,10 @@ public class LoginController {
 
 	@Autowired
 	private LoginService loginService;
+	@Autowired
+	private DailyReportService dailyReportService;
+	@Autowired
+	private AttendanceService attendanceService;
 
 	/**
 	 * ログイン画面初期表示
@@ -86,8 +95,18 @@ public class LoginController {
 			return "redirect:/";
 		}
 
-		// 権限に応じた画面遷移
+		// 2の時未提出者の通知を作成
 		String role = user.getRole();
+		if("2".equals(role)) {
+			List<NotificationsDto> managerNotifications = new ArrayList<>();
+        	managerNotifications.addAll(dailyReportService.checkManagerDailyReport());
+        	managerNotifications.addAll(attendanceService.checkManagerAttendance());
+
+            //セッションに追加
+            session.setAttribute("managerNotifications", managerNotifications);
+		}
+		
+		//権限に応じた画面遷移
 		if ("1".equals(role) || "2".equals(role) || "3".equals(role) || "4".equals(role)) {
 			return "redirect:/index";
 		} else {

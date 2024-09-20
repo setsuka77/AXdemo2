@@ -470,12 +470,10 @@ public class AttendanceService {
 
 		//土日かどうかチェック
 		Boolean weekEnd = notificationsService.notWeekend(previousDay);
-		System.out.println("勤怠用判定;" + weekEnd);
 		if (weekEnd) {
 			String formattedDate = previousDay.format(formatter);
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
-			System.out.println("勤怠：" + users);
 		
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "勤怠未提出";
@@ -493,7 +491,6 @@ public class AttendanceService {
 			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content,
 					java.sql.Date.valueOf(lastDate));
 		//}
-		System.out.println("勤怠申請通知作成済み");
 	}
 	
 
@@ -516,17 +513,14 @@ public class AttendanceService {
 
 		//土日かどうかチェック
 		Boolean weekEnd = notificationsService.notWeekend(previousDay);
-		System.out.println("勤怠用判定;" + weekEnd);
 		if (weekEnd) {
 			String formattedDate = previousDay.format(formatter);
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
-			System.out.println("勤怠：" + users);
-
 			// マネージャーに未提出ユーザー数のお知らせ
-			int missingReportCount = users.size();
-			if (missingReportCount > 0) {
-				String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人未提出です ("
+			int missingAttendanceCount = users.size();
+			if (missingAttendanceCount > 0) {
+				String managerContent = formattedDate + "の勤怠が" + missingAttendanceCount + "人未提出です ("
 						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
 				// マネージャーの勤怠未提出通知を作成
 	            NotificationsDto notificationsDto = new NotificationsDto();
