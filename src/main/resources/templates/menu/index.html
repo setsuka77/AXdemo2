@@ -15,7 +15,18 @@
 	<div class="container">
 		<div class="notice-container">
 			<h3>お知らせ</h3>
-			<table>
+			<div th:if="${notifications.size() == 0}" style="text-align: center;">
+				現在お知らせはありません
+			</div>
+
+			<div th:if="${role} == 'manager'" th:each="notification : ${notifications}">
+				<details class="accordion-003">
+					<summary th:text=" ${notification.notificationType} + ' ' + ${notification.content}"></summary>
+					<p	>tesuto</p>
+				</details>
+			</div>
+
+			<table th:if="${role} != 'manager'">
 				<tbody>
 					<tr th:each="notification : ${notifications}">
 						<td th:text="${notification.createdAtFormatted}"></td>
@@ -30,6 +41,7 @@
 				</tbody>
 			</table>
 		</div>
+
 		<div class="menu-container">
 			<h2>処理メニュー</h2>
 

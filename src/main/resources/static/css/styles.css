@@ -123,6 +123,63 @@ main {
 	background: #fff; /* 背景色を白に設定 */
 	border-radius: 8px; /* 角を丸くする */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
+	 overflow-x: hidden; /* 横スクロールを非表示 */
+    max-height: 230px; /* 高さの上限を設定（3行分の高さに合わせて調整） */
+    overflow-y: auto; /* 縦スクロールを表示 */
+}
+
+/* ===========================================
+ * アコーディオンスタイル
+ * ======================================== */
+ .accordion-003 {
+    max-width: 500px;
+    margin-bottom: 7px;
+    border-bottom: 2px solid #d0d0d0;
+}
+
+.accordion-003 summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 0.5em 0.5em;
+    color: #333333;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.accordion-003 summary::-webkit-details-marker {
+    display: none;
+}
+
+.accordion-003 summary::after {
+    transform: translateY(-25%) rotate(45deg);
+    width: 7px;
+    height: 7px;
+    margin-left: 10px;
+    border-bottom: 3px solid #333333b3;
+    border-right: 3px solid #333333b3;
+    content: '';
+    transition: transform .3s;
+}
+
+.accordion-003[open] summary::after {
+    transform: rotate(225deg);
+}
+
+.accordion-003 p {
+    transform: translateY(-10px);
+    opacity: 0;
+    margin: 0;
+    padding: .3em 2em 1.5em;
+    color: #333333;
+    transition: transform .5s, opacity .5s;
+    font-size: inherit; /* 親要素のフォントサイズを継承 */
+}
+
+.accordion-003[open] p {
+    transform: none;
+    opacity: 1;
 }
 
 /* ===========================================
