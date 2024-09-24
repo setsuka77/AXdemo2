@@ -300,6 +300,9 @@ public class DailyReportService {
 	            notificationsDto.setContent(managerContent);
 	            notificationsDto.setNotificationType("日報未提出");
 	            notificationsDto.setCreatedAt(LocalDateTime.now());
+	            
+	            // 未提出ユーザーのリストを設定
+	            notificationsDto.setUsers(usersWithoutReport);
 
 	            notifications.add(notificationsDto);
 	        }

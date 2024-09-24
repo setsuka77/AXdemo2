@@ -517,6 +517,7 @@ public class AttendanceService {
 			String formattedDate = previousDay.format(formatter);
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
+			
 			// マネージャーに未提出ユーザー数のお知らせ
 			int missingAttendanceCount = users.size();
 			if (missingAttendanceCount > 0) {
@@ -527,6 +528,9 @@ public class AttendanceService {
 	            notificationsDto.setContent(managerContent);
 	            notificationsDto.setNotificationType("勤怠未提出");
 	            notificationsDto.setCreatedAt(LocalDateTime.now());
+	            
+	            // 未提出ユーザーのリストを設定
+	            notificationsDto.setUsers(users);
 
 	            notifications.add(notificationsDto);
 			}
@@ -550,7 +554,10 @@ public class AttendanceService {
             notificationsDto.setNotificationType("勤怠申請未提出");
             notificationsDto.setCreatedAt(LocalDateTime.now());
 
-            notifications.add(notificationsDto);
+            // 未提出ユーザーのリストを設定
+            notificationsDto.setUsers(users);
+
+            notifications.add(notificationsDto);            
 		}
 		return notifications;
 	}

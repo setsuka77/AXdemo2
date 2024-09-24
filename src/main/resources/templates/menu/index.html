@@ -21,8 +21,10 @@
 
 			<div th:if="${role} == 'manager'" th:each="notification : ${notifications}">
 				<details class="accordion-003">
-					<summary th:text=" ${notification.notificationType} + ' ' + ${notification.content}"></summary>
-					<p	>tesuto</p>
+					<summary th:text=" ${notification.notificationType} + '  ' + ${notification.content}"></summary>
+					<span th:each="user, iterStat : ${notification.users}" th:text="${user.name}+ '、'">
+               		<span th:if="${!iterStat.last}"></span>
+            	</span>
 				</details>
 			</div>
 

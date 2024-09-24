@@ -3,6 +3,7 @@ package com.example.demo.dto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -25,5 +26,8 @@ public class NotificationsDto {
     	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         return createdAt.format(formatter);
     }
+    
+    //未提出ユーザー名前のリスト
+    private List<UsersDto> users;
 
 }
