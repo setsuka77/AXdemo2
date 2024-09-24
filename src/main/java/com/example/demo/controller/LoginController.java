@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,6 +105,7 @@ public class LoginController {
 
             //セッションに追加
             session.setAttribute("managerNotifications", managerNotifications);
+            session.setAttribute("notificationTimestamp", Instant.now());
 		}
 		
 		//権限に応じた画面遷移

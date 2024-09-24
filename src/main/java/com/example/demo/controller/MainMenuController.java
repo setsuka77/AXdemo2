@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,22 @@ public class MainMenuController {
 	@Value("${push.vapid.public-key}")
     private String publicVapidKey;
 	
+	/**
+	 * 通知をクリアするメソッド
+	 * @param session
+	 */
+    private void clearOldNotifications(HttpSession session) {
+    	Instant timestamp = (Instant) session.getAttribute("notificationTimestamp");
+        if (timestamp != null) {
+            Instant now = Instant.now();
+
+            // 5分経過したかどうか確認
+            if (now.isAfter(timestamp.plusSeconds(300))) { 
+                session.removeAttribute("managerNotifications");
+                session.removeAttribute("notificationTimestamp");
+            }
+        }
+    }
 
 	/**
 	 * 処理メニュー画面 初期表示
@@ -56,11 +73,15 @@ public class MainMenuController {
         
         //マネ権限時のお知らせを取得
         if ("manager".equals(role)){
+        	// 5分経過した通知の削除処理
+            clearOldNotifications(session);
         	// セッションからmanagerNotificationsを取得
             List<NotificationsDto> existingNotifications = (List<NotificationsDto>) session.getAttribute("managerNotifications");       
             System.out.println("マネ権限:"+ existingNotifications);
+        	if(existingNotifications != null) {
         	// 既存の通知リストにマネージャー用の通知を追加
         	notifications.addAll(existingNotifications);
+        	}
         }
         // モデルに通知を追加
         model.addAttribute("notifications", notifications);
@@ -69,6 +90,5 @@ public class MainMenuController {
 		return "menu/index";
 	}
 	
-
-
+	
 }

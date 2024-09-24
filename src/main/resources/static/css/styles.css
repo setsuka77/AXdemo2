@@ -111,6 +111,9 @@ main {
 	background-color: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	max-height: auto; /* 最大高さをなしに設定 */
+	overflow-y: auto; /* 縦方向に内容があふれた場合にスクロール可能に */
+	overflow-x: hidden; /* 横方向のスクロールを非表示 */
 }
 
 /* お知らせコンテナ */
@@ -132,7 +135,7 @@ main {
  * アコーディオンスタイル
  * ======================================== */
  .accordion-003 {
-    max-width: 500px;
+    max-width: 650px;
     margin-bottom: 7px;
     border-bottom: 2px solid #d0d0d0;
 }
@@ -146,6 +149,7 @@ main {
     color: #333333;
     font-weight: 400;
     cursor: pointer;
+    margin-left: 40px;
 }
 
 .accordion-003 summary::-webkit-details-marker {
@@ -167,20 +171,11 @@ main {
     transform: rotate(225deg);
 }
 
-.accordion-003 p {
-    transform: translateY(-10px);
-    opacity: 0;
-    margin: 0;
-    padding: .3em 2em 1.5em;
-    color: #333333;
-    transition: transform .5s, opacity .5s;
-    font-size: inherit; /* 親要素のフォントサイズを継承 */
+.name{
+	font-size: 13px;
+	color: rgb(54, 54, 54);
 }
 
-.accordion-003[open] p {
-    transform: none;
-    opacity: 1;
-}
 
 /* ===========================================
  * 見出しのスタイル設定
