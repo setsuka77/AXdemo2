@@ -147,7 +147,7 @@ public class SendMailService {
 
 			// メールが空でない場合は送信
 			if (userSubmissionStatus.isEmpty()) {
-				message.setText("全員が勤怠・日報・月次承認を提出しています。");
+				message.setText("全員が勤怠・日報・月次承認申請を提出しています。");
 			} else {
 				message.setText(emailContent.toString() + "\n該当社員に確認をお願いします。");
 			}

@@ -29,9 +29,9 @@ public class LogService {
 	 * 
 	 * @param message ログに記録するメッセージ
 	 */
-	public void logInfo(String message) {
+	public void logInfo(String jobName, String message) {
 		logger.info(message);
-		saveLogToDB("INFO", message, null);
+		saveLogToDB(jobName,"INFO", message, null);
 	}
 
 	/**
@@ -39,9 +39,9 @@ public class LogService {
 	 *
 	 * @param message ログに記録するメッセージ
 	 */
-	public void logWarn(String message) {
+	public void logWarn(String jobName, String message) {
 		logger.warn(message);
-		saveLogToDB("WARN", message, null);
+		saveLogToDB(jobName,"WARN", message, null);
 	}
 
 	// エラーメッセージのバッファ
@@ -56,9 +56,9 @@ public class LogService {
 	 * @param message ログに記録するメッセージ
 	 * @param e       発生した例外
 	 */
-	public void logError(String message, Exception e) {
+	public void logError(String jobName, String message, Exception e) {
 		logger.error(message, e);
-		saveLogToDB("ERROR", message, e.getMessage());
+		saveLogToDB(jobName,"ERROR", message, e.getMessage());
 		addToBuffer("【種別】" + message + "\n【詳細】" + e.getMessage());
 	}
 
@@ -104,8 +104,8 @@ public class LogService {
 	 * 
 	 * @param message ログに記録するメッセージ
 	 */
-	public void logDebug(String message) {
-		logger.debug(message);
+	public void logDebug(String jobName, String message) {
+		logger.debug(jobName, message);
 	}
 
 	/**
@@ -115,12 +115,13 @@ public class LogService {
 	 * @param message      ログメッセージ
 	 * @param errorMessage エラーメッセージ（エラーが発生した場合のみ）
 	 */
-	private void saveLogToDB(String status, String message, String errorMessage) {
+	private void saveLogToDB(String jobName, String status, String message, String errorMessage) {
 		BatchLog log = new BatchLog();
-		log.setJobName("DailyReportBatch"); // 例: 固定のバッチ名。状況に応じて動的に設定可能
+		log.setJobName(jobName);
 		log.setStatus(status);
 		log.setStartTime(LocalDateTime.now());
 		log.setEndTime(LocalDateTime.now());
+		log.setMessage(message); 
 		log.setErrorMessage(errorMessage);
 		log.setCreatedAt(LocalDateTime.now());
 

@@ -17,6 +17,8 @@ public class BatchLog {
     private LocalDateTime startTime;
     /** バッチ処理の終了時間 */
     private LocalDateTime endTime;
+    /** メッセージ */
+    private String message;
     /** エラーメッセージ（エラーが発生した場合のみ） */
     private String errorMessage;
     /** レコード作成日時 */

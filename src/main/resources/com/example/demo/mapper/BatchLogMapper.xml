@@ -8,9 +8,11 @@
 	<!-- バッチログの挿入 -->
 	<insert id="insertBatchLog" useGeneratedKeys="true"
 		keyProperty="id">
-		INSERT INTO batch_log (job_name, status, start_time, end_time,
+		INSERT INTO batch_log (job_name, status, start_time,
+		end_time, message,
 		error_message, created_at)
-		VALUES (#{jobName}, #{status}, #{startTime}, #{endTime}, #{errorMessage},
+		VALUES (#{jobName},
+		#{status}, #{startTime}, #{endTime}, #{message}, #{errorMessage},
 		#{createdAt})
 	</insert>
 
@@ -23,8 +25,8 @@
 	<!-- バッチログの更新 -->
 	<update id="updateBatchLog">
 		UPDATE batch_log
-		SET status = #{status}, end_time = #{endTime}, error_message =
-		#{errorMessage}
+		SET status = #{status}, end_time = #{endTime}, message = #{message},
+		error_message = #{errorMessage}
 		WHERE id = #{id}
 	</update>
 
