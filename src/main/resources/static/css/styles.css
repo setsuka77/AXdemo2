@@ -10,7 +10,7 @@
 body {
 	display: flex; /* フレックスボックスを使って中央寄せ */
 	justify-content: center; /* 横方向の中央寄せ */
-	align-items: center; /* 縦方向の中央寄せ */
+	padding-top: 70px;
 	height: 100vh; /* ビューポートの高さに合わせる */
 	background-color: #f5f5f5; /* 背景色を設定 */
 	overflow-x: hidden; /* 横スクロールを防ぐ */
@@ -45,16 +45,18 @@ header {
 
 /* メインコンテンツがヘッダーの下に表示されるように、上部に余白を追加 */
 main {
-	padding-top: 70px; /* ヘッダーの高さに応じて調整 */
+	padding-top: 200px; /* ヘッダーの高さに応じて調整 */
+	width: 100%; /* 必要に応じて幅を調整 */
+	max-width: 1200px; /* 最大幅を指定 */
+	margin: 0 auto; /* 横方向の中央揃え */
 }
 
 /* ===========================================
  * コンテナスタイル
  * ======================================== */
 .container {
-	display: flex; /* フレックスボックスを使う */
-	justify-content: center; /* 横方向の中央寄せ */
-	align-items: center; /* 縦方向の中央寄せ */
+	display: block; /* ブロックを使う */
+	margin: 0 auto; /* 左右の中央寄せを設定 */
 	width: 100%; /* 幅を100%に設定 */
 	max-width: 1200px; /* 適切な最大幅を指定 */
 	padding: 20px; /* 内部パディングを設定 */
@@ -68,6 +70,7 @@ main {
 	background: #fff; /* 背景色を白に設定 */
 	border-radius: 8px; /* 角を丸くする */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
+	margin: 0 auto; /* 横方向の中央寄せ */
 }
 
 /*上部ユーザ情報コンテナ*/
@@ -90,6 +93,7 @@ main {
 	background: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin: 0 auto; /* 横方向の中央寄せ */
 }
 
 /* メニューコンテナスタイル */
@@ -100,6 +104,7 @@ main {
 	background: #fff; /* 背景色を白に設定 */
 	border-radius: 8px; /* 角を丸くする */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
+	margin: 0 auto; /* 横方向の中央寄せ */
 }
 
 /* 勤怠・日報コンテナ */
@@ -114,6 +119,7 @@ main {
 	max-height: auto; /* 最大高さをなしに設定 */
 	overflow-y: auto; /* 縦方向に内容があふれた場合にスクロール可能に */
 	overflow-x: hidden; /* 横方向のスクロールを非表示 */
+	margin: 0 auto; /* 横方向の中央寄せ */
 }
 
 /* お知らせコンテナ */
@@ -122,13 +128,13 @@ main {
 	width: 100%; /* 幅を100%に設定 */
 	max-width: 600px; /* 最大幅を600pxに設定 */
 	padding: 20px; /* 内部パディングを設定 */
-	margin-bottom: 20px;
 	background: #fff; /* 背景色を白に設定 */
 	border-radius: 8px; /* 角を丸くする */
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
 	 overflow-x: hidden; /* 横スクロールを非表示 */
     max-height: 230px; /* 高さの上限を設定（3行分の高さに合わせて調整） */
     overflow-y: auto; /* 縦スクロールを表示 */
+    margin: 0 auto 20px auto; /* 横方向の中央寄せと下部マージンを追加 */
 }
 
 /* ===========================================
@@ -678,6 +684,9 @@ input.note {
 @media ( max-width : 480px) {
 	h2 {
 		font-size: 16px;
+	}
+	body {
+		padding-top: 150px;
 	}
 
 	.form-container {

@@ -28,7 +28,7 @@ public class TaskSchedulerConfig {
 	/**
 	 * 毎日18時10分にバッチ処理を実行、日報勤怠未提出者にプッシュ通知を送信
 	 */
-	// @Scheduled(cron = "0 10 18 * * ?")
+	// @Scheduled(cron = "0 10 18 * * MON-FRI", zone = "Asia/Tokyo")
 	// @Scheduled(cron = "0 */2 * * * ?")
 	public void sendNotifications() {
 		try {
@@ -46,8 +46,8 @@ public class TaskSchedulerConfig {
 	/**
 	 * 毎日午前9時半に日報勤怠未提出者通知メールをマネージャに送信するバッチ処理
 	 */
-	// @Scheduled(cron = "0 30 9 * * ?") // 毎日午前9時半に実行
-	 //@Scheduled(cron = "0 */2 * * * ?")
+	// @Scheduled(cron = "0 30 9 * * ?", zone = "Asia/Tokyo") // 毎日午前9時半に実行
+	// @Scheduled(cron = "0 */2 * * * ?")
 	public void performAttendanceAndReportSendMail() {
 		try {
 			// 未提出者の確認を行い、権限を指定してメール送信
