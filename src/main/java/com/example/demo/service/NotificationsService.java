@@ -100,6 +100,7 @@ public class NotificationsService {
 		userNotifications.setNotificationId(notificationId);
 		userNotifications.setIsRead(false);
 		userNotifications.setIsVisible(true);
+		userNotifications.setCreatedAt(LocalDateTime.now());
 
 		userNotificationsMapper.insert(userNotifications);
 	}

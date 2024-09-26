@@ -31,8 +31,8 @@ public class TaskSchedulerConfig {
 	 //@Scheduled(cron = "0 */2 * * * ?")
 	public void sendNotifications() {
 		try {
-			// dailyReportService.checkDailyReport();
-			// attendanceService.checkAttendance();
+			 //dailyReportService.checkDailyReport();
+			 //attendanceService.checkAttendance();
 			// 未提出者にプッシュ通知を送信
 			pushNotificationService.sendNotificationToUnsubmittedUsers("AX社内管理システム", "未提出のものがあります。メニューで確認してください。",
 					"/icon.png");
@@ -46,7 +46,7 @@ public class TaskSchedulerConfig {
 	 * 毎日午前9時半に日報勤怠未提出者通知メールをマネージャに送信するバッチ処理
 	 */
 	// @Scheduled(cron = "0 30 9 * * ?") // 毎日午前9時半に実行
-	// @Scheduled(cron = "0 */2 * * * ?")
+	 //@Scheduled(cron = "0 */2 * * * ?")
 	public void performAttendanceAndReportSendMail() {
 		try {
 			// 未提出者の確認を行い、権限を指定してメール送信

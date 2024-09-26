@@ -411,14 +411,6 @@ public class AttendanceService {
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 		String message = userName + "の" + formattedDate + "における承認申請が承認されました。";
 		
-		//通知作成
-		String notificationType = "勤怠申請結果";
-		java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
-		Integer userId = req.getUserId();
-		String content = formattedDate + "における勤怠申請が承認されました。";
-		Long notificationId =notificationsService.createNotification(content,notificationType,targetsqlDate);
-		notificationsService.linkNotificationToUser(userId, notificationId, notificationType);
-		
 		return message;
 	}
 

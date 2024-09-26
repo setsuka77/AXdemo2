@@ -8,9 +8,9 @@
 	<insert id="insert"
 		parameterType="com.example.demo.entity.UserNotifications">
 		INSERT INTO user_notifications (user_id,
-		notification_id, is_read, is_visible)
+		notification_id, is_read, is_visible,created_at)
 		VALUES (#{userId},
-		#{notificationId}, #{isRead},#{isVisible})
+		#{notificationId}, #{isRead},#{isVisible},#{createdAt})
 	</insert>
 
 	<!-- 該当ユーザーのお知らせがあるか確認 -->
