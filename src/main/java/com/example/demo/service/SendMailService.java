@@ -127,7 +127,7 @@ public class SendMailService {
 		List<Map.Entry<Integer, StringBuilder>> sortedEntries = userSubmissionStatus.entrySet().stream()
 				.sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
 
-		// マネージャごとにメールを送信
+		// マネージャへメールを送信
 		for (Users user : users) {
 			SimpleMailMessage message = new SimpleMailMessage();
 			message.setTo(user.getEmail());

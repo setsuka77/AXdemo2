@@ -51,7 +51,7 @@ public class LogService {
 	private Timer timer = new Timer();
 
 	/**
-	 * エラーレベルのログを記録し、バッファに追加して一定時間後にメールを送信
+	 * エラーレベルのログを記録し、バッファに追加
 	 *
 	 * @param message ログに記録するメッセージ
 	 * @param e       発生した例外
@@ -63,7 +63,7 @@ public class LogService {
 	}
 
 	/**
-	 * エラーメッセージをバッファに追加し、タイマーで一定時間後にメールを送信
+	 * エラーメッセージをバッファに追加
 	 *
 	 * @param logMessage バッファに追加するログメッセージ
 	 */
@@ -84,7 +84,7 @@ public class LogService {
 	}
 
 	/**
-	 * バッファ内のメッセージをまとめて1通のメールとして送信
+	 * バッファ内のメッセージをまとめて1通のメールとして管理者に送信
 	 */
 	private void sendBufferedMessages() {
 		StringBuilder emailBody = new StringBuilder("システムに障害が発生しました。\n\n");
