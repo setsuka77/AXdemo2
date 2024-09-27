@@ -421,13 +421,15 @@ public class AttendanceService {
 	 * @param status 却下ステータス
 	 * @return 却下結果メッセージ
 	 */
-	public String rejectAttendance(Integer id, int status) {
+	public String rejectAttendance(Integer id, int status ,String comment) {
 		// 申請IDで申請内容を取得
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
 		// ステータスを却下済みに設定
 		req.setStatus(status);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
+		req.setComment(comment);
 		monthlyAttendanceReqMapper.updateStatus(req);
+		
 		// メッセージ追加
 		String userName = req.getUserName();
 		Date targetDate = req.getTargetYearMonth();
@@ -474,7 +476,7 @@ public class AttendanceService {
 		}
 		// 今日が月初の場合のみ通知作成
 		LocalDate today = LocalDate.now();
-		//if (today.getDayOfMonth() == 1) {
+		if (today.getDayOfMonth() == 1) {
 			//先月の勤怠を提出していないユーザーを検索
 			List<UsersDto> users = monthlyAttendanceReqMapper
 					.findUsersWithoutAttendance(java.sql.Date.valueOf(lastDate));
@@ -482,7 +484,7 @@ public class AttendanceService {
 			String notificationType = "勤怠申請未提出";
 			notificationsService.createNotificationForUsers(users, previousDay, notificationType, content,
 					java.sql.Date.valueOf(lastDate));
-		//}
+		}
 	}
 	
 

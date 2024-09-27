@@ -24,6 +24,7 @@
 		date = #{date},
 		status =
 		#{status}
+		comment = #{comment}
 		WHERE id = #{id}
 	</update>
 
@@ -88,7 +89,8 @@
 		parameterType="com.example.demo.entity.MonthlyAttendanceReq">
 		UPDATE monthly_attendance_req 
 		SET status = #{status},
-		date = #{date}
+		date = #{date},
+		comment = #{comment}
 		WHERE id = #{id}
 	</update>
 	

@@ -32,7 +32,7 @@ public interface AttendanceMapper {
 	List<AttendanceDto> findAttendanceByUserIdAndDateRange(@Param("userId") Integer userId, @Param("startDate") Date startDate,@Param("endDate") Date endDate);
 	
 	/**
-	 * 日報未提出者情報　取得
+	 * 勤怠未提出者情報　取得
 	 */
 	List<UsersDto> findUsersWithoutReport(@Param("date") Date date);
 	

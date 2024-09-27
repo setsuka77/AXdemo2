@@ -23,5 +23,7 @@ public class MonthlyAttendanceReq {
 	private Integer status;
 	/** ユーザーの名前*/
 	private String userName;
+	/** 却下理由 */
+	private String comment;
 	
 }

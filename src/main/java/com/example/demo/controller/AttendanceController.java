@@ -133,7 +133,14 @@ public class AttendanceController {
 		List<MonthlyAttendanceReqDto> monthlyAttendanceReq = attendanceService.findByYearMonth(userId, targetYearMonth);
 		String status = getStatusText(monthlyAttendanceReq);
 		model.addAttribute("statusText", status);
-
+		//却下理由があったらそれを追加する
+		if(monthlyAttendanceReq != null) {
+			for (MonthlyAttendanceReqDto req : monthlyAttendanceReq) {
+				String comment = req.getComment();
+				model.addAttribute("comment",comment);
+			}
+		}
+		
 		// ステータスに応じて入力可否を設定する(trueだと非活性化する)
 		boolean isFormEditable = "承認待ち".equals(status) || "承認済み".equals(status);
 		model.addAttribute("isFormEditable", isFormEditable);
@@ -163,6 +170,7 @@ public class AttendanceController {
 		setYearMonthList(model);
 		return "attendance/record";
 	}
+
 
 	/*
 	 * 上部ステータス表示の設定
@@ -346,8 +354,7 @@ public class AttendanceController {
 	 * @return 勤怠管理画面のリダイレクトURL
 	 */
 	@PostMapping(path = "/attendance/record", params = "approval")
-	public String approvalMonthAttendance(MonthlyAttendanceReq monthlyAttendanceReq, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+	public String approvalMonthAttendance( HttpSession session, RedirectAttributes redirectAttributes) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
@@ -367,15 +374,17 @@ public class AttendanceController {
 	 * @param redirectAttributes
 	 * @return 勤怠管理画面のリダイレクトURL
 	 */
-	@PostMapping(path = "/attendance/record", params = "rejected")
-	public String rejectMonthAttendance(AttendanceForm attendanceForm, HttpSession session,
-			RedirectAttributes redirectAttributes) {
+	@PostMapping(path = "/attendance/record")
+	public String rejectMonthAttendance(HttpSession session, RedirectAttributes redirectAttributes,
+			@RequestParam("comment")String comment) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
 		// 表示させている申請情報からIDを取得
 		Integer id = req.getId();
+		
 		// ステータスを変更
-		String message = attendanceService.rejectAttendance(id, 3); // 却下済みのステータス
+		String message = attendanceService.rejectAttendance(id, 3,comment); // 却下済みのステータス
+		//String message = attendanceService.rejectAttendance(id, 3); 
 		redirectAttributes.addFlashAttribute("message", message);
 
 		return "redirect:/attendance/record";

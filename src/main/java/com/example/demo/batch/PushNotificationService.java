@@ -1,23 +1,5 @@
 package com.example.demo.batch;
 
-import com.example.demo.dto.UsersDto;
-import com.example.demo.entity.PushSubscription;
-import com.example.demo.mapper.AttendanceMapper;
-import com.example.demo.mapper.DailyReportMapper;
-import com.example.demo.mapper.MonthlyAttendanceReqMapper;
-import com.example.demo.service.PushSubscriptionService;
-
-import nl.martijndwars.webpush.Notification;
-import nl.martijndwars.webpush.PushService;
-import nl.martijndwars.webpush.Subscription;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jose4j.lang.JoseException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
@@ -27,6 +9,24 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jose4j.lang.JoseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.UsersDto;
+import com.example.demo.entity.PushSubscription;
+import com.example.demo.mapper.AttendanceMapper;
+import com.example.demo.mapper.DailyReportMapper;
+import com.example.demo.mapper.MonthlyAttendanceReqMapper;
+import com.example.demo.service.PushSubscriptionService;
+
+import jakarta.annotation.PostConstruct;
+import nl.martijndwars.webpush.Notification;
+import nl.martijndwars.webpush.PushService;
+import nl.martijndwars.webpush.Subscription;
 
 @Service
 public class PushNotificationService {
@@ -111,6 +111,8 @@ public class PushNotificationService {
 		List<UsersDto> dailyReportUnsubmitted = dailyReportMapper.findUsersWithoutReport(Date.valueOf(LocalDate.now()));
 		// 本日の勤怠未提出の社員リストを取得
 		List<UsersDto> attendanceUnsubmitted = attendanceMapper.findUsersWithoutReport(Date.valueOf(LocalDate.now()));
+		System.out.println(attendanceUnsubmitted);
+		System.out.println(dailyReportUnsubmitted);
 		// 前月の勤怠月次承認未申請の社員リストを取得
 				YearMonth lastMonth = YearMonth.now().minusMonths(1);
 				LocalDate lastDate = lastMonth.atDay(1);

@@ -54,10 +54,9 @@
 
 			<form id="register-form" th:action="@{/attendance/record}" method="post">
 				<div class="button-group">
-					<button type="submit" th:if="${loginUser.role == '2'}" name="rejected"
+					<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" id="openModal"
 						th:attr="disabled=${checkReject == false}" class="button"
-						th:classappend="${checkReject == false ? 'disabled-form' : ''}"
-						　onClick="return confirm('却下します。よろしいですか？')">却下</button>
+						th:classappend="${checkReject == false ? 'disabled-form' : ''}">却下</button>
 
 					<button type="submit" th:if="${loginUser.role == '2'}" name="approval"
 						th:attr="disabled=${checkApproval == false}" class="button"
@@ -111,6 +110,10 @@
 					<span th:if="${loginUser.role == '2' and calendar != null and calendar.size() > 0}">
 						<a href="javascript:history.back()">⇐申請一覧に戻る</a>
 					</span>
+					<!-- 却下コメントがあるとき表示-->
+					<div th:if="${comment != null} and ${loginUser.role != '2'}" class="comment-contain">
+						<p>却下理由: <span th:text="${comment}"></span></p>
+					</div>
 					<thead>
 						<tr>
 							<th>日付</th>
@@ -209,7 +212,79 @@
 		</div>
 	</div>
 
+	<!-- モーダルのHTML -->
+	<dialog id="modalDialog" class="dialog">
+		<div class="dialog-content" id="dialogInputArea">
+			<div>却下理由を入力してください</div>
+			<form id="rejectForm">
+				<textarea id="comment" rows="4" placeholder="却下理由" class="dialog-comment"></textarea>
+				<div id="rejectButton">
+					<button type="button" id="submitReject">送信</button>
+					<button type="button" id="cancel">キャンセル</button>
+				</div>
+			</form>
+		</div>
+	</dialog>
+
+
 	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+			const openButton = document.getElementById('openModal');
+			const modalDialog = document.getElementById('modalDialog');
+			const cancelButton = document.getElementById('cancel');
+			const submitRejectButton = document.getElementById('submitReject');
+			const commentField = document.getElementById('comment');
+
+			// 「却下」ボタン押下時にモーダルを開く
+			openButton.addEventListener('click', (event) => {
+				event.preventDefault();  // フォームの送信を止める
+				modalDialog.showModal(); // モーダルを表示
+			});
+
+			//モーダルの外をクリックしたときにモーダルを閉じる
+			modalDialog.addEventListener('click', (event) => {
+				if (event.target.closest('#dialogInputArea') === null) {
+					modalDialog.close();
+				}
+			});
+
+			// 「キャンセル」ボタン押下時にモーダルを閉じる
+			cancelButton.addEventListener('click', () => {
+				modalDialog.close();  // モーダルを閉じる
+			});
+
+			// 「送信」ボタン押下時にフォームを送信する（fetch経由で）
+			submitRejectButton.addEventListener('click', () => {
+				const comment = commentField.value;
+				console.log("コメント送信:" + comment);
+
+				// fetchを使ってデータを送信
+				fetch("/login/attendance/record", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					body: new URLSearchParams({
+						comment: comment
+					})
+				})
+					.then(response => {
+						if (response.ok) {
+							// モーダルを閉じ、ページをリロードまたはメッセージ表示
+							modalDialog.close();
+							alert("却下理由が送信されました。");
+							window.location.reload(); // 必要に応じてリロード
+						} else {
+							alert("送信中にエラーが発生しました。");
+						}
+					})
+					.catch(error => {
+						alert("エラーが発生しました: " + error);
+					});
+			});
+		});
+
+
 		//表示時必須チェック
 		function validateDisplay() {
 			const year = document.getElementById('year').value;
@@ -224,7 +299,7 @@
 				return true; // フォームの送信を許可
 			}
 		}
-		
+
 		// 選択された日付を基準に祝日を取得
 		const year = document.getElementById('year').value;
 		const holidays = JapaneseHolidays.getHolidaysOf(year);

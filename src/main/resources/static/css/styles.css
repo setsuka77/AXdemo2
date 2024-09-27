@@ -599,6 +599,24 @@ input.note {
 	width: 450px;
 	/* 勤務状況カラムに合わせた横幅設定 */
 }
+.dialog{
+	width:600px;
+	margin: 0 auto;/* 中央配置 */
+	margin-top:20px;
+	padding: 10px 20px;
+	border: 2px solid rgb(93, 93, 93); /* ボーダーを設定 */
+	border-radius: 4px; /* 角を丸くする */
+}
+.dialog-comment{
+	border: 1px solid rgb(93, 93, 93); /* ボーダーを設定 */
+}
+
+#rejectButton {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end; /* ボタンを右寄せにする */
+}
+
 
 /* ===========================================
  * レスポンシブ対応・メディアクエリ設定
