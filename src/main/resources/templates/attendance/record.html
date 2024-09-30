@@ -54,7 +54,7 @@
 
 			<form id="register-form" th:action="@{/attendance/record}" method="post">
 				<div class="button-group">
-					<button type="submit" th:if="${loginUser.role == '2'}" name="rejected" id="openModal"
+					<button type="submit" th:if="${loginUser.role == '2'}" id="openModal"
 						th:attr="disabled=${checkReject == false}" class="button"
 						th:classappend="${checkReject == false ? 'disabled-form' : ''}">却下</button>
 
@@ -101,7 +101,7 @@
 					<p th:utext="${registerError}"></p>
 				</div>
 				<!-- 登録完了メッセージ表示 -->
-				<div th:if="${message}" class="alert alert-success" role="alert">
+				<div th:if="${message}" class="alert alert-success" role="alert" id="message">
 					<p th:utext="${message}"></p>
 				</div>
 
@@ -112,7 +112,7 @@
 					</span>
 					<!-- 却下コメントがあるとき表示-->
 					<div th:if="${comment != null} and ${loginUser.role != '2'}" class="comment-contain">
-						<p>却下理由: <span th:text="${comment}"></span></p>
+						却下理由: <span th:text="${comment}" style="white-space: pre-wrap;"></span>
 					</div>
 					<thead>
 						<tr>
@@ -216,10 +216,10 @@
 	<dialog id="modalDialog" class="dialog">
 		<div class="dialog-content" id="dialogInputArea">
 			<div>却下理由を入力してください</div>
-			<form id="rejectForm">
-				<textarea id="comment" rows="4" placeholder="却下理由" class="dialog-comment"></textarea>
+			<form id="rejectForm" th:action="@{/attendance/record}" method="post">
+				<textarea id="comment" rows="4" placeholder="却下理由" class="dialog-comment" name="comment"></textarea>
 				<div id="rejectButton">
-					<button type="button" id="submitReject">送信</button>
+					<button type="submit" id="submitReject" name="submitReject">送信</button>
 					<button type="button" id="cancel">キャンセル</button>
 				</div>
 			</form>
@@ -232,7 +232,6 @@
 			const openButton = document.getElementById('openModal');
 			const modalDialog = document.getElementById('modalDialog');
 			const cancelButton = document.getElementById('cancel');
-			const submitRejectButton = document.getElementById('submitReject');
 			const commentField = document.getElementById('comment');
 
 			// 「却下」ボタン押下時にモーダルを開く
@@ -253,37 +252,12 @@
 				modalDialog.close();  // モーダルを閉じる
 			});
 
-			// 「送信」ボタン押下時にフォームを送信する（fetch経由で）
-			submitRejectButton.addEventListener('click', () => {
-				const comment = commentField.value;
-				console.log("コメント送信:" + comment);
-
-				// fetchを使ってデータを送信
-				fetch("/login/attendance/record", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded"
-					},
-					body: new URLSearchParams({
-						comment: comment
-					})
-				})
-					.then(response => {
-						if (response.ok) {
-							// モーダルを閉じ、ページをリロードまたはメッセージ表示
-							modalDialog.close();
-							alert("却下理由が送信されました。");
-							window.location.reload(); // 必要に応じてリロード
-						} else {
-							alert("送信中にエラーが発生しました。");
-						}
-					})
-					.catch(error => {
-						alert("エラーが発生しました: " + error);
-					});
+			// フォーム送信後にモーダルを閉じる処理
+			document.getElementById('rejectForm').addEventListener('submit', () => {
+				modalDialog.close(); // 送信後にモーダルを閉じる
 			});
-		});
 
+		});
 
 		//表示時必須チェック
 		function validateDisplay() {

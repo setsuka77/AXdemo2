@@ -140,46 +140,53 @@ main {
 /* ===========================================
  * アコーディオンスタイル
  * ======================================== */
- .accordion-003 {
-    max-width: 650px;
-    margin-bottom: 7px;
-    border-bottom: 2px solid #d0d0d0;
+ 
+/* アコーディオンのスタイル設定 */
+.accordion-003 {
+    max-width: 650px; /* アコーディオンの最大幅 */
+    margin-bottom: 7px; /* アコーディオン項目間の下マージン */
+    border-bottom: 2px solid #d0d0d0; /* アコーディオン項目の下に境界線を追加 */
 }
 
+/* アコーディオンの要約部分のスタイル設定 */
 .accordion-003 summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    padding: 0.5em 0.5em;
-    color: #333333;
-    font-weight: 400;
-    cursor: pointer;
-    margin-left: 40px;
+    display: flex; /* フレックスボックスを使用して配置 */
+    justify-content: space-between; /* 要素間にスペースを均等に分配 */
+    align-items: center; /* 縦方向に中央揃え */
+    position: relative; /* 子要素の絶対位置を基準にするための設定 */
+    padding: 0.5em 0.5em; /* 内側の余白を設定 */
+    color: #333333; /* 文字色を指定 */
+    font-weight: 400; /* フォントの太さを指定 */
+    cursor: pointer; /* カーソルをポインターに変更してクリック可能にする */
+    margin-left: 40px; /* 左側にマージンを追加 */
 }
 
+/* ブラウザデフォルトのアコーディオンマーカーを非表示にする */
 .accordion-003 summary::-webkit-details-marker {
-    display: none;
+    display: none; /* マーカーを非表示 */
 }
 
+/* アコーディオンの要約部分に矢印を追加 */
 .accordion-003 summary::after {
-    transform: translateY(-25%) rotate(45deg);
-    width: 7px;
-    height: 7px;
-    margin-left: 10px;
-    border-bottom: 3px solid #333333b3;
-    border-right: 3px solid #333333b3;
-    content: '';
-    transition: transform .3s;
+    transform: translateY(-25%) rotate(45deg); /* 矢印の初期位置と回転を設定 */
+    width: 7px; /* 矢印の幅 */
+    height: 7px; /* 矢印の高さ */
+    margin-left: 10px; /* 矢印の左側にマージンを追加 */
+    border-bottom: 3px solid #333333b3; /* 矢印の下部分 */
+    border-right: 3px solid #333333b3; /* 矢印の右部分 */
+    content: ''; /* 内容を空に設定 */
+    transition: transform .3s; /* 矢印の回転にアニメーションを設定 */
 }
 
+/* アコーディオンが開いている時の矢印のスタイル設定 */
 .accordion-003[open] summary::after {
-    transform: rotate(225deg);
+    transform: rotate(225deg); /* 矢印を下向きに回転 */
 }
 
-.name{
-	font-size: 13px;
-	color: rgb(54, 54, 54);
+/* 名前表示のスタイル設定 */
+.name {
+    font-size: 13px; /* フォントサイズを指定 */
+    color: rgb(54, 54, 54); /* 文字色を指定 */
 }
 
 
@@ -599,6 +606,8 @@ input.note {
 	width: 450px;
 	/* 勤務状況カラムに合わせた横幅設定 */
 }
+
+/* モーダルの設定*/
 .dialog{
 	width:600px;
 	margin: 0 auto;/* 中央配置 */
@@ -607,16 +616,47 @@ input.note {
 	border: 2px solid rgb(93, 93, 93); /* ボーダーを設定 */
 	border-radius: 4px; /* 角を丸くする */
 }
+
+/* モーダルの中身の設定*/
 .dialog-comment{
 	border: 1px solid rgb(93, 93, 93); /* ボーダーを設定 */
 }
 
+/* モーダル内のボタンの設定*/
 #rejectButton {
 	display: flex;
 	gap: 10px;
 	justify-content: flex-end; /* ボタンを右寄せにする */
 }
 
+/* 却下理由の設定*/
+.comment-contain {
+  display: inline-block; /* インラインブロック要素として表示 */
+    color: #333; /* 文字色を指定 */
+    background: #fff; /* 背景色を白に設定 */
+    border: solid 2px #535353; /* 周囲に2pxの実線境界を設定 */
+    padding: 10px 10px; /* 内側の余白を上下10px、左右10pxに設定 */
+    position: relative; /* 子要素の絶対位置を基準にするための設定 */
+    border-radius: 4px; /* 角を丸くする */
+}
+
+/* 吹き出しの三角部分を作成 */
+.comment-contain::before {
+    content: ""; /* 内容を空に設定 */
+    position: absolute; /* 絶対位置に設定 */
+    width: 15px; /* 三角部分の幅 */
+    height: 18px; /* 三角部分の高さ */
+    background: #fff; /* 三角部分の背景色を白に設定 */
+    bottom: -18px; /* 親要素の下に配置 */
+    left: 10%; /* 親要素の幅に対して左から10%の位置に配置 */
+    border-right: 3px solid #333; /* 三角部分の右側に境界を設定 */
+    transform: skew(-30deg); /* 三角形の形状を作成するために傾ける */
+    z-index: 1; /* 他の要素の前に表示 */
+}
+
+.because{
+	 font-weight: bold; /* 太字 */
+}
 
 /* ===========================================
  * レスポンシブ対応・メディアクエリ設定

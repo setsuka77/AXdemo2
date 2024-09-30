@@ -403,6 +403,7 @@ public class AttendanceService {
 		// ステータスを承認済みに設定
 		req.setStatus(status);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
+		req.setComment(null);
 		monthlyAttendanceReqMapper.updateStatus(req);
 		// メッセージ追加
 		String userName = req.getUserName();
@@ -427,7 +428,7 @@ public class AttendanceService {
 		// ステータスを却下済みに設定
 		req.setStatus(status);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
-		req.setComment(comment);
+		req.setComment(comment == null || comment.trim().isEmpty() ? null : comment);
 		monthlyAttendanceReqMapper.updateStatus(req);
 		
 		// メッセージ追加

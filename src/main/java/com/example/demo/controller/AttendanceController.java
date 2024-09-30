@@ -190,6 +190,10 @@ public class AttendanceController {
 			return "承認済み";
 		case 3:
 			return "却下";
+		case 4:
+			return "訂正承認待ち";
+		case 5:
+			return "訂正承認済み";
 		default:
 			return "未申請";
 		}
@@ -372,10 +376,10 @@ public class AttendanceController {
 	 * @param attendanceForm     勤怠フォーム
 	 * @param session
 	 * @param redirectAttributes
-	 * @return 勤怠管理画面のリダイレクトURL
+	 * @return 登録完了メッセージ
 	 */
-	@PostMapping(path = "/attendance/record")
-	public String rejectMonthAttendance(HttpSession session, RedirectAttributes redirectAttributes,
+	@PostMapping(path = "/attendance/record", params = "submitReject")
+	public String rejectMonthAttendance(HttpSession session,RedirectAttributes redirectAttributes,
 			@RequestParam("comment")String comment) {
 		// 申請情報の取得
 		MonthlyAttendanceReq req = (MonthlyAttendanceReq) session.getAttribute("monthlyAttendanceReq");
@@ -384,7 +388,6 @@ public class AttendanceController {
 		
 		// ステータスを変更
 		String message = attendanceService.rejectAttendance(id, 3,comment); // 却下済みのステータス
-		//String message = attendanceService.rejectAttendance(id, 3); 
 		redirectAttributes.addFlashAttribute("message", message);
 
 		return "redirect:/attendance/record";
