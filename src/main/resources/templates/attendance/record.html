@@ -54,8 +54,8 @@
 
 			<form id="register-form" th:action="@{/attendance/record}" method="post">
 				<div class="button-group">
-					<button type="submit" th:if="${loginUser.role == '2'}" id="openModal"
-						th:attr="disabled=${checkReject == false}" class="button"
+					<button type="submit" th:if="${loginUser.role == '2'}" data-dialog="#rejectModal"
+						th:attr="disabled=${checkReject == false}" class="button js_dialog_open el_button"
 						th:classappend="${checkReject == false ? 'disabled-form' : ''}">却下</button>
 
 					<button type="submit" th:if="${loginUser.role == '2'}" name="approval"
@@ -63,11 +63,15 @@
 						th:classappend="${checkApproval == false ? 'disabled-form' : ''}"
 						　onClick="return confirm('承認します。よろしいですか？')">承認</button>
 
-					<button type="submit" th:if="${loginUser.role != '2'}" th:attr="disabled=${checkAllStatus == false}"
-						name="request" class="button" th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}"
+					<button type="submit" th:if="${loginUser.role != '2'} and ${statusText != '承認済み'}"
+						th:attr="disabled=${checkAllStatus == false}" name="request" class="button"
+						th:classappend="${checkAllStatus == false ? 'disabled-form' : ''}"
 						onClick="return confirm('承認申請します。よろしいですか？')">承認申請</button>
 					<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
 					<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
+
+					<button type="submit" th:if="${loginUser.role != '2'} and ${statusText == '承認済み'}"
+						data-dialog="#correctModal" class="button js_dialog_open el_button">訂正申請</button>
 
 					<button type="submit" th:if="${loginUser.role != '2'}" name="regist" class="button"
 						th:disabled="${checkRegister == false}"
@@ -81,6 +85,7 @@
 						<thead>
 							<tr>
 								<th>承認申請者</th>
+								<th>申請内容</th>
 								<th>申請対象年月</th>
 								<th>申請日</th>
 							</tr>
@@ -89,6 +94,7 @@
 							<tr th:each="req : ${monthlyAttendanceReq}">
 								<td><a th:href="@{/attendance/record/detail(id=${req.id})}"
 										th:text="${req.userName}">申請者</a></td>
+								<td th:text="${req.ApplicationType}">申請内容</td>
 								<td th:text="${#dates.format(req.targetYearMonth, 'yyyy年M月')}">申請対象年月</td>
 								<td th:text="${#dates.format(req.date, 'yyyy年M月dd日')}">申請日</td>
 							</tr>
@@ -106,14 +112,19 @@
 				</div>
 
 				<table class="table table-hover" border="1" cellspacing="0" id="attendance">
+					<!-- 却下コメントがあるとき表示-->
+					<div th:if="${comment != null} and ${loginUser.role != '2'}" class="comment-reject">
+						<p>承認者:<span th:text="${approverName}"></span></p>
+						却下理由:<span th:text="${comment}" style="white-space: pre-wrap;"></span>
+					</div>
+					<!-- 訂正申請コメントがあるとき表示-->
+					<div th:if="${comment != null} and ${loginUser.role == '2'}" class="comment-approver">
+						申請理由:<span th:text="${comment}" style="white-space: pre-wrap;"></span>
+					</div>
 					<!-- 申請一覧に戻るボタンを表示する条件 -->
 					<span th:if="${loginUser.role == '2' and calendar != null and calendar.size() > 0}">
-						<a href="javascript:history.back()">⇐申請一覧に戻る</a>
+						<p><a href="javascript:history.back()">⇐申請一覧に戻る</a></p>
 					</span>
-					<!-- 却下コメントがあるとき表示-->
-					<div th:if="${comment != null} and ${loginUser.role != '2'}" class="comment-contain">
-						却下理由: <span th:text="${comment}" style="white-space: pre-wrap;"></span>
-					</div>
 					<thead>
 						<tr>
 							<th>日付</th>
@@ -212,15 +223,33 @@
 		</div>
 	</div>
 
-	<!-- モーダルのHTML -->
-	<dialog id="modalDialog" class="dialog">
+	<!-- 却下理由用モーダル -->
+	<dialog id="rejectModal" class="dialog">
 		<div class="dialog-content" id="dialogInputArea">
 			<div>却下理由を入力してください</div>
-			<form id="rejectForm" th:action="@{/attendance/record}" method="post">
-				<textarea id="comment" rows="4" placeholder="却下理由" class="dialog-comment" name="comment"></textarea>
-				<div id="rejectButton">
+			<form id="rejectModalForm" th:action="@{/attendance/record}" method="post">
+				<textarea id="rejectComment" rows="4" placeholder="却下理由" class="dialog-comment"
+					name="comment"></textarea>
+				<div class="modalButton">
 					<button type="submit" id="submitReject" name="submitReject">送信</button>
-					<button type="button" id="cancel">キャンセル</button>
+					<button type="button" id="cancel" class="js_dialog_close el_button">キャンセル</button>
+				</div>
+			</form>
+		</div>
+	</dialog>
+
+	<!-- 訂正理由用モーダル -->
+	<dialog id="correctModal" class="dialog">
+		<div class="dialog-content" id="dialogInputAreaC">
+			<div>訂正理由を入力してください</div>
+			<form id="correctModalForm" th:action="@{/attendance/record}" method="post">
+				<textarea id="correctComment" rows="4" placeholder="訂正理由" class="dialog-comment"
+					name="comment"></textarea>
+				<input type="hidden" id="hidden-year" name="year" th:value="${param.year}" />
+				<input type="hidden" id="hidden-month" name="month" th:value="${param.month}" />
+				<div class="modalButton">
+					<button type="submit" id="correct" name="correct">送信</button>
+					<button type="button" id="cancelCorrect" class="js_dialog_close el_button">キャンセル</button>
 				</div>
 			</form>
 		</div>
@@ -228,35 +257,25 @@
 
 
 	<script>
-		document.addEventListener("DOMContentLoaded", () => {
-			const openButton = document.getElementById('openModal');
-			const modalDialog = document.getElementById('modalDialog');
-			const cancelButton = document.getElementById('cancel');
-			const commentField = document.getElementById('comment');
+		const dialogOpenButtons = document.querySelectorAll(".js_dialog_open");
+		const dialogCloseButtons = document.querySelectorAll(".js_dialog_close");
 
-			// 「却下」ボタン押下時にモーダルを開く
-			openButton.addEventListener('click', (event) => {
-				event.preventDefault();  // フォームの送信を止める
-				modalDialog.showModal(); // モーダルを表示
+		// 開く時
+		dialogOpenButtons.forEach((button) => {
+			const dialog = document.querySelector(button.dataset.dialog);
+			button.addEventListener("click", () => {
+				event.preventDefault();
+				dialog.showModal();
 			});
+		});
 
-			//モーダルの外をクリックしたときにモーダルを閉じる
-			modalDialog.addEventListener('click', (event) => {
-				if (event.target.closest('#dialogInputArea') === null) {
-					modalDialog.close();
-				}
+		// 閉じる時
+		dialogCloseButtons.forEach((button) => {
+			const dialog = button.closest("dialog");
+
+			button.addEventListener("click", () => {
+				dialog.close();
 			});
-
-			// 「キャンセル」ボタン押下時にモーダルを閉じる
-			cancelButton.addEventListener('click', () => {
-				modalDialog.close();  // モーダルを閉じる
-			});
-
-			// フォーム送信後にモーダルを閉じる処理
-			document.getElementById('rejectForm').addEventListener('submit', () => {
-				modalDialog.close(); // 送信後にモーダルを閉じる
-			});
-
 		});
 
 		//表示時必須チェック

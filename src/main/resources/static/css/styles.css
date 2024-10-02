@@ -623,14 +623,14 @@ input.note {
 }
 
 /* モーダル内のボタンの設定*/
-#rejectButton {
+.modalButton {
 	display: flex;
 	gap: 10px;
 	justify-content: flex-end; /* ボタンを右寄せにする */
 }
 
 /* 却下理由の設定*/
-.comment-contain {
+.comment-reject {
   display: inline-block; /* インラインブロック要素として表示 */
     color: #333; /* 文字色を指定 */
     background: #fff; /* 背景色を白に設定 */
@@ -641,7 +641,7 @@ input.note {
 }
 
 /* 吹き出しの三角部分を作成 */
-.comment-contain::before {
+.comment-reject::before {
     content: ""; /* 内容を空に設定 */
     position: absolute; /* 絶対位置に設定 */
     width: 15px; /* 三角部分の幅 */
@@ -654,8 +654,28 @@ input.note {
     z-index: 1; /* 他の要素の前に表示 */
 }
 
-.because{
-	 font-weight: bold; /* 太字 */
+/*訂正申請の理由*/
+.comment-approver{
+	display: inline-block; /* インラインブロック要素として表示 */
+    color: #333; /* 文字色を指定 */
+    background: #fff; /* 背景色を白に設定 */
+    border: solid 2px #535353; /* 周囲に2pxの実線境界を設定 */
+    padding: 10px 10px; /* 内側の余白を上下10px、左右10pxに設定 */
+    position: relative; /* 子要素の絶対位置を基準にするための設定 */
+    border-radius: 4px; /* 角を丸くする */
+}
+/* 吹き出しの三角部分を作成 */
+.comment-approver::before {
+    content: ""; /* 内容を空に設定 */
+    position: absolute; /* 絶対位置に設定 */
+    width: 15px; /* 三角部分の幅 */
+    height: 18px; /* 三角部分の高さ */
+    background: #fff; /* 三角部分の背景色を白に設定 */
+    top: -18px; /* 親要素の下に配置 */
+    left: 10%; /* 親要素の幅に対して左から10%の位置に配置 */
+    border-left: 3px solid #333; /* 三角部分の右側に境界を設定 */
+    transform: skew(30deg); /* 三角形の形状を作成するために傾ける */
+    z-index: 1; /* 他の要素の前に表示 */
 }
 
 /* ===========================================

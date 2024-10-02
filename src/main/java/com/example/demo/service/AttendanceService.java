@@ -45,12 +45,21 @@ public class AttendanceService {
 	private NotificationsService notificationsService;
 
 	/**
-	 * ステータスが1の申請一覧を取得する
+	 * ステータスが1(承認待ち)と4(訂正承認待ち)の申請一覧を取得する
 	 *
 	 * @return ステータスが1の月次勤怠申請のリスト
 	 */
 	public List<MonthlyAttendanceReqDto> findAllAttendance() {
-		return monthlyAttendanceReqMapper.findAllWithStatus();
+	 List<MonthlyAttendanceReqDto> attendanceList = monthlyAttendanceReqMapper.findAllWithStatus();
+	 // ステータスによってapplicationTypeを設定
+	 for (MonthlyAttendanceReqDto dto : attendanceList) {
+		 if (dto.getApproverName() != null && !dto.getApproverName().isEmpty()) {
+		     dto.setApplicationType("勤怠訂正");
+		 } else if (dto.getStatus() == 1) {
+			 dto.setApplicationType("勤怠申請");
+		 }
+	 }
+	 return attendanceList;
 	}
 
 	/**
@@ -155,7 +164,7 @@ public class AttendanceService {
 	 * @return ステータスが「却下」または「未申請」の場合は true、それ以外は false
 	 */
 	public boolean checkRegister(String status) {
-		return "却下".equals(status) || "未申請".equals(status); //true
+		return "却下".equals(status) || "未申請".equals(status) || "訂正承認済み".equals(status); //true
 	}
 
 	/**
@@ -381,6 +390,33 @@ public class AttendanceService {
 	}
 
 	/**
+	 * 訂正ボタン押下 承認申請更新
+	 * 
+	 * @param year
+	 * @param month
+	 * @param user
+	 * @param comment
+	 * @return 処理結果メッセージ
+	 */
+	public String correctMonthlyAttendanceReq(Integer year, Integer month, Users user, String comment) {
+		YearMonth yearMonth = YearMonth.of(year, month);
+		LocalDate startDate = yearMonth.atDay(1);
+
+		MonthlyAttendanceReq existingReq = monthlyAttendanceReqMapper.findByUserAndYearMonth(user.getId(),
+				java.sql.Date.valueOf(startDate));
+		MonthlyAttendanceReq req = new MonthlyAttendanceReq();
+		req.setId(existingReq.getId());
+		req.setUserId(user.getId());
+		req.setTargetYearMonth(java.sql.Date.valueOf(startDate.withDayOfMonth(1)));
+		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
+		req.setStatus(4); // 訂正承認待ち
+		req.setComment(comment);
+
+		monthlyAttendanceReqMapper.update(req);
+		return "訂正申請が完了しました。";
+	}
+
+	/**
 	 * 月次勤怠申請のIDで取得
 	 * 
 	 * @param id 月次勤怠申請ID
@@ -397,13 +433,18 @@ public class AttendanceService {
 	 * @param status 承認ステータス
 	 * @return 承認結果メッセージ
 	 */
-	public String approvalAttendance(Integer id, int status) {
+	public String approvalAttendance(Integer id, String name) {
 		// 申請IDで申請内容を取得
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
-		// ステータスを承認済みに設定
-		req.setStatus(status);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		req.setComment(null);
+		req.setApproverName(name);
+		// ステータスを設定
+		if (req.getStatus() == 4) {
+			req.setStatus(5);
+		} else {
+			req.setStatus(2);
+		}
 		monthlyAttendanceReqMapper.updateStatus(req);
 		// メッセージ追加
 		String userName = req.getUserName();
@@ -412,6 +453,16 @@ public class AttendanceService {
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 		String message = userName + "の" + formattedDate + "における承認申請が承認されました。";
 		
+		//訂正申請時、通知作成
+		if(req.getApproverName() != null) {
+			String notificationType = "勤怠申請結果";
+			java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
+			Integer userId = req.getUserId();
+			String content = formattedDate + "における勤怠訂正申請が承認されました。";
+			Long notificationId = notificationsService.createNotification(content, notificationType, targetsqlDate);
+			notificationsService.linkNotificationToUser(userId, notificationId, notificationType);
+		}
+
 		return message;
 	}
 
@@ -422,30 +473,36 @@ public class AttendanceService {
 	 * @param status 却下ステータス
 	 * @return 却下結果メッセージ
 	 */
-	public String rejectAttendance(Integer id, int status ,String comment) {
+	public String rejectAttendance(Integer id, int status, String comment, String name) {
 		// 申請IDで申請内容を取得
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
 		// ステータスを却下済みに設定
 		req.setStatus(status);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		req.setComment(comment == null || comment.trim().isEmpty() ? null : comment);
+		req.setApproverName(name);
 		monthlyAttendanceReqMapper.updateStatus(req);
-		
+
 		// メッセージ追加
 		String userName = req.getUserName();
 		Date targetDate = req.getTargetYearMonth();
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 		String message = userName + "の" + formattedDate + "における承認申請が却下されました。";
-		
+
 		//通知作成
 		String notificationType = "勤怠申請結果";
 		java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
 		Integer userId = req.getUserId();
-		String content = formattedDate + "における勤怠申請が却下されました。";
-		Long notificationId =notificationsService.createNotification(content,notificationType,targetsqlDate);
+		String content;
+		if(req.getApproverName() != null) {
+			content = formattedDate + "における勤怠訂正申請が却下されました。";
+		}else {
+			content = formattedDate + "における勤怠申請が却下されました。";
+		}
+		Long notificationId = notificationsService.createNotification(content, notificationType, targetsqlDate);
 		notificationsService.linkNotificationToUser(userId, notificationId, notificationType);
-		
+
 		return message;
 	}
 
@@ -469,7 +526,7 @@ public class AttendanceService {
 			String formattedDate = previousDay.format(formatter);
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
-		
+
 			// 日報未提出の通知を作成し、全ユーザーに通知を紐付け
 			String notificationType = "勤怠未提出";
 			String content = formattedDate + "の勤怠が提出されていません";
@@ -487,7 +544,6 @@ public class AttendanceService {
 					java.sql.Date.valueOf(lastDate));
 		}
 	}
-	
 
 	/**
 	 * 勤怠提出の有無確認(マネージャー用)
@@ -503,7 +559,7 @@ public class AttendanceService {
 		// 前日の日付を取得
 		LocalDate previousDay = LocalDate.now().minusDays(1);
 		java.sql.Date date = java.sql.Date.valueOf(previousDay);
-		
+
 		List<NotificationsDto> notifications = new ArrayList<>();
 
 		//土日かどうかチェック
@@ -512,22 +568,22 @@ public class AttendanceService {
 			String formattedDate = previousDay.format(formatter);
 			// 前日の日報を提出していないユーザーを検索
 			List<UsersDto> users = attendanceMapper.findUsersWithoutReport(date);
-			
+
 			// マネージャーに未提出ユーザー数のお知らせ
 			int missingAttendanceCount = users.size();
 			if (missingAttendanceCount > 0) {
 				String managerContent = formattedDate + "の勤怠が" + missingAttendanceCount + "人未提出です ("
-						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
+						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) + "時点" + ")";
 				// マネージャーの勤怠未提出通知を作成
-	            NotificationsDto notificationsDto = new NotificationsDto();
-	            notificationsDto.setContent(managerContent);
-	            notificationsDto.setNotificationType("勤怠未提出");
-	            notificationsDto.setCreatedAt(LocalDateTime.now());
-	            
-	            // 未提出ユーザーのリストを設定
-	            notificationsDto.setUsers(users);
+				NotificationsDto notificationsDto = new NotificationsDto();
+				notificationsDto.setContent(managerContent);
+				notificationsDto.setNotificationType("勤怠未提出");
+				notificationsDto.setCreatedAt(LocalDateTime.now());
 
-	            notifications.add(notificationsDto);
+				// 未提出ユーザーのリストを設定
+				notificationsDto.setUsers(users);
+
+				notifications.add(notificationsDto);
 			}
 		}
 
@@ -542,17 +598,17 @@ public class AttendanceService {
 			String formattedDate = lastMonth.format(formatterMonth);
 			int missingReportCount = users.size();
 			String managerContent = formattedDate + "の勤怠が" + missingReportCount + "人申請されていません("
-					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
+					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) + "時点" + ")";
 			// マネージャーの日報未提出通知を作成
-            NotificationsDto notificationsDto = new NotificationsDto();
-            notificationsDto.setContent(managerContent);
-            notificationsDto.setNotificationType("勤怠申請未提出");
-            notificationsDto.setCreatedAt(LocalDateTime.now());
+			NotificationsDto notificationsDto = new NotificationsDto();
+			notificationsDto.setContent(managerContent);
+			notificationsDto.setNotificationType("勤怠申請未提出");
+			notificationsDto.setCreatedAt(LocalDateTime.now());
 
-            // 未提出ユーザーのリストを設定
-            notificationsDto.setUsers(users);
+			// 未提出ユーザーのリストを設定
+			notificationsDto.setUsers(users);
 
-            notifications.add(notificationsDto);            
+			notifications.add(notificationsDto);
 		}
 		return notifications;
 	}

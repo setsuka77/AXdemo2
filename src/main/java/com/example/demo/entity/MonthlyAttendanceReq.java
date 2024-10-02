@@ -25,5 +25,9 @@ public class MonthlyAttendanceReq {
 	private String userName;
 	/** 却下理由 */
 	private String comment;
+	/** 承認者 */
+	private String approverName;
+	/** 申請の種類 */
+	private String applicationType;
 	
 }

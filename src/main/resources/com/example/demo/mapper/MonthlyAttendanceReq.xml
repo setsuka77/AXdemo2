@@ -23,7 +23,7 @@
 		target_year_month = #{targetYearMonth},
 		date = #{date},
 		status =
-		#{status}
+		#{status},
 		comment = #{comment}
 		WHERE id = #{id}
 	</update>
@@ -49,7 +49,7 @@
 		JOIN
 		users u ON mar.user_id = u.id
 		WHERE
-		mar.status = 1
+		mar.status IN (1, 4)
 	</select>
 
 	<!-- 指定した年月のステータスを取得 -->
@@ -90,7 +90,8 @@
 		UPDATE monthly_attendance_req 
 		SET status = #{status},
 		date = #{date},
-		comment = #{comment}
+		comment = #{comment},
+		approver_name = #{approverName}
 		WHERE id = #{id}
 	</update>
 	
