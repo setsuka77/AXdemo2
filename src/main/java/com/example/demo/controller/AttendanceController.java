@@ -23,6 +23,7 @@ import com.example.demo.entity.MonthlyAttendanceReq;
 import com.example.demo.entity.Users;
 import com.example.demo.form.AttendanceForm;
 import com.example.demo.service.AttendanceService;
+import com.example.demo.service.NotificationsService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -31,6 +32,8 @@ public class AttendanceController {
 
 	@Autowired
 	private AttendanceService attendanceService;
+	@Autowired
+	private NotificationsService notificationsService;
 
 	/**
 	 * 勤怠登録画面 初期表示
@@ -151,6 +154,9 @@ public class AttendanceController {
 		boolean checkAllStatus = false;
 		//登録ボタンの表示チェック (True時:活性化)
 		boolean checkRegister = attendanceService.checkRegister(status);
+		//勤怠訂正申請が却下時に通知を非表示に
+		String notificationType = "訂正申請結果";
+		notificationsService.checkNotifications(userId, targetYearMonth, notificationType);
 
 		//本日の日付を渡す
 		LocalDate nowDate = LocalDate.now();
@@ -430,7 +436,7 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 		String name = loginUser.getName();
 		// ステータスを変更
-		String message = attendanceService.rejectAttendance(id, 3, comment, name); // 却下済みのステータス
+		String message = attendanceService.rejectAttendance(id, comment, name); // 却下済みのステータス
 		redirectAttributes.addFlashAttribute("message", message);
 
 		return "redirect:/attendance/record";

@@ -35,7 +35,7 @@
 						<td th:text="${notification.notificationType}"></td>
 						<td>
 							<a href="javascript:void(0);" class="notification-link"
-								th:attr="data-type=${notification.notificationType}, data-date=${#dates.format(notification.targetDate, 'yyyy-MM-dd')}"
+								th:attr="data-type=${notification.content}, data-date=${#dates.format(notification.targetDate, 'yyyy-MM-dd')}"
 								th:text="${notification.content}">
 							</a>
 						</td>
@@ -263,24 +263,17 @@
 		link.addEventListener('click', function (event) {
 			event.preventDefault();  // デフォルトのリンク動作を無効化
 
-			const notificationType = link.getAttribute('data-type');
+			const content = link.getAttribute('data-type');
 			const targetDate = new Date(link.getAttribute('data-date'));
 
 			// 年と月を取得
 			const year = targetDate.getFullYear();
 			const month = targetDate.getMonth() + 1;
 			const date = targetDate.getDate();
-			console.log('年:', year);
-			console.log('月:', month);
-			console.log('対象日:', targetDate);
-			console.log('通知の種類:', notificationType);
-			console.log('対象日:', date);
 
 			const reportDate = year + '-' + month + '-' + date;
 
-			console.log('日報用:', reportDate);
-
-			if (notificationType.includes('勤怠')) {
+			if (content.includes('勤怠')) {
 				// POST リクエストを送信
 				const form = document.createElement('form');
 				form.method = 'POST';
@@ -300,7 +293,7 @@
 
 				document.body.appendChild(form);
 				form.submit();
-			} else if (notificationType.includes('日報')) {
+			} else if (content.includes('日報')) {
 				// POST リクエストを送信
 				const form = document.createElement('form');
 				form.method = 'POST';

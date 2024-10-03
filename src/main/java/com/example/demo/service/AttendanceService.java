@@ -375,7 +375,12 @@ public class AttendanceService {
 		req.setStatus(1); // 承認待ち
 
 		// 既存の UserNotifications を userId と targetDate,notificationType で検索
-		String notificationType = "勤怠申請未提出";
+		String notificationType;
+		if(existingReq != null) {
+			notificationType = "訂正申請結果";
+		}else {
+			notificationType = "勤怠申請未提出";
+		}
 		notificationsService.checkNotifications(user.getId(), java.sql.Date.valueOf(startDate.withDayOfMonth(1)),
 				notificationType);
 
@@ -390,7 +395,7 @@ public class AttendanceService {
 	}
 
 	/**
-	 * 訂正ボタン押下 承認申請更新
+	 * 訂正申請ボタン押下 承認申請更新
 	 * 
 	 * @param year
 	 * @param month
@@ -451,11 +456,17 @@ public class AttendanceService {
 		Date targetDate = req.getTargetYearMonth();
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
-		String message = userName + "の" + formattedDate + "における承認申請が承認されました。";
+		String message;
+		if(req.getApproverName() != null && req.getStatus() == 5) {
+			message = userName + "の" + formattedDate + "における訂正申請が承認されました。";
+		}else {
+			message = userName + "の" + formattedDate + "における承認申請が承認されました。";
+		}
+		System.out.println(req);
 		
 		//訂正申請時、通知作成
-		if(req.getApproverName() != null) {
-			String notificationType = "勤怠申請結果";
+		if(req.getApproverName() != null && req.getStatus() == 5) {
+			String notificationType = "訂正申請結果";
 			java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
 			Integer userId = req.getUserId();
 			String content = formattedDate + "における勤怠訂正申請が承認されました。";
@@ -473,14 +484,18 @@ public class AttendanceService {
 	 * @param status 却下ステータス
 	 * @return 却下結果メッセージ
 	 */
-	public String rejectAttendance(Integer id, int status, String comment, String name) {
+	public String rejectAttendance(Integer id,String comment, String name) {
 		// 申請IDで申請内容を取得
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
-		// ステータスを却下済みに設定
-		req.setStatus(status);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		req.setComment(comment == null || comment.trim().isEmpty() ? null : comment);
 		req.setApproverName(name);
+		// ステータスを設定
+		if (req.getStatus() == 4) {
+			req.setStatus(2);
+		} else {
+			req.setStatus(3);
+		}
 		monthlyAttendanceReqMapper.updateStatus(req);
 
 		// メッセージ追加
@@ -488,16 +503,23 @@ public class AttendanceService {
 		Date targetDate = req.getTargetYearMonth();
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
-		String message = userName + "の" + formattedDate + "における承認申請が却下されました。";
-
+		String message;
+		if(req.getApproverName() != null && req.getStatus() == 2) {
+			message = userName + "の" + formattedDate + "における訂正申請が却下されました。";
+		}else {
+			message = userName + "の" + formattedDate + "における承認申請が却下されました。";
+		}
+		
 		//通知作成
-		String notificationType = "勤怠申請結果";
 		java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
 		Integer userId = req.getUserId();
+		String notificationType;
 		String content;
 		if(req.getApproverName() != null) {
+			notificationType = "訂正申請結果";
 			content = formattedDate + "における勤怠訂正申請が却下されました。";
 		}else {
+			notificationType = "勤怠申請結果";
 			content = formattedDate + "における勤怠申請が却下されました。";
 		}
 		Long notificationId = notificationsService.createNotification(content, notificationType, targetsqlDate);
