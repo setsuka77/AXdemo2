@@ -32,7 +32,7 @@
 				<tbody>
 					<tr th:each="notification : ${notifications}">
 						<td th:text="${notification.createdAtFormatted}"></td>
-						<td th:text="${notification.notificationType}"></td>
+						<td th:text="${notification.notificationType}" class="notiType"></td>
 						<td>
 							<a href="javascript:void(0);" class="notification-link"
 								th:attr="data-type=${notification.content}, data-date=${#dates.format(notification.targetDate, 'yyyy-MM-dd')}"
@@ -310,6 +310,31 @@
 
 			} else {
 				console.log('Unknown notification type:', notificationType);
+			}
+		});
+	});
+
+	// 通知種類CSS適用
+	document.addEventListener('DOMContentLoaded', function () {
+		document.querySelectorAll('tr').forEach(function (row) {
+			const notiTypeElement = row.querySelector('.notiType');
+			const contentElement = row.querySelector('.notification-link');
+
+			const notiType = notiTypeElement ? notiTypeElement.textContent.trim() : '';
+			const content = contentElement ? contentElement.textContent.trim() : '';
+			notiTypeElement.classList.add('box2');
+
+			if (notiType.includes('未提出')) {
+				className = 'noti-unsubmitted';
+			} else if (content.includes('承認')) {
+				className = 'noti-approval';
+			} else if (content.includes('却下')) {
+				className = 'noti-rejection';
+			}
+
+			// クラスを notiTypeに適用
+			if (className) {
+				notiTypeElement.classList.add(className);
 			}
 		});
 	});

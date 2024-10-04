@@ -1,17 +1,17 @@
 package com.example.demo.batch;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.service.SendMailService;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @Service
 public class LogService {
@@ -57,9 +57,9 @@ public class LogService {
 	 * @param e       発生した例外
 	 */
 	public void logError(String jobName, String message, Exception e) {
-		logger.error(message, e);
-		saveLogToDB(jobName,"ERROR", message, e.getMessage());
-		addToBuffer("【種別】" + message + "\n【詳細】" + e.getMessage());
+		logger.error(message, e);//エラーログ出力
+		saveLogToDB(jobName,"ERROR", message, e.getMessage());//DBへ保存
+		addToBuffer("【種別】" + message + "\n【詳細】" + e.getMessage());//バッファへ追加
 	}
 
 	/**

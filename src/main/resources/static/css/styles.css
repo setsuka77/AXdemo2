@@ -358,6 +358,28 @@ textarea {
     text-decoration: underline; /* マウスオーバー時に下線を表示 */
 }
 
+/*お知らせ種類のスタイル*/
+/* 共通のスタイル */
+.box2 {
+    background: #FFF;
+    padding: 2px;
+    text-align: center;
+}
+
+/* 通知ごとの文字色と枠線をカスタマイズ */
+/*未提出*/
+.noti-unsubmitted {
+    color: rgb(228, 67, 54); /* 赤色 */
+}
+
+/*.noti-approval {
+    color: rgb(121, 208, 106);  明るい緑 
+}
+
+.noti-rejection {
+    color: rgb(75, 155, 243);  明るい青 
+}*/
+
 
 /* ボタンスタイル */
 /* ======================================== */

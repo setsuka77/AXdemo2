@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.batch.LogService;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.Users;
 import com.example.demo.mapper.AttendanceMapper;
@@ -37,6 +40,8 @@ public class SendMailService {
 
 	@Autowired
 	private MonthlyAttendanceReqMapper monthlyAttendanceReqMapper;
+	
+	private static final Logger logger = LoggerFactory.getLogger(LogService.class);
 
 	/**
 	 * テストメール送信(Controller経由)
@@ -62,7 +67,7 @@ public class SendMailService {
 	 */
 	public void sendSystemFailureMail(String role, String emailBody) {
 		List<Users> users = usersMapper.findUsersByRole(role);
-
+		
 		for (Users user : users) {
 			SimpleMailMessage message = new SimpleMailMessage();
 			message.setTo(user.getEmail());

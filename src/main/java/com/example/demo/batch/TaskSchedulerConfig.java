@@ -28,15 +28,16 @@ public class TaskSchedulerConfig {
 	 * 毎日18時10分にバッチ処理を実行、日報勤怠未提出者にプッシュ通知を送信
 	 */
 	// @Scheduled(cron = "0 10 18 * * MON-FRI", zone = "Asia/Tokyo")
-	// @Scheduled(cron = "0 */2 * * * ?")
+	//  @Scheduled(cron = "0 */1 * * * ?")
 	public void sendNotifications() {
 		try {
 			 //dailyReportService.checkDailyReport();
 			 //attendanceService.checkAttendance();
-			// 未提出者にプッシュ通知を送信
+			throw new RuntimeException("テスト用のエラーです");
+			/*// 未提出者にプッシュ通知を送信
 			pushNotificationService.sendNotificationToUnsubmittedUsers("AX社内管理システム", "未提出のものがあります。メニューで確認してください。",
 					"/icon.png");
-			logService.logInfo("PushNotificationBatch", "プッシュ通知送信完了");
+			logService.logInfo("PushNotificationBatch", "プッシュ通知送信完了");*/
 		} catch (Exception e) {
 			logService.logError("PushNotificationBatch", "プッシュ通知送信エラー", e);
 		}
