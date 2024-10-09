@@ -114,10 +114,10 @@ public class PushNotificationService {
 		System.out.println(attendanceUnsubmitted);
 		System.out.println(dailyReportUnsubmitted);
 		// 前月の勤怠月次承認未申請の社員リストを取得
-				YearMonth lastMonth = YearMonth.now().minusMonths(1);
-				LocalDate lastDate = lastMonth.atDay(1);
-				List<UsersDto> monthlyAttendanceUnsubmitted = monthlyAttendanceReqMapper
-						.findUsersWithoutAttendance(Date.valueOf(lastDate));
+		YearMonth lastMonth = YearMonth.now().minusMonths(1);
+		LocalDate lastDate = lastMonth.atDay(1);
+		List<UsersDto> monthlyAttendanceUnsubmitted = monthlyAttendanceReqMapper
+				.findUsersWithoutAttendance(Date.valueOf(lastDate));
 
 		// 日報と勤怠の未提出者リストを統合
 		List<UsersDto> unsubmittedUsers = dailyReportUnsubmitted.stream().distinct() // 重複を排除

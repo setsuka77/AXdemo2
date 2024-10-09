@@ -66,17 +66,18 @@ public class SendMailService {
 	 * @param to 送信先のメールアドレス
 	 */
 	public void sendSystemFailureMail(String role, String emailBody) {
-		List<Users> users = usersMapper.findUsersByRole(role);
+//		List<Users> users = usersMapper.findUsersByRole(role);//定期的にエラーがここで発生。DBと接続がないと言われる
 		
-		for (Users user : users) {
+	//	for (Users user : users) {
 			SimpleMailMessage message = new SimpleMailMessage();
-			message.setTo(user.getEmail());
+			//message.setTo(user.getEmail());
+			message.setTo("otsukas@example.test");
 			message.setFrom("no-reply@axsystem.com"); // 差出人のアドレスを指定
 			message.setSubject("【重要】システム障害が発生しました"); // システム障害の件名
 			message.setText(emailBody); // メールの本文にエラー内容を設定
 
 			mailSender.send(message);
-		}
+		//}
 	}
 
 	/**

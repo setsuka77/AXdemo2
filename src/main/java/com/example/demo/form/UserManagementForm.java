@@ -2,7 +2,9 @@ package com.example.demo.form;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -35,5 +37,7 @@ public class UserManagementForm {
 	private String phoneNumber;
 	/** よみ */
 	private String nameKana;
+	/** 拠点 */
+	private String base;
 	
 }

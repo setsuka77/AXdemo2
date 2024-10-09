@@ -31,6 +31,13 @@
 		SELECT * FROM users
 		WHERE name = #{name}
 	</select>
+	
+	<!-- 部署登録画面で使用 -->
+	<select id="findWorker"
+		resultType="com.example.demo.dto.UserManagementDto">
+		SELECT * FROM users
+		WHERE department_id = #{departmentId}
+	</select>
 
 	<select id="findMaxId" resultType="java.lang.Integer">
 		SELECT MAX(id) FROM users

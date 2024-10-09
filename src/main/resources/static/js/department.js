@@ -137,6 +137,117 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+// 部署のプルダウンメニューから選択された値で所属社員を取得
+document.getElementById('currentDepartment').addEventListener('change', function() {
+	const selectedDepartment = this.value;
+	fetchWorkers(selectedDepartment); // 選択した部署に基づいて社員情報を取得
+});
+
+
+let originalUsers = []; // 元のユーザーの配列を保持
+
+function fetchWorkers(selectedDepartment) {
+	const userManagementForm = document.getElementById('userManagementForm');
+	const tableBody = document.querySelector('#userManagementForm table tbody');
+	const noWorker = document.getElementById('noWorker');
+	const worker = document.getElementById('worker');
+	const roleButton = document.getElementById('role');
+	const idButton = document.getElementById('id');
+	tableBody.innerHTML = ''; // テーブルをクリア
+
+	// サーバーに選択された日付を送信し、対応するレポートデータを取得する
+	fetch(`/login/department/worker?selectedDepartment=${encodeURIComponent(selectedDepartment)}`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' }
+	})
+
+		.then(response => response.json())
+		.then(data => {
+			// データを受け取った後の処理
+			const users = data.users;
+			// データを元の配列に保持
+			originalUsers = [...users]; // 取得したデータの元の順序を保持
+
+			// ユーザーが存在しない場合、テーブルを非表示
+			if (users.length === 0) {
+				userManagementForm.style.display = ''; // 表示
+				noWorker.style.display = ''; // 該当する職員がいないメッセージを表示
+				worker.style.display = 'none'; // テーブルを非表示
+			} else {
+				userManagementForm.style.display = ''; // 表示
+				noWorker.style.display = 'none'; // 該当する職員がいないメッセージを非表示
+				worker.style.display = ''; // 表示
+				users.forEach(user => {
+					const row = document.createElement('tr');
+					row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.role}</td>
+                    <td>${user.base}</td>
+                    <td><a href="/user/edit/${user.id}">変更</a></td>
+                `;
+					tableBody.appendChild(row); // テーブルに行を追加
+
+					// ボタンのスタイルを更新
+					idButton.style.backgroundColor = ' rgb(200, 200, 200)';
+					roleButton.style.backgroundColor = '#FFA41D';
+				});
+			}
+		})
+		.catch(error => console.error('Error fetching workersエラー！:', error));
+}
+
+
+//idのボタンを押下したときidで並び替える
+function sortTableById() {
+	const tableBody = document.getElementById('workerTableBody');
+	const rows = Array.from(tableBody.getElementsByTagName('tr'));
+	const roleButton = document.getElementById('role');
+	const idButton = document.getElementById('id');
+
+	// IDを基準に並び替え
+	rows.sort((rowA, rowB) => {
+		const idA = parseInt(rowA.getElementsByTagName('td')[0].textContent);
+		const idB = parseInt(rowB.getElementsByTagName('td')[0].textContent);
+		return idA - idB;  // 昇順に並び替え
+	});
+
+	// 並び替え後の行をテーブルに再追加
+	tableBody.innerHTML = '';  // クリア
+	rows.forEach(row => tableBody.appendChild(row));  // 再追加
+
+	// ボタンのスタイルを更新
+	idButton.style.backgroundColor = '#FFA41D';
+	roleButton.style.backgroundColor = ' rgb(200, 200, 200)';
+}
+
+
+//役職のボタンを押下したとき役職で並び替える
+function sortTableByRole() {
+	const tableBody = document.getElementById('workerTableBody');
+	const rows = Array.from(tableBody.getElementsByTagName('tr'));
+	const roleButton = document.getElementById('role');
+	const idButton = document.getElementById('id');
+
+	// 役職に基づいて元のユーザーの順序を復元
+	const sortedRows = originalUsers.map(user => {
+		const matchingRow = rows.find(row => row.cells[1].textContent === user.name); // 名前で一致する行を探す
+		return matchingRow; // 一致する行を返す
+	});
+
+	// 並び替え後の行をテーブルに再追加
+	tableBody.innerHTML = '';  // クリア
+	sortedRows.forEach(row => {
+		if (row) {
+			tableBody.appendChild(row); // 再追加
+		}
+	});
+	// ボタンのスタイルを更新
+	idButton.style.backgroundColor = ' rgb(200, 200, 200)';
+	roleButton.style.backgroundColor = '#FFA41D';
+}
+
+
 
 // 部署のプルダウンメニューから選択された値をテキストフィールドに反映
 document.getElementById('currentDepartment').addEventListener('change', function() {

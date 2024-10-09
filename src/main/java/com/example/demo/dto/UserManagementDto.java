@@ -19,5 +19,14 @@ public class UserManagementDto {
 	private Integer departmentId;
 	/** 有効開始日 */
 	private LocalDate startDate;
-
+	/** メールアドレス */
+	private String email;
+	/** 電話番号 */
+	private String phoneNumber;
+	/** よみ */
+	private String nameKana;
+	/** 拠点 */
+	private String base;
+	/** 部署名 */
+	private String departmentName;
 }

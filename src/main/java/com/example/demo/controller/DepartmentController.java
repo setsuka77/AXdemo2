@@ -1,19 +1,25 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.dto.DepartmentDto;
+import com.example.demo.dto.UserManagementDto;
 import com.example.demo.entity.Users;
 import com.example.demo.form.DepartmentForm;
 import com.example.demo.service.DepartmentService;
@@ -60,6 +66,25 @@ public class DepartmentController {
         // 部署名で前方一致検索を行い、結果を返す
         return departmentService.searchDepartmentsByName(name);
     }
+    
+    /**
+     * 所属社員一覧取得
+     * 
+     * @param 部署名
+     */
+    @ResponseBody
+	@RequestMapping(value = "/department/worker", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    public ResponseEntity<Map<String, Object>> searchWorker(@RequestParam String selectedDepartment) {
+        System.out.println( selectedDepartment);
+        // 部署名で社員検索を行い、所属社員リストを返す
+        List<UserManagementDto> users = departmentService.searchDepartmentWorker(selectedDepartment);
+        
+        Map<String, Object> response = new HashMap<>();
+		response.put("users", users);
+        
+        return ResponseEntity.ok(response);
+    }
+    
 
     /**
      * 部署管理画面 新規部署登録処理
@@ -164,4 +189,7 @@ public class DepartmentController {
         }
         return "redirect:/department/manage";
     }
+    
+    
+
 }

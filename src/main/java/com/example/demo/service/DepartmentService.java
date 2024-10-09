@@ -1,20 +1,25 @@
 package com.example.demo.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.DepartmentDto;
+import com.example.demo.dto.UserManagementDto;
 import com.example.demo.entity.Department;
 import com.example.demo.form.DepartmentForm;
 import com.example.demo.mapper.DepartmentMapper;
+import com.example.demo.mapper.UsersMapper;
 
 @Service
 public class DepartmentService {
 
 	@Autowired
 	private DepartmentMapper departmentMapper;
+	@Autowired
+	private UsersMapper usersMapper;
 
 	/**
 	 * 部署登録画面 プルダウン用 全ての部署を取得
@@ -34,6 +39,47 @@ public class DepartmentService {
 	public List<DepartmentDto> searchDepartmentsByName(String name) {
 		return departmentMapper.findByNameLike(name + "%");
 	}
+	
+	/**
+	 * 部署登録画面　所属社員一覧
+	 * 
+	 * @param 部署名
+	 */
+	public List<UserManagementDto> searchDepartmentWorker(String departmentName) {
+	    // 部署名から部署情報を取得
+	    Department department = departmentMapper.findByName(departmentName);
+	    Integer departmentId = department.getDepartmentId();
+
+	    // 部署IDで所属社員リストを取得
+	    List<UserManagementDto> users = usersMapper.findWorker(departmentId);
+	    // role順に並べ替える
+	    users.sort(Comparator.comparing(user -> Integer.parseInt(user.getRole())));
+
+	    // 役職の数値をわかりやすい文字に変換
+	    for (UserManagementDto user : users) {
+	        String role = user.getRole();
+	        switch (role) {
+	            case "1":
+	                role = "管理者";
+	                break;
+	            case "2":
+	                role = "マネージャー";
+	                break;
+	            case "3":
+	                role = "UM";
+	                break;
+	            default:
+	                role = "社員";
+	                break;
+	        }
+
+	        // 変換後の役職をセット
+	        user.setRole(role);
+	    }
+	    // 所属社員リストを返す
+	    return users;
+	}
+
 
 	/**
 	 * 部署登録画面 新規部署登録処理

@@ -90,5 +90,9 @@ public interface UsersMapper {
 	 * マネージャー権限のユーザー情報取得
 	 */
 	List<UsersDto> findManagers();
-
+	
+	/**
+	 * 部署登録画面　ユーザー情報取得
+	 */
+	List<UserManagementDto> findWorker( Integer departmentId);
 }

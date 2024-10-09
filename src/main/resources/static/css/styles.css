@@ -2,19 +2,28 @@
  * 共通の枠組みスタイル設定
  * ======================================== */
 * {
-	box-sizing: border-box; /* ボックスサイズをボーダーを含むように設定 */
-	margin: 0; /* 外部マージンをゼロに設定 */
-	padding: 0; /* 内部パディングをゼロに設定 */
+	box-sizing: border-box;
+	/* ボックスサイズをボーダーを含むように設定 */
+	margin: 0;
+	/* 外部マージンをゼロに設定 */
+	padding: 0;
+	/* 内部パディングをゼロに設定 */
 }
 
 body {
-	display: flex; /* フレックスボックスを使って中央寄せ */
-	justify-content: center; /* 横方向の中央寄せ */
+	display: flex;
+	/* フレックスボックスを使って中央寄せ */
+	justify-content: center;
+	/* 横方向の中央寄せ */
 	padding-top: 70px;
-	height: 100vh; /* ビューポートの高さに合わせる */
-	background-color: #f5f5f5; /* 背景色を設定 */
-	overflow-x: hidden; /* 横スクロールを防ぐ */
-	font-family: Arial, sans-serif; /* フォントファミリーを設定 */
+	height: 100vh;
+	/* ビューポートの高さに合わせる */
+	background-color: #f5f5f5;
+	/* 背景色を設定 */
+	overflow-x: hidden;
+	/* 横スクロールを防ぐ */
+	font-family: Arial, sans-serif;
+	/* フォントファミリーを設定 */
 }
 
 /* ヘッダーを固定表示する */
@@ -24,9 +33,12 @@ header {
 	top: 0;
 	left: 0;
 	height: 70px;
-	background-color: #fff; /* 背景色を変更 */
-	z-index: 1000; /* ヘッダーが他の要素より前に表示されるようにする */
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* ヘッダーの影 */
+	background-color: #fff;
+	/* 背景色を変更 */
+	z-index: 1000;
+	/* ヘッダーが他の要素より前に表示されるようにする */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	/* ヘッダーの影 */
 }
 
 /* ヘッダー内のボタンとコンテンツのスタイル */
@@ -37,7 +49,7 @@ header {
 	align-items: center;
 }
 
-.header-button h2{
+.header-button h2 {
 	position: relative;
 	display: inline-block;
 	margin-bottom: 0;
@@ -45,44 +57,71 @@ header {
 
 /* メインコンテンツがヘッダーの下に表示されるように、上部に余白を追加 */
 main {
-	padding-top: 200px; /* ヘッダーの高さに応じて調整 */
-	width: 100%; /* 必要に応じて幅を調整 */
-	max-width: 1200px; /* 最大幅を指定 */
-	margin: 0 auto; /* 横方向の中央揃え */
+	padding-top: 200px;
+	/* ヘッダーの高さに応じて調整 */
+	width: 100%;
+	/* 必要に応じて幅を調整 */
+	max-width: 1200px;
+	/* 最大幅を指定 */
+	margin: 0 auto;
+	/* 横方向の中央揃え */
 }
 
 /* ===========================================
  * コンテナスタイル
  * ======================================== */
 .container {
-	display: block; /* ブロックを使う */
-	margin: 0 auto; /* 左右の中央寄せを設定 */
-	width: 100%; /* 幅を100%に設定 */
-	max-width: 1200px; /* 適切な最大幅を指定 */
-	padding: 20px; /* 内部パディングを設定 */
+	display: block;
+	/* ブロックを使う */
+	margin: 0 auto;
+	/* 左右の中央寄せを設定 */
+	width: 100%;
+	/* 幅を100%に設定 */
+	max-width: 1200px;
+	/* 適切な最大幅を指定 */
+	padding: 20px;
+	/* 内部パディングを設定 */
 }
 
 /* フォームコンテナスタイル */
 .form-container {
-	width: 100%; /* 幅を100%に設定 */
-	max-width: 800px; /* 最大幅を800pxに設定 */
-	padding: 20px; /* 内部パディングを設定 */
-	background: #fff; /* 背景色を白に設定 */
-	border-radius: 8px; /* 角を丸くする */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
-	margin: 0 auto; /* 横方向の中央寄せ */
+	width: 100%;
+	/* 幅を100%に設定 */
+	max-width: 800px;
+	/* 最大幅を800pxに設定 */
+	padding: 20px;
+	/* 内部パディングを設定 */
+	background: #fff;
+	/* 背景色を白に設定 */
+	border-radius: 8px;
+	/* 角を丸くする */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	/* ボックスシャドウを設定 */
+	margin: 0 auto;
+	/* 横方向の中央寄せ */
 }
 
 /*上部ユーザ情報コンテナ*/
 .info-container {
 	display: flex;
-	margin-bottom: 20px; /* 下部マージンを設定 */
+	margin-bottom: 20px;
+	/* 下部マージンを設定 */
+}
+
+/*処理メニュー画面要用上部コンテナ*/
+.info-menuContainer {
+	display: flex;
+	text-align: center;
+	width: 90%;
+	margin: 0 auto 20px;
 }
 
 .info-item {
-	flex: 1; /* アイテムが均等に広がる */
+	flex: 1;
+	/* アイテムが均等に広がる */
 	margin-right: 10px;
-	white-space: nowrap; /* テキストの折り返しを防ぐ */
+	white-space: nowrap;
+	/* テキストの折り返しを防ぐ */
 }
 
 /* ログイン画面コンテナスタイル */
@@ -93,18 +132,26 @@ main {
 	background: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	margin: 0 auto; /* 横方向の中央寄せ */
+	margin: 0 auto;
+	/* 横方向の中央寄せ */
 }
 
 /* メニューコンテナスタイル */
 .menu-container {
-	width: 100%; /* 幅を100%に設定 */
-	max-width: 600px; /* 最大幅を600pxに設定 */
-	padding: 20px; /* 内部パディングを設定 */
-	background: #fff; /* 背景色を白に設定 */
-	border-radius: 8px; /* 角を丸くする */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
-	margin: 0 auto; /* 横方向の中央寄せ */
+	width: 100%;
+	/* 幅を100%に設定 */
+	max-width: 600px;
+	/* 最大幅を600pxに設定 */
+	padding: 20px;
+	/* 内部パディングを設定 */
+	background: #fff;
+	/* 背景色を白に設定 */
+	border-radius: 8px;
+	/* 角を丸くする */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	/* ボックスシャドウを設定 */
+	margin: 0 auto;
+	/* 横方向の中央寄せ */
 }
 
 /* 勤怠・日報コンテナ */
@@ -116,77 +163,115 @@ main {
 	background-color: #fff;
 	border-radius: 8px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	max-height: auto; /* 最大高さをなしに設定 */
-	overflow-y: auto; /* 縦方向に内容があふれた場合にスクロール可能に */
-	overflow-x: hidden; /* 横方向のスクロールを非表示 */
-	margin: 0 auto; /* 横方向の中央寄せ */
+	max-height: auto;
+	/* 最大高さをなしに設定 */
+	overflow-y: auto;
+	/* 縦方向に内容があふれた場合にスクロール可能に */
+	overflow-x: hidden;
+	/* 横方向のスクロールを非表示 */
+	margin: 0 auto;
+	/* 横方向の中央寄せ */
 }
 
 /* お知らせコンテナ */
-.notice-container{
+.notice-container {
 	text-align: center;
-	width: 100%; /* 幅を100%に設定 */
-	max-width: 600px; /* 最大幅を600pxに設定 */
-	padding: 20px; /* 内部パディングを設定 */
-	background: #fff; /* 背景色を白に設定 */
-	border-radius: 8px; /* 角を丸くする */
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* ボックスシャドウを設定 */
-	 overflow-x: hidden; /* 横スクロールを非表示 */
-    max-height: 230px; /* 高さの上限を設定（3行分の高さに合わせて調整） */
-    overflow-y: auto; /* 縦スクロールを表示 */
-    margin: 0 auto 20px auto; /* 横方向の中央寄せと下部マージンを追加 */
+	width: 100%;
+	/* 幅を100%に設定 */
+	max-width: 600px;
+	/* 最大幅を600pxに設定 */
+	padding: 20px;
+	/* 内部パディングを設定 */
+	background: #fff;
+	/* 背景色を白に設定 */
+	border-radius: 8px;
+	/* 角を丸くする */
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	/* ボックスシャドウを設定 */
+	overflow-x: hidden;
+	/* 横スクロールを非表示 */
+	max-height: 230px;
+	/* 高さの上限を設定（3行分の高さに合わせて調整） */
+	overflow-y: auto;
+	/* 縦スクロールを表示 */
+	margin: 0 auto 20px auto;
+	/* 横方向の中央寄せと下部マージンを追加 */
 }
 
 /* ===========================================
  * アコーディオンスタイル
  * ======================================== */
- 
+
 /* アコーディオンのスタイル設定 */
 .accordion-003 {
-    max-width: 650px; /* アコーディオンの最大幅 */
-    margin-bottom: 7px; /* アコーディオン項目間の下マージン */
-    border-bottom: 2px solid #d0d0d0; /* アコーディオン項目の下に境界線を追加 */
+	max-width: 650px;
+	/* アコーディオンの最大幅 */
+	margin-bottom: 7px;
+	/* アコーディオン項目間の下マージン */
+	border-bottom: 2px solid #d0d0d0;
+	/* アコーディオン項目の下に境界線を追加 */
 }
 
 /* アコーディオンの要約部分のスタイル設定 */
 .accordion-003 summary {
-    display: flex; /* フレックスボックスを使用して配置 */
-    justify-content: space-between; /* 要素間にスペースを均等に分配 */
-    align-items: center; /* 縦方向に中央揃え */
-    position: relative; /* 子要素の絶対位置を基準にするための設定 */
-    padding: 0.5em 0.5em; /* 内側の余白を設定 */
-    color: #333333; /* 文字色を指定 */
-    font-weight: 400; /* フォントの太さを指定 */
-    cursor: pointer; /* カーソルをポインターに変更してクリック可能にする */
-    margin-left: 40px; /* 左側にマージンを追加 */
+	display: flex;
+	/* フレックスボックスを使用して配置 */
+	justify-content: space-between;
+	/* 要素間にスペースを均等に分配 */
+	align-items: center;
+	/* 縦方向に中央揃え */
+	position: relative;
+	/* 子要素の絶対位置を基準にするための設定 */
+	padding: 0.5em 0.5em;
+	/* 内側の余白を設定 */
+	color: #333333;
+	/* 文字色を指定 */
+	font-weight: 400;
+	/* フォントの太さを指定 */
+	cursor: pointer;
+	/* カーソルをポインターに変更してクリック可能にする */
+	margin-left: 40px;
+	/* 左側にマージンを追加 */
 }
 
 /* ブラウザデフォルトのアコーディオンマーカーを非表示にする */
 .accordion-003 summary::-webkit-details-marker {
-    display: none; /* マーカーを非表示 */
+	display: none;
+	/* マーカーを非表示 */
 }
 
 /* アコーディオンの要約部分に矢印を追加 */
 .accordion-003 summary::after {
-    transform: translateY(-25%) rotate(45deg); /* 矢印の初期位置と回転を設定 */
-    width: 7px; /* 矢印の幅 */
-    height: 7px; /* 矢印の高さ */
-    margin-left: 10px; /* 矢印の左側にマージンを追加 */
-    border-bottom: 3px solid #333333b3; /* 矢印の下部分 */
-    border-right: 3px solid #333333b3; /* 矢印の右部分 */
-    content: ''; /* 内容を空に設定 */
-    transition: transform .3s; /* 矢印の回転にアニメーションを設定 */
+	transform: translateY(-25%) rotate(45deg);
+	/* 矢印の初期位置と回転を設定 */
+	width: 7px;
+	/* 矢印の幅 */
+	height: 7px;
+	/* 矢印の高さ */
+	margin-left: 10px;
+	/* 矢印の左側にマージンを追加 */
+	border-bottom: 3px solid #333333b3;
+	/* 矢印の下部分 */
+	border-right: 3px solid #333333b3;
+	/* 矢印の右部分 */
+	content: '';
+	/* 内容を空に設定 */
+	transition: transform .3s;
+	/* 矢印の回転にアニメーションを設定 */
 }
 
 /* アコーディオンが開いている時の矢印のスタイル設定 */
 .accordion-003[open] summary::after {
-    transform: rotate(225deg); /* 矢印を下向きに回転 */
+	transform: rotate(225deg);
+	/* 矢印を下向きに回転 */
 }
 
 /* 名前表示のスタイル設定 */
 .name {
-    font-size: 13px; /* フォントサイズを指定 */
-    color: rgb(54, 54, 54); /* 文字色を指定 */
+	font-size: 13px;
+	/* フォントサイズを指定 */
+	color: rgb(54, 54, 54);
+	/* 文字色を指定 */
 }
 
 
@@ -216,10 +301,13 @@ main {
 }
 
 label {
-	display: block; /* ブロック要素として表示 */
-	margin-bottom: 5px; /* 下部マージンを設定 */
+	display: block;
+	/* ブロック要素として表示 */
+	margin-bottom: 5px;
+	/* 下部マージンを設定 */
 	min-width: 100px;
-	font-weight: bold; /* 太字に設定 */
+	font-weight: bold;
+	/* 太字に設定 */
 }
 
 /* ===========================================
@@ -228,7 +316,8 @@ label {
 
 /* ログインフォームのタイトルのスタイル */
 .login-form {
-	width: 80%; /* 幅を80%に設定 */
+	width: 80%;
+	/* 幅を80%に設定 */
 	margin: 5% 10%;
 	text-align: auto;
 }
@@ -241,7 +330,8 @@ label {
 
 .password-wrapper input {
 	width: 100%;
-	padding-right: 30px; /* アイコン用のスペースを確保 */
+	padding-right: 30px;
+	/* アイコン用のスペースを確保 */
 }
 
 .password-wrapper #eye {
@@ -250,58 +340,82 @@ label {
 	top: 50%;
 	transform: translateY(-50%);
 	cursor: pointer;
-	color: #888; /* アイコンの色 */
+	color: #888;
+	/* アイコンの色 */
 }
 
 /* 入力グループスタイル */
 .input-group {
 	display: flex;
-	margin-bottom: 20px; /* 下部マージンを設定 */
+	margin-bottom: 20px;
+	/* 下部マージンを設定 */
 }
 
 /* 入力フィールドスタイル */
-.input-group input[type="text"], .input-group input[type="password"],
-	.input-group input[type="date"] {
-	width: 100%; /* 幅を100%に設定 */
-	padding: 10px; /* 内部パディングを設定 */
-	border: 1px solid #ccc; /* ボーダーを設定 */
-	border-radius: 4px; /* 角を丸くする */
-	font-size: 14px; /* フォントサイズを設定 */
+.input-group input[type="text"],
+.input-group input[type="password"],
+.input-group input[type="date"] {
+	width: 100%;
+	/* 幅を100%に設定 */
+	padding: 10px;
+	/* 内部パディングを設定 */
+	border: 1px solid #ccc;
+	/* ボーダーを設定 */
+	border-radius: 4px;
+	/* 角を丸くする */
+	font-size: 14px;
+	/* フォントサイズを設定 */
 }
 
 /* 入力フィールドの幅を80%に設定 */
-.input-group.input-wide input[type="text"], .input-group.input-wide input[type="password"],
-	.input-group.input-wide input[type="date"] {
-	width: 80%; /* 幅を80%に設定 */
+.input-group.input-wide input[type="text"],
+.input-group.input-wide input[type="password"],
+.input-group.input-wide input[type="date"] {
+	width: 80%;
+	/* 幅を80%に設定 */
 }
 
 /* 入力フィールドとボタンを横に並べる */
 .input-with-button {
-	display: flex; /* フレックスボックスを使用して横に並べる */
-	align-items: center; /* 垂直方向に中央寄せ */
+	display: flex;
+	/* フレックスボックスを使用して横に並べる */
+	align-items: center;
+	/* 垂直方向に中央寄せ */
 }
 
 .input-with-button input[type="text"] {
-	flex: 1; /* 入力フィールドが可能な限りの幅を占める */
-	margin-right: 10px; /* ボタンと入力フィールドの間の隙間を設定 */
+	flex: 1;
+	/* 入力フィールドが可能な限りの幅を占める */
+	margin-right: 10px;
+	/* ボタンと入力フィールドの間の隙間を設定 */
 }
 
 .input-with-button button {
-	flex-shrink: 0; /* ボタンのサイズが縮まないように設定 */
+	flex-shrink: 0;
+	/* ボタンのサイズが縮まないように設定 */
 }
 
 /* テキストエリアスタイル */
 textarea {
 	resize: none;
-	width: 100%; /* 幅を100%に設定 */
-	padding: 10px; /* 内部パディングを設定 */
-	margin-bottom: 10px; /* 文字数カウント用の余白 */
-	border: 1px solid #ccc; /* ボーダーを設定 */
-	border-radius: 4px; /* 角を丸くする */
-	font-size: 14px; /* フォントサイズを設定 */
-	overflow: hidden; /* 縦スクロールを無効 */
-	white-space: pre-wrap; /* 改行と折り返しを考慮 */
-	word-wrap: break-word; /* 長い単語を折り返す */
+	width: 100%;
+	/* 幅を100%に設定 */
+	padding: 10px;
+	/* 内部パディングを設定 */
+	margin-bottom: 10px;
+	/* 文字数カウント用の余白 */
+	border: 1px solid #ccc;
+	/* ボーダーを設定 */
+	border-radius: 4px;
+	/* 角を丸くする */
+	font-size: 14px;
+	/* フォントサイズを設定 */
+	overflow: hidden;
+	/* 縦スクロールを無効 */
+	white-space: pre-wrap;
+	/* 改行と折り返しを考慮 */
+	word-wrap: break-word;
+	/* 長い単語を折り返す */
 }
 
 /* テキストエリア文字数カウンター */
@@ -321,55 +435,65 @@ textarea {
 
 /* フォーム非活性時スタイル */
 .disabled-form {
-	pointer-events: none; /* フォーム全体を非活性にする */
-	opacity: 0.5; /* 非活性状態を視覚的に表示 */
+	pointer-events: none;
+	/* フォーム全体を非活性にする */
+	opacity: 0.5;
+	/* 非活性状態を視覚的に表示 */
 }
 
 /* 部署管理画面 プルダウン内項目スタイル */
 #currentDepartment option {
-	color: black; /* 通常の文字色 */
+	color: black;
+	/* 通常の文字色 */
 }
 
 /* [停止中] の文字列を含むオプションのスタイル */
 #currentDepartment option.stop {
-	color: gray; /* 灰色 */
+	color: gray;
+	/* 灰色 */
 	background: #e7e7e7;
 }
 
 /* ユーザ管理画面 プルダウン内項目スタイル */
 #departmentId option {
-	color: black; /* 通常の文字色 */
+	color: black;
+	/* 通常の文字色 */
 }
 
 /* [停止中] の文字列を含むオプションのスタイル */
 #departmentId option.stop {
-	color: gray; /* 灰色 */
+	color: gray;
+	/* 灰色 */
 	background: #e7e7e7;
 }
 
 /* お知らせリンクのスタイル */
 .notification-link {
-    text-decoration: none; /* 通常時は下線なし */
-    color: rgb(40, 40, 40); /* リンクの色 */
+	text-decoration: none;
+	/* 通常時は下線なし */
+	color: rgb(40, 40, 40);
+	/* リンクの色 */
 }
 
 /* お知らせリンクのスタイル(マウスオーバー時)*/
 .notification-link:hover {
-    text-decoration: underline; /* マウスオーバー時に下線を表示 */
+	text-decoration: underline;
+	/* マウスオーバー時に下線を表示 */
 }
 
 /*お知らせ種類のスタイル*/
 /* 共通のスタイル */
 .box2 {
-    background: #FFF;
-    padding: 2px;
-    text-align: center;
+	background: #FFF;
+	padding: 2px;
+	text-align: center;
 }
 
 /* 通知ごとの文字色と枠線をカスタマイズ */
 /*未提出*/
 .noti-unsubmitted {
-    color: rgb(228, 67, 54); /* 赤色 */
+	color: rgb(228, 67, 54);
+	/* 赤色 */
 }
 
 /*.noti-approval {
@@ -384,36 +508,52 @@ textarea {
 /* ボタンスタイル */
 /* ======================================== */
 button {
-	width: 100px; /* 幅を100pxに設定 */
-	padding: 10px; /* 内部パディングを設定 */
-	border: none; /* ボーダーを削除 */
-	border-radius: 4px; /* 角を丸くする */
-	background: #FED813; /* 背景色を設定 */
-	color: black; /* テキスト色を黒に設定 */
-	font-size: 16px; /* フォントサイズを設定 */
-	cursor: pointer; /* カーソルをポインタに設定 */
+	width: 100px;
+	/* 幅を100pxに設定 */
+	padding: 10px;
+	/* 内部パディングを設定 */
+	border: none;
+	/* ボーダーを削除 */
+	border-radius: 4px;
+	/* 角を丸くする */
+	background: #FED813;
+	/* 背景色を設定 */
+	color: black;
+	/* テキスト色を黒に設定 */
+	font-size: 16px;
+	/* フォントサイズを設定 */
+	cursor: pointer;
+	/* カーソルをポインタに設定 */
 }
 
 button:hover {
-	background: #FFA41D; /* ホバー時の背景色を設定 */
+	background: #FFA41D;
+	/* ホバー時の背景色を設定 */
 }
 
 /* ボタングループスタイル */
 .button-group {
-	display: flex; /* フレックスボックスを使う */
-	justify-content: flex-end; /* 右寄せ */
-	gap: 10px; /* ボタン間の隙間を設定 */
+	display: flex;
+	/* フレックスボックスを使う */
+	justify-content: flex-end;
+	/* 右寄せ */
+	gap: 10px;
+	/* ボタン間の隙間を設定 */
 }
 
 /* ログインボタングループスタイル */
 .login-button-group {
-	justify-content: center; /* 中央寄せ */
+	justify-content: center;
+	/* 中央寄せ */
 }
 
 .button-group button.disabled-form {
-	background-color: #d3d3d3; /* 灰色に設定 */
-	color: #6c757d; /* 文字色を暗い灰色に設定 */
-	cursor: not-allowed; /* 非活性時のカーソルを設定 */
+	background-color: #d3d3d3;
+	/* 灰色に設定 */
+	color: #6c757d;
+	/* 文字色を暗い灰色に設定 */
+	cursor: not-allowed;
+	/* 非活性時のカーソルを設定 */
 }
 
 /* ログオフ、メニューボタン位置調整 */
@@ -425,13 +565,16 @@ button:hover {
 
 .menu-header-button {
 	display: flex;
-	justify-content: space-between; /* 左右に余白を持たせる */
-	align-items: center; /* 垂直方向の中央揃え */
+	justify-content: space-between;
+	/* 左右に余白を持たせる */
+	align-items: center;
+	/* 垂直方向の中央揃え */
 	margin-bottom: 50px;
 }
 
 .menu-header-button h2 {
-	margin-left: 20%; /* 左の余白を調整して中央に配置 */
+	margin-left: 20%;
+	/* 左の余白を調整して中央に配置 */
 }
 
 .menu-header-button a {
@@ -443,10 +586,14 @@ button:hover {
 .card {
 	display: flex;
 	flex-direction: column;
-	justify-content: center; /* コンテンツを縦方向に中央揃え */
-	align-items: center; /* コンテンツを横方向に中央揃え */
-	width: 200px; /* カードの横幅を調整 */
-	height: 130px; /* カードの高さを調整 */
+	justify-content: center;
+	/* コンテンツを縦方向に中央揃え */
+	align-items: center;
+	/* コンテンツを横方向に中央揃え */
+	width: 200px;
+	/* カードの横幅を調整 */
+	height: 130px;
+	/* カードの高さを調整 */
 	padding: 20px;
 	margin: 10px;
 	background-color: #FED813;
@@ -454,7 +601,8 @@ button:hover {
 	border-radius: 8px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	text-align: center;
-	text-decoration: none; /* リンクに下線がつかないようにする */
+	text-decoration: none;
+	/* リンクに下線がつかないようにする */
 	transition: box-shadow 0.3s ease;
 }
 
@@ -482,8 +630,10 @@ button:hover {
 /* ul のスタイルをリセット */
 ul {
 	display: flex;
-	justify-content: space-around; /* 両サイドを端に配置して中のflexを均等に配置 */
-	flex-wrap: wrap; /* カードが多い場合に折り返す */
+	justify-content: space-around;
+	/* 両サイドを端に配置して中のflexを均等に配置 */
+	flex-wrap: wrap;
+	/* カードが多い場合に折り返す */
 	list-style: none;
 	padding: 0;
 }
@@ -491,10 +641,14 @@ ul {
 /* エラーメッセージスタイル */
 /* ======================================== */
 .error-message {
-	display: none; /* デフォルトで非表示 */
-	margin-top: -20px; /* 上部マージンを設定 */
-	color: red; /* テキスト色を赤に設定 */
-	font-size: 0.9em; /* フォントサイズを設定 */
+	display: none;
+	/* デフォルトで非表示 */
+	margin-top: -20px;
+	/* 上部マージンを設定 */
+	color: red;
+	/* テキスト色を赤に設定 */
+	font-size: 0.9em;
+	/* フォントサイズを設定 */
 }
 
 /* ログイン画面 エラーメッセージ */
@@ -510,7 +664,8 @@ ul {
 
 /* 勤怠管理画面 表示年月必須エラーメッセージ */
 .error-message.attendanceError {
-	margin-top: -10px; /* 上部マージンを設定 */
+	margin-top: -10px;
+	/* 上部マージンを設定 */
 }
 
 /* 勤怠登録画面 土日祝日時の文字 */
@@ -522,46 +677,59 @@ ul {
 	color: rgb(0, 128, 255);
 }
 
-.manage-form{
+.manage-form {
 	color: rgb(0, 0, 0);
 	opacity: 1.0;
 }
 
 /* 現在の日付時の背景色 */
 .highlight {
-	background-color: rgb(230, 242, 255); /* 背景色を指定 */
+	background-color: rgb(230, 242, 255);
+	/* 背景色を指定 */
 }
 
 /*エラー時の背景色*/
 .error-field {
-	background-color: #f2dede !important; /* 背景色を指定 */
+	background-color: #f2dede !important;
+	/* 背景色を指定 */
 }
 
 /* アラートスタイル */
 /* ======================================== */
 .alert {
-	padding: 15px; /* 内部パディングを設定 */
-	margin-bottom: 20px; /* 下部マージンを設定 */
-	border: 1px solid transparent; /* ボーダーを設定 (初期設定) */
-	border-radius: 4px; /* 角を丸くする */
+	padding: 15px;
+	/* 内部パディングを設定 */
+	margin-bottom: 20px;
+	/* 下部マージンを設定 */
+	border: 1px solid transparent;
+	/* ボーダーを設定 (初期設定) */
+	border-radius: 4px;
+	/* 角を丸くする */
 }
 
 /* 成功アラートスタイル */
 .alert-success {
-	background-color: #d4edda; /* 背景色を設定 */
-	border-color: #c3e6cb; /* ボーダー色を設定 */
-	color: #155724; /* テキスト色を設定 */
+	background-color: #d4edda;
+	/* 背景色を設定 */
+	border-color: #c3e6cb;
+	/* ボーダー色を設定 */
+	color: #155724;
+	/* テキスト色を設定 */
 }
 
 /* エラーアラートスタイル */
 .alert-danger {
-	background-color: #f2dede; /* 背景色を設定 */
-	border-color: #ebccd1; /* ボーダー色を設定 */
-	color: #a94442; /* テキスト色を設定 */
+	background-color: #f2dede;
+	/* 背景色を設定 */
+	border-color: #ebccd1;
+	/* ボーダー色を設定 */
+	color: #a94442;
+	/* テキスト色を設定 */
 }
 
 .alert p {
-	margin: 0; /* マージンをゼロに設定 */
+	margin: 0;
+	/* マージンをゼロに設定 */
 }
 
 /* テーブル一覧スタイル */
@@ -574,10 +742,12 @@ table {
 }
 
 .table-hover tbody tr:hover {
-	background-color: #f5f5f5; /* ホバー時の背景色 */
+	background-color: #f5f5f5;
+	/* ホバー時の背景色 */
 }
 
-th, td {
+th,
+td {
 	padding: 10px;
 	text-align: left;
 	border-bottom: 1px solid #ddd;
@@ -587,7 +757,8 @@ th, td {
 
 th {
 	background: #f2f2f2;
-	text-align: center; /* テキストを中央寄せ */
+	text-align: center;
+	/* テキストを中央寄せ */
 }
 
 /* フォームスタイル */
@@ -597,12 +768,14 @@ th {
 
 /* マネージャーのみ表示される申請一覧のコンテナ */
 .manager-table-container {
-	width: 80%; /* 幅を80%に設定 */
+	width: 80%;
+	/* 幅を80%に設定 */
 }
 
 /* マネージャーのみ表示される申請一覧のテーブル */
 .manager-table {
-	width: 100%; /* テーブル自体は親要素に合わせる */
+	width: 100%;
+	/* テーブル自体は親要素に合わせる */
 }
 
 /* 出勤時間と退勤時間の入力フォームの横幅調整 */
@@ -612,13 +785,15 @@ th {
 }
 
 /* 出勤時間と退勤時間のカラムの横幅調整 */
-th.time-column, td.time-column {
+th.time-column,
+td.time-column {
 	width: 90px;
 	/* カラムの横幅を短く設定 */
 }
 
 /* 勤務状況のカラムの横幅調整 */
-th.status-column, td.status-column {
+th.status-column,
+td.status-column {
 	width: 150px;
 	/* プルダウンの横幅に合わせて設定 */
 }
@@ -630,75 +805,157 @@ input.note {
 }
 
 /* モーダルの設定*/
-.dialog{
-	width:600px;
-	margin: 0 auto;/* 中央配置 */
-	margin-top:20px;
+.dialog {
+	width: 600px;
+	margin: 0 auto;
+	/* 中央配置 */
+	margin-top: 20px;
 	padding: 10px 20px;
-	border: 2px solid rgb(93, 93, 93); /* ボーダーを設定 */
-	border-radius: 4px; /* 角を丸くする */
+	border: 2px solid rgb(93, 93, 93);
+	/* ボーダーを設定 */
+	border-radius: 4px;
+	/* 角を丸くする */
 }
 
 /* モーダルの中身の設定*/
-.dialog-comment{
-	border: 1px solid rgb(93, 93, 93); /* ボーダーを設定 */
+.dialog-comment {
+	border: 1px solid rgb(93, 93, 93);
+	/* ボーダーを設定 */
 }
 
 /* モーダル内のボタンの設定*/
 .modalButton {
 	display: flex;
 	gap: 10px;
-	justify-content: flex-end; /* ボタンを右寄せにする */
+	justify-content: flex-end;
+	/* ボタンを右寄せにする */
 }
 
 /* 却下理由の設定*/
 .comment-reject {
-  display: inline-block; /* インラインブロック要素として表示 */
-    color: #333; /* 文字色を指定 */
-    background: #fff; /* 背景色を白に設定 */
-    border: solid 2px #535353; /* 周囲に2pxの実線境界を設定 */
-    padding: 10px 10px; /* 内側の余白を上下10px、左右10pxに設定 */
-    position: relative; /* 子要素の絶対位置を基準にするための設定 */
-    border-radius: 4px; /* 角を丸くする */
+	display: inline-block;
+	/* インラインブロック要素として表示 */
+	color: #333;
+	/* 文字色を指定 */
+	background: #fff;
+	/* 背景色を白に設定 */
+	border: solid 2px #535353;
+	/* 周囲に2pxの実線境界を設定 */
+	padding: 10px 10px;
+	/* 内側の余白を上下10px、左右10pxに設定 */
+	position: relative;
+	/* 子要素の絶対位置を基準にするための設定 */
+	border-radius: 4px;
+	/* 角を丸くする */
 }
 
 /* 吹き出しの三角部分を作成 */
 .comment-reject::before {
-    content: ""; /* 内容を空に設定 */
-    position: absolute; /* 絶対位置に設定 */
-    width: 15px; /* 三角部分の幅 */
-    height: 18px; /* 三角部分の高さ */
-    background: #fff; /* 三角部分の背景色を白に設定 */
-    bottom: -18px; /* 親要素の下に配置 */
-    left: 10%; /* 親要素の幅に対して左から10%の位置に配置 */
-    border-right: 3px solid #333; /* 三角部分の右側に境界を設定 */
-    transform: skew(-30deg); /* 三角形の形状を作成するために傾ける */
-    z-index: 1; /* 他の要素の前に表示 */
+	content: "";
+	/* 内容を空に設定 */
+	position: absolute;
+	/* 絶対位置に設定 */
+	width: 15px;
+	/* 三角部分の幅 */
+	height: 18px;
+	/* 三角部分の高さ */
+	background: #fff;
+	/* 三角部分の背景色を白に設定 */
+	bottom: -18px;
+	/* 親要素の下に配置 */
+	left: 10%;
+	/* 親要素の幅に対して左から10%の位置に配置 */
+	border-right: 3px solid #333;
+	/* 三角部分の右側に境界を設定 */
+	transform: skew(-30deg);
+	/* 三角形の形状を作成するために傾ける */
+	z-index: 1;
+	/* 他の要素の前に表示 */
 }
 
 /*訂正申請の理由*/
-.comment-approver{
-	display: inline-block; /* インラインブロック要素として表示 */
-    color: #333; /* 文字色を指定 */
-    background: #fff; /* 背景色を白に設定 */
-    border: solid 2px #535353; /* 周囲に2pxの実線境界を設定 */
-    padding: 10px 10px; /* 内側の余白を上下10px、左右10pxに設定 */
-    position: relative; /* 子要素の絶対位置を基準にするための設定 */
-    border-radius: 4px; /* 角を丸くする */
+.comment-approver {
+	display: inline-block;
+	/* インラインブロック要素として表示 */
+	color: #333;
+	/* 文字色を指定 */
+	background: #fff;
+	/* 背景色を白に設定 */
+	border: solid 2px #535353;
+	/* 周囲に2pxの実線境界を設定 */
+	padding: 10px 10px;
+	/* 内側の余白を上下10px、左右10pxに設定 */
+	position: relative;
+	/* 子要素の絶対位置を基準にするための設定 */
+	border-radius: 4px;
+	/* 角を丸くする */
 }
+
 /* 吹き出しの三角部分を作成 */
 .comment-approver::before {
-    content: ""; /* 内容を空に設定 */
-    position: absolute; /* 絶対位置に設定 */
-    width: 15px; /* 三角部分の幅 */
-    height: 18px; /* 三角部分の高さ */
-    background: #fff; /* 三角部分の背景色を白に設定 */
-    top: -18px; /* 親要素の下に配置 */
-    left: 10%; /* 親要素の幅に対して左から10%の位置に配置 */
-    border-left: 3px solid #333; /* 三角部分の右側に境界を設定 */
-    transform: skew(30deg); /* 三角形の形状を作成するために傾ける */
-    z-index: 1; /* 他の要素の前に表示 */
+	content: "";
+	/* 内容を空に設定 */
+	position: absolute;
+	/* 絶対位置に設定 */
+	width: 15px;
+	/* 三角部分の幅 */
+	height: 18px;
+	/* 三角部分の高さ */
+	background: #fff;
+	/* 三角部分の背景色を白に設定 */
+	top: -18px;
+	/* 親要素の下に配置 */
+	left: 10%;
+	/* 親要素の幅に対して左から10%の位置に配置 */
+	border-left: 3px solid #333;
+	/* 三角部分の右側に境界を設定 */
+	transform: skew(30deg);
+	/* 三角形の形状を作成するために傾ける */
+	z-index: 1;
+	/* 他の要素の前に表示 */
 }
+
+/*部署管理画面　所属社員一覧*/
+/* 該当する職員がいませんをセンター表示 */
+#noWorker {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* th（ID, 名前など）を左寄せ */
+#worker th {
+    text-align: left;
+    padding: 10px;
+}
+
+/* テーブル全体のスタイルを整える場合（例：ボーダーや余白） */
+#worker {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#worker th, #worker td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+/* テーブル行のスタイルを追加（例：偶数行の背景色変更） */
+#worker tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* 昇順ボタン*/
+.downButton{
+    width: auto; /* 自動幅 */
+    padding: 0px 3px; 
+    margin-left: 5px; /*テキストとの幅*/
+    font-size: 14px; /* フォントサイズ */
+    border: none; /* ボーダーなし */
+    color: white; /* 文字色 */
+    border-radius: 4px; /* 角を丸く */
+}
+
 
 /* ===========================================
  * レスポンシブ対応・メディアクエリ設定
@@ -706,85 +963,128 @@ input.note {
 
 /* メディアクエリ (1200px以下のスクリーン) */
 /* ======================================== */
-@media ( max-width : 1200px) {
+@media (max-width : 1200px) {
 	.container {
-		flex-direction: column; /* 縦方向のレイアウトに変更*/
+		flex-direction: column;
+		/* 縦方向のレイアウトに変更*/
 	}
+
 	.form-container {
-		width: 100%; /*最大幅を100%に設定 */
+		width: 100%;
+		/*最大幅を100%に設定 */
 	}
+
 	.data-list-container {
-		width: 100%; /* 幅を100%に設定 */
+		width: 100%;
+		/* 幅を100%に設定 */
 	}
 
 	/* テーブルカラムのレスポンシブ対応 */
-	th, td {
+	th,
+	td {
 		padding: 8px;
 		font-size: 14px;
 	}
-	th.time-column, td.time-column {
-		width: auto; /* 自動調整 */
+
+	th.time-column,
+	td.time-column {
+		width: auto;
+		/* 自動調整 */
 	}
-	th.status-column, td.status-column {
-		width: auto; /* 自動調整 */
+
+	th.status-column,
+	td.status-column {
+		width: auto;
+		/* 自動調整 */
 	}
+
 	input.note {
-		width: 100%; /* 幅を100%に設定 */
+		width: 100%;
+		/* 幅を100%に設定 */
 	}
 }
 
 /* メディアクエリ (800px以下のスクリーン) */
 /* ======================================== */
-@media ( max-width : 800px) {
+@media (max-width : 800px) {
 	h2 {
 		font-size: 20px;
 	}
+
 	.container {
-		flex-direction: column; /* 縦方向のレイアウトに変更*/
+		flex-direction: column;
+		/* 縦方向のレイアウトに変更*/
 	}
+
 	.form-container {
-		width: 100%; /*最大幅を100%に設定 */
+		width: 100%;
+		/*最大幅を100%に設定 */
 	}
+
 	.button-group {
-		gap: 10px; /*ボタン間の隙間を設定 */
-		justify-content: flex-end; /*右寄せ*/
+		gap: 10px;
+		/*ボタン間の隙間を設定 */
+		justify-content: flex-end;
+		/*右寄せ*/
 	}
+
 	/* ログインボタングループスタイル */
 	.login-button-group {
-		justify-content: center; /* 中央寄せ */
+		justify-content: center;
+		/* 中央寄せ */
 	}
+
 	.data-list-container {
-		width: 100%; /* 幅を100%に設定 */
+		width: 100%;
+		/* 幅を100%に設定 */
+	}
+
+	.notice-container {
+		font-size: 14px;
+		/* タブレットなどの中型デバイスでのフォントサイズ調整 */
 	}
 
 	/* テーブルカラムのレスポンシブ対応 */
-	th, td {
+	th,
+	td {
 		padding: 6px;
 		font-size: 16px;
 	}
-	th.time-column, td.time-column {
-		width: auto; /* 自動調整 */
+
+	th.time-column,
+	td.time-column {
+		width: auto;
+		/* 自動調整 */
 	}
-	th.status-column, td.status-column {
-		width: auto; /* 自動調整 */
+
+	th.status-column,
+	td.status-column {
+		width: auto;
+		/* 自動調整 */
 	}
+
 	input.note {
-		width: 100%; /* 幅を100%に設定 */
+		width: 100%;
+		/* 幅を100%に設定 */
 	}
+
 	.working-time {
 		width: 50px;
 	}
+
 	.error-message.attendanceError {
-		margin-top: auto; /* 上部マージンを設定 */
+		margin-top: auto;
+		/* 上部マージンを設定 */
 	}
 }
 
 /* メディアクエリ (480px以下のスクリーン) */
 /* ======================================== */
-@media ( max-width : 480px) {
+@media (max-width : 480px) {
 	h2 {
 		font-size: 16px;
 	}
+
 	body {
 		padding-top: 150px;
 	}
@@ -792,51 +1092,72 @@ input.note {
 	.form-container {
 		padding: 15px;
 	}
+
 	.data-list-container {
 		width: 100%;
 	}
+
 	button {
 		width: 100%;
 		font-size: 14px;
 		white-space: nowrap;
 	}
+
 	.button-group {
 		flex-direction: column;
 		gap: 10px;
 		justify-content: center;
 	}
+
 	.card {
 		height: 100px;
 	}
+
 	.card i {
 		margin-top: 5px;
 		font-size: 30px;
 	}
+
 	.info-item {
 		font-size: 13px;
 	}
 
 	/* テーブルカラムのレスポンシブ対応 */
-	th,td {
+	th,
+	td {
 		padding: 4px;
 		font-size: 14px;
 	}
-	th.time-column, td.time-column {
-		width: auto; /* 自動調整 */
+
+	th.time-column,
+	td.time-column {
+		width: auto;
+		/* 自動調整 */
 	}
-	th.status-column, td.status-column {
-		width: auto; /* 自動調整 */
+
+	th.status-column,
+	td.status-column {
+		width: auto;
+		/* 自動調整 */
 	}
+
 	input.note {
-		width: 100%; /* 幅を100%に設定 */
+		width: 100%;
+		/* 幅を100%に設定 */
 	}
+
 	.input-time {
-		width: 50px; /* 横幅を短く設定 */
+		width: 50px;
+		/* 横幅を短く設定 */
 	}
+
 	.working-time {
 		width: 50px;
 	}
+
 	.error-message.attendanceError {
-		margin-top: auto; /* 上部マージンを設定 */
+		margin-top: auto;
+		/* 上部マージンを設定 */
 	}
+
 }

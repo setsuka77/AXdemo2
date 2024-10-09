@@ -13,7 +13,7 @@
 
 	<div class="container">
 		<div class="form-container">
-				<h2>部署管理</h2>
+			<h2>部署管理</h2>
 
 			<!-- 部署管理フォーム -->
 			<form id="departmentForm" th:action="@{/department/manage}" method="post" th:object="${departmentForm}">
@@ -46,7 +46,7 @@
 				</div>
 				<!-- エラーメッセージ表示 -->
 				<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-					<p th:utext="${errorMessage}"></p> 
+					<p th:utext="${errorMessage}"></p>
 				</div>
 
 				<div class="button-group">
@@ -59,9 +59,32 @@
 					<button type="submit" id="restart" name="restart" class="button" onClick="return confirmRestart()"
 						disabled>部署再開</button>
 				</div>
-
 			</form>
 
+
+			<div id="userManagementForm" style="display: none;">
+				<h3>▼所属社員</h3>
+
+				<div id="noWorker" style="display: none;">
+					該当する職員がいません
+				</div>
+
+					<table id="worker" style="display: none;">
+						<thead>
+							<tr>
+								<th>ID<button type="button" class="downButton" onclick="sortTableById()" id="id">▼</button></th>
+								<th>名前</th>
+								<th>役職<button type="button" class="downButton" onclick="sortTableByRole()" id="role">▼</button></th>
+								<th>拠点</th>
+								<th>変更</th>
+							</tr>
+						</thead>
+						<tbody id="workerTableBody">
+							<tr th:each="user : ${users}">
+							</tr>
+						</tbody>
+					</table>
+			</div>
 		</div>
 	</div>
 	<script th:src="@{/js/department.js}"></script>
