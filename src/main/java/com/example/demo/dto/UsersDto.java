@@ -25,9 +25,9 @@ public class UsersDto {
 	private Date startDate;
 	/** メールアドレス */
 	private String email;
-	/** 電話番号 */
-	private String phoneNumber;
 	/** よみ */
 	private String nameKana;
+	/** 勤務地 */
+	private String workPlace;
 
 }

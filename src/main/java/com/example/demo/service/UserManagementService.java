@@ -1,9 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.UserManagementDto;
-import com.example.demo.form.UserManagementForm;
-import com.example.demo.mapper.UsersMapper;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+
+import com.example.demo.dto.UserManagementDto;
+import com.example.demo.form.UserManagementForm;
+import com.example.demo.mapper.UsersMapper;
 
 @Service
 public class UserManagementService {
@@ -44,6 +44,9 @@ public class UserManagementService {
 		dto.setRole(user.getRole());
 		dto.setDepartmentId(user.getDepartmentId());
 		dto.setStartDate(user.getStartDate());
+		dto.setEmail(user.getEmail());
+		dto.setNameKana(user.getNameKana());
+		dto.setWorkPlace(user.getWorkPlace());
 		return dto;
 	}
 
@@ -69,15 +72,19 @@ public class UserManagementService {
 		userForm.setPassword(userDto.getPassword());
 		userForm.setRole(userDto.getRole());
 		userForm.setDepartmentId(userDto.getDepartmentId());
+		userForm.setName(userDto.getName());
+		userForm.setEmail(userDto.getEmail());
+		userForm.setNameKana(userDto.getNameKana());
+		userForm.setWorkPlace(userDto.getWorkPlace());
 
 		// startDate の型変換
 		if (userDto.getStartDate() != null) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			String formattedDate = userDto.getStartDate().format(formatter);
 
 			// 利用開始日が9999/12/31だった場合の処理
 			if ("9999/12/31".equals(formattedDate)) {
-				formattedDate = "9999/99/99";
+				formattedDate = "9999-99-99";
 			}
 
 			userForm.setStartDate(formattedDate);
@@ -104,35 +111,26 @@ public class UserManagementService {
 	}
 
 	/**
-	 * ユーザ管理画面 新規ユーザ情報登録 既存ユーザ情報更新 論理削除
+	 * ユーザ管理画面 新規ユーザ情報登録 既存ユーザ情報更新 
 	 * 
 	 * @param userForm ユーザ管理フォーム
 	 * @param id       ユーザID
 	 */
-	public boolean registerOrUpdateUser(UserManagementForm userForm, Integer id) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-		boolean isDeleted = false;
-
+	public void registerOrUpdateUser(UserManagementForm userForm) {
 		// 入力内容取得
 		UserManagementDto user = new UserManagementDto();
 		user.setName(userForm.getName());
 		user.setPassword(userForm.getPassword());
 		user.setRole(userForm.getRole());
 		user.setDepartmentId(userForm.getDepartmentId());
+		user.setEmail(userForm.getEmail());
+		user.setNameKana(userForm.getNameKana());
+		user.setWorkPlace(userForm.getWorkPlace());
 
-		// 9999/99/99が入力された時の論理削除
 		// startDateをStringからLocalDateに変換
 		if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
-			if ("9999/99/99".equals(userForm.getStartDate())) {
-				// 特殊な未来日として設定
-				LocalDate futureDate = LocalDate.of(9999, 12, 31);
-				user.setStartDate(futureDate); // LocalDateとして設定
-				isDeleted = true; // 削除フラグを立てる
-			} else {
-				// 通常の日付として処理
-				LocalDate startDate = LocalDate.parse(userForm.getStartDate(), formatter);
-				user.setStartDate(startDate); // LocalDateとして設定
-			}
+			LocalDate date = LocalDate.parse(userForm.getStartDate());
+		    user.setStartDate(date);
 		} else {
 			// startDateがnullまたは空の場合はnullに設定
 			user.setStartDate(null);
@@ -150,13 +148,42 @@ public class UserManagementService {
 			// 新規登録実行
 			user.setId(userId);
 			usersMapper.insertUser(user);
+			System.out.println("登録");
 		} else {
+			//パスワード設定
+			if(userForm.getPassword() == null || userForm.getPassword().isEmpty()) {
+				user.setPassword(existingUser.getPassword());
+			};
 			// 既存更新実行
 			user.setId(userId);
 			usersMapper.updateUser(user);
+			System.out.println("更新");
 		}
+	}
 
-		return isDeleted;
+	/**
+	 * ユーザ管理画面 「利用停止」ボタン押下後
+	 * 
+	 * @param userForm ユーザ管理フォーム
+	 * @param id       ユーザID
+	 */
+	public void deleteUser(UserManagementForm userForm) {
+		// 入力内容取得
+		UserManagementDto user = new UserManagementDto();
+		user.setName(userForm.getName());
+		user.setPassword(userForm.getPassword());
+		user.setRole(userForm.getRole());
+		user.setDepartmentId(userForm.getDepartmentId());
+		user.setId(userForm.getId());
+		user.setEmail(userForm.getEmail());
+		user.setNameKana(userForm.getNameKana());
+		user.setWorkPlace(userForm.getWorkPlace());
+
+		// 特殊な未来日として設定
+		LocalDate futureDate = LocalDate.of(9999, 12, 31);
+		user.setStartDate(futureDate);
+
+		usersMapper.updateUser(user);
 	}
 
 	/**

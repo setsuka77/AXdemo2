@@ -52,6 +52,7 @@ public class DepartmentService {
 
 	    // 部署IDで所属社員リストを取得
 	    List<UserManagementDto> users = usersMapper.findWorker(departmentId);
+	   
 	    // role順に並べ替える
 	    users.sort(Comparator.comparing(user -> Integer.parseInt(user.getRole())));
 

@@ -69,21 +69,23 @@
 					該当する職員がいません
 				</div>
 
-					<table id="worker" style="display: none;">
-						<thead>
-							<tr>
-								<th>ID<button type="button" class="downButton" onclick="sortTableById()" id="id">▼</button></th>
-								<th>名前</th>
-								<th>役職<button type="button" class="downButton" onclick="sortTableByRole()" id="role">▼</button></th>
-								<th>拠点</th>
-								<th>変更</th>
-							</tr>
-						</thead>
-						<tbody id="workerTableBody">
-							<tr th:each="user : ${users}">
-							</tr>
-						</tbody>
-					</table>
+				<table id="worker" style="display: none;">
+					<thead>
+						<tr>
+							<th>ID<button type="button" class="downButton" onclick="sortTableById()" id="id">▼</button>
+							</th>
+							<th>名前</th>
+							<th>役職<button type="button" class="downButton" onclick="sortTableByRole()"
+									id="role">▼</button></th>
+							<th>勤務地</th>
+							<th>変更</th>
+						</tr>
+					</thead>
+					<tbody id="workerTableBody">
+						<tr th:each="user : ${users}">
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>

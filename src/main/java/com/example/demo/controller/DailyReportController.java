@@ -134,13 +134,9 @@ public class DailyReportController {
 	public String displayReport(HttpSession session,String selectDate,Model model) {
 		// selectDate が yyyy-MM-dd 形式でない場合に補正する
 	    String formattedDate = formatDate(selectDate);
-	    //Date date = Date.valueOf(formattedDate);
 		// セッションからユーザー情報を取得
 		Users loginUser = (Users) session.getAttribute("user");	
-		//Integer userId = loginUser.getId();
 
-		// 日報情報を取得
-		//DailyReportForm dailyReportForm = dailyReportService.setForm(userId,date);  
 		// 初期表示用に10行の空のフォームを準備する
 	    List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
 	        for (int i = 0; i < 3; i++) {

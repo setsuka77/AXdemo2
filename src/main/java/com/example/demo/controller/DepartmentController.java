@@ -75,7 +75,6 @@ public class DepartmentController {
     @ResponseBody
 	@RequestMapping(value = "/department/worker", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public ResponseEntity<Map<String, Object>> searchWorker(@RequestParam String selectedDepartment) {
-        System.out.println( selectedDepartment);
         // 部署名で社員検索を行い、所属社員リストを返す
         List<UserManagementDto> users = departmentService.searchDepartmentWorker(selectedDepartment);
         

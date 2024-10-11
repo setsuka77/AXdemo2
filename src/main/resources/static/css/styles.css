@@ -581,6 +581,10 @@ button:hover {
 	margin-left: auto;
 }
 
+#back-button{
+	margin-right: 60%;
+}
+
 /* カード型スタイル */
 /* ======================================== */
 .card {

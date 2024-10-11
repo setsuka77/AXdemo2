@@ -21,12 +21,10 @@ public class UserManagementDto {
 	private LocalDate startDate;
 	/** メールアドレス */
 	private String email;
-	/** 電話番号 */
-	private String phoneNumber;
 	/** よみ */
 	private String nameKana;
-	/** 拠点 */
-	private String base;
+	/** 勤務地 */
+	private String workPlace;
 	/** 部署名 */
 	private String departmentName;
 }

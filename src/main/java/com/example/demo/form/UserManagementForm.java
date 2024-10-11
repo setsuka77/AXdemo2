@@ -1,7 +1,5 @@
 package com.example.demo.form;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -17,8 +15,8 @@ public class UserManagementForm {
 	/** ユーザーID */
 	private Integer id;
 	/** パスワード */
-	@NotBlank(message = "{validation.userManagementForm.password}")
-    @Pattern(regexp = "^[a-zA-Z0-9]{1,16}$", message = "{validation.userManagementForm.password}")
+	//@NotBlank(message = "{validation.userManagementForm.password}")
+    @Pattern(regexp = "^[a-zA-Z0-9]{0,16}$", message = "{validation.userManagementForm.password}")
 	private String password;
 	/** 役職 */
 	@NotBlank(message = "{notBlank.userManagementForm.role}")
@@ -27,17 +25,12 @@ public class UserManagementForm {
 	@NotNull(message = "{notNull.userManagementForm.departmentId}")
 	private Integer departmentId;
 	/** 有効開始日 */
-	@NotBlank(message = "{validation.userManagementForm.startDate}")
-	@Pattern(regexp = "^\\d{4}/\\d{2}/\\d{2}$", message = "{validation.userManagementForm.startDate}")
-	@DateTimeFormat(pattern = "YYYY/MM/DD") // 入力フォームのフォーマットに合わせる
 	private String startDate;
 	/** メールアドレス */
 	private String email;
-	/** 電話番号 */
-	private String phoneNumber;
 	/** よみ */
 	private String nameKana;
-	/** 拠点 */
-	private String base;
+	/** 勤務地 */
+	private String workPlace;
 	
 }

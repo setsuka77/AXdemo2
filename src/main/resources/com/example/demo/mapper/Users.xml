@@ -52,16 +52,19 @@
 	<insert id="insertUser"
 		parameterType="com.example.demo.dto.UserManagementDto">
 		INSERT INTO users (id, name, password, role,
-		department_id, start_date)
+		department_id, start_date, email, name_kana, work_place)
 		VALUES (#{id}, #{name}, #{password},
-		#{role}, #{departmentId}, #{startDate})
+		#{role}, #{departmentId}, #{startDate},#{email},#{nameKana},#{workPlace])
 	</insert>
 
 	<update id="updateUser"
 		parameterType="com.example.demo.dto.UserManagementDto">
 		UPDATE users SET password = #{password}, role = #{role},
 		department_id = #{departmentId},
-		start_date =#{startDate}
+		start_date = #{startDate},
+		email = #{email},
+		name_kana = #{nameKana},
+		work_place = #{workPlace}
 		WHERE id =
 		#{id}
 	</update>

@@ -165,8 +165,8 @@ function fetchWorkers(selectedDepartment) {
 		.then(data => {
 			// データを受け取った後の処理
 			const users = data.users;
-			// データを元の配列に保持
-			originalUsers = [...users]; // 取得したデータの元の順序を保持
+			// 取得したデータの元の順序を保持
+			originalUsers = [...users]; 
 
 			// ユーザーが存在しない場合、テーブルを非表示
 			if (users.length === 0) {
@@ -183,8 +183,8 @@ function fetchWorkers(selectedDepartment) {
                     <td>${user.id}</td>
                     <td>${user.name}</td>
                     <td>${user.role}</td>
-                    <td>${user.base}</td>
-                    <td><a href="/user/edit/${user.id}">変更</a></td>
+                    <td>${user.workPlace}</td>
+                   	<td><a href="/login/userManagement/manage/${user.name}?from=employeeList">変更</a></td>
                 `;
 					tableBody.appendChild(row); // テーブルに行を追加
 
@@ -238,9 +238,7 @@ function sortTableByRole() {
 	// 並び替え後の行をテーブルに再追加
 	tableBody.innerHTML = '';  // クリア
 	sortedRows.forEach(row => {
-		if (row) {
 			tableBody.appendChild(row); // 再追加
-		}
 	});
 	// ボタンのスタイルを更新
 	idButton.style.backgroundColor = ' rgb(200, 200, 200)';

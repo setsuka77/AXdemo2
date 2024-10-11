@@ -14,11 +14,11 @@
 
 	<div class="container">
 		<div class="form-container">
-					<h2>ユーザ管理</h2>
+			<h2>ユーザ管理</h2>
 
 
 			<!-- 検索用フォーム -->
-			<form id="search-form" method="post" th:action="@{/userManagement/search}" th:object="${userForm}"
+			<form id="search-form" method="post" th:action="@{/userManagement/manage}" th:object="${userForm}"
 				onsubmit="return validateSearch()">
 
 				<!-- 成功メッセージ表示 -->
@@ -30,7 +30,7 @@
 					<label for="name">ユーザ名</label>
 					<input type="text" class="input-wide" id="name" name="name" th:field="*{name}">
 					<div class="button-group input-with-button">
-						<button type="submit">検索</button>
+						<button type="submit" name="search">検索</button>
 					</div>
 				</div>
 				<div class="error-message manageError" id="username-error">ユーザ名を入力してください。</div>
@@ -42,21 +42,28 @@
 			</form>
 
 			<!-- 登録用フォーム -->
-			<form id="register-form" method="post" th:action="@{/userManagement/register}" th:object="${userForm}"
+			<form id="register-form" method="post" th:action="@{/userManagement/manage}" th:object="${userForm}"
 				onsubmit="return validateRegister()">
 				<input type="hidden" id="hidden-name" name="name">
-				<input type="hidden" id="hidden-id" name="id">
-
+				<div class="input-group">
+					<label for="nameKana">よみがな</label>
+					<input type="text" id="nameKana" name="nameKana" th:field="*{nameKana}">
+				</div>
 				<div class="input-group">
 					<label for="id">ユーザID</label>
-					<input type="text" id="id" name="id" th:field="*{id}" disabled>
+					<input type="text" id="id" name="id" autocomplete="new-userId" th:field="*{id}">
 				</div>
 				<div class="input-group">
 					<label for="password">パスワード</label>
 					<div class="password-wrapper">
-						<input type="password" id="password" name="password" th:field="*{password}">
+						<input type="password" id="password" name="password" th:field="*{password}"
+							th:value="${userForm.password}" autocomplete="new-password">
 						<i id="eye" class="fa-solid fa-eye"></i>
 					</div>
+				</div>
+				<div class="input-group">
+					<label for="email">email</label>
+					<input type="text" id="email" name="email" th:field="*{email}">
 				</div>
 				<div class="input-group">
 					<label for="role">権限</label>
@@ -79,8 +86,12 @@
 					</select>
 				</div>
 				<div class="input-group">
+					<label for="workPlace">勤務地</label>
+					<input type="text" id="workPlace" name="workPlace" th:field="*{workPlace}">
+				</div>
+				<div class="input-group">
 					<label for="start-date">利用開始日</label>
-					<input type="text" id="start-date" name="startDate" th:field="*{startDate}"
+					<input type="date" id="start-date" name="startDate" th:field="*{startDate}" th:value="${startDate}"
 						placeholder="YYYY/MM/DD">
 				</div>
 				<!-- エラーメッセージ表示 -->
@@ -89,9 +100,9 @@
 				</div>
 
 				<div class="button-group">
-					<button type="submit" class="button" id="register-button"
-						th:classappend="${checkRegister} ? 'disabled-form' : ''"
-						th:disabled="${checkRegister}">登録</button>
+					<button type="button" id="back-button" onclick="history.back()" style="display: none;">戻る</button>
+					<button type="submit" class="button" id="delete-button" name="delete">利用停止</button>
+					<button type="submit" class="button" id="register-button" name="register">登録</button>
 				</div>
 
 			</form>
@@ -100,20 +111,63 @@
 	</div>
 
 	<script>
-		//検索時必須チェック
-		function validateSearch() {
-			const username = document.getElementById('name').value;
-			if (!username) {
-				document.getElementById('username-error').style.display = 'block';
-				// 登録ボタンを非活性にする
-				document.getElementById('register-button').disabled = true;
+		document.addEventListener('DOMContentLoaded', function () {
+			// URLパラメータの取得
+			const urlParams = new URLSearchParams(window.location.search);
+			const fromList = urlParams.get('from') === 'employeeList';
+
+			// 戻るボタンの表示・非表示を制御
+			const backButton = document.getElementById('back-button');
+			if (fromList) {
+				backButton.style.display = ''; // ボタンを表示
+			} else {
+				backButton.style.display = 'none'; // ボタンを非表示
+			}
+
+			// ボタンの初期状態を設定
+			validateRegister();
+
+			// 入力フィールドにイベントリスナーを追加
+			document.querySelectorAll('#register-form input, #register-form select').forEach(input => {
+				input.addEventListener('input', validateRegister);
+			});
+		});
+
+
+		// 登録時必須チェック
+		function validateRegister() {
+			const userId = document.getElementById('id').value;
+			const userName = document.getElementById('name').value;
+			const role = document.getElementById('role').value;
+			const departmentId = document.getElementById('departmentId').value;
+			const startDate = document.getElementById('start-date').value;
+			const email = document.getElementById('email').value;
+			const workPlace = document.getElementById('workPlace').value;
+			const registButton = document.getElementById('register-button');
+			const deleteButton = document.getElementById('delete-button');
+
+			// 入力チェック（パスワードフィールドは無視）
+			if (!userName || !userId || !role || !departmentId || !startDate || !email || !workPlace) {
+				disableButton(registButton);
+				disableButton(deleteButton);
 				return false; // フォームの送信をキャンセル
 			} else {
-				document.getElementById('username-error').style.display = 'none';
-				// 検索成功時に登録ボタンを活性にする
-				document.getElementById('register-button').disabled = false;
+				enableButton(registButton);
+				enableButton(deleteButton);
 				return true; // フォームの送信を許可
 			}
+		}
+
+		// ボタンを活性化する関数
+		function enableButton(button) {
+			button.disabled = false;
+			button.classList.remove('disabled-form');
+		}
+
+		// ボタンを非活性化する関数
+		function disableButton(button) {
+			button.disabled = true;
+			button.classList.add('disabled-form');
 		}
 
 		//パスワードの表示非表示
@@ -134,11 +188,9 @@
 		document.getElementById('register-form').onsubmit = function () {
 			// 検索フォームからの値を取得
 			var searchName = document.getElementById('name').value;
-			var searchId = document.getElementById('id').value;
 
 			// 登録フォームのhiddenフィールドに値を設定
 			document.getElementById('hidden-name').value = searchName;
-			document.getElementById('hidden-id').value = searchId;
 
 			if (!validateRegister()) {
 				event.preventDefault(); // フォームの送信をキャンセル
