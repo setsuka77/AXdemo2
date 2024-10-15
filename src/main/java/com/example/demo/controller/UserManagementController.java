@@ -57,7 +57,7 @@ public class UserManagementController {
 		if (!model.containsAttribute("userForm")) {
 			model.addAttribute("userForm", new UserManagementForm());
 		}
-		//roleが2以外の時、利用停止ボタンと検索ボタンを非活性に設定
+		//roleが2以外の時、検索ボタンを非活性に設定
 		if (!"2".equals(loginUser.getRole())) {
 			model.addAttribute("checkSearch", false);
 		}
