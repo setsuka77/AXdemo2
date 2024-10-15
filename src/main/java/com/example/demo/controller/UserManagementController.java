@@ -57,9 +57,12 @@ public class UserManagementController {
 		if (!model.containsAttribute("userForm")) {
 			model.addAttribute("userForm", new UserManagementForm());
 		}
+		//roleが2以外の時、利用停止ボタンと検索ボタンを非活性に設定
+		if (!"2".equals(loginUser.getRole())) {
+			model.addAttribute("checkSearch", false);
+		}
 		return "userManagement/manage";
 	}
-
 
 	/**
 	 * ユーザー管理画面　部署管理画面から遷移したときの初期表示
@@ -80,11 +83,11 @@ public class UserManagementController {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		model.addAttribute("loginUser", loginUser);
-		if(!"2".equals(loginUser.getRole())) {
-			model.addAttribute("test", false);
+		//roleが2以外の時、利用停止ボタンと検索ボタンを非活性に設定
+		if (!"2".equals(loginUser.getRole())) {
+			model.addAttribute("checkStop", false);
 			model.addAttribute("checkSearch", false);
 		}
-
 		return "userManagement/manage";
 	}
 
@@ -148,7 +151,6 @@ public class UserManagementController {
 		// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
 		model.addAttribute("departments", departments);
-		System.out.println(userForm);
 		// ユーザ名が既に登録されているかチェック（IDが存在しない場合）
 		String userNameError = userManagementService.checkUserNameConflict(userForm.getName(), userForm.getId());
 		if (userNameError != null) {
@@ -175,6 +177,7 @@ public class UserManagementController {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
 		model.addAttribute("loginUser", loginUser);
+
 		return "redirect:/userManagement/manage";
 	}
 

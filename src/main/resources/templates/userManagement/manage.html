@@ -32,8 +32,8 @@
 						th:attr="disabled=${loginUser.role != '2'}">
 					<div class="button-group input-with-button">
 						<button type="submit" name="search" id="search-button"
-						th:disabled="${checkSearch == false}"
-						th:classappend="${checkSearch == false ? 'disabled-form' : ''}">検索</button>
+							th:attr="disabled=${checkSearch == false}"
+							th:classappend="${checkSearch == false ? 'disabled-form' : ''}">検索</button>
 					</div>
 				</div>
 				<div class="error-message manageError" id="username-error">ユーザ名を入力してください。</div>
@@ -108,7 +108,7 @@
 				<div class="button-group">
 					<button type="button" id="back-button" onclick="history.back()" style="display: none;">戻る</button>
 					<button type="submit" class="button" id="delete-button" name="delete"
-					th:disabled="${test == false}"
+						th:attr="data-check-stop=${checkStop}"
 						th:classappend="${checkStop == false ? 'disabled-form' : ''}">利用停止</button>
 					<button type="submit" class="button" id="register-button" name="register">登録</button>
 				</div>
@@ -153,6 +153,7 @@
 			const workPlace = document.getElementById('workPlace').value;
 			const registButton = document.getElementById('register-button');
 			const deleteButton = document.getElementById('delete-button');
+			const checkStop = document.getElementById('delete-button').getAttribute('data-check-stop') === 'false';
 
 			// 入力チェック（パスワードフィールドは無視）
 			if (!userName || !userId || !role || !departmentId || !startDate || !email || !workPlace) {
@@ -161,7 +162,12 @@
 				return false; // フォームの送信をキャンセル
 			} else {
 				enableButton(registButton);
-				enableButton(deleteButton);
+				// checkStopがtrueのときにdeleteButtonを有効化する
+				if (checkStop === true) {
+					disableButton(deleteButton);
+				} else {
+					enableButton(deleteButton);
+				}
 				return true; // フォームの送信を許可
 			}
 		}

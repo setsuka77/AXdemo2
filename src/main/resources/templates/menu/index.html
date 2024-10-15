@@ -60,7 +60,7 @@
 						<!-- 現在日時が入る -->
 					</div>
 					<div class="location">勤務地:<input type="text" id="workPlace" name="workPlace"
-							th:field="*{loginUser.workPlace}" disabled> <a href="/login/userManagement/manage">編集</a>
+							th:field="*{loginUser.workPlace}" disabled> <a th:href="@{/userManagement/manage/{name}(name=${loginUser.name})}">編集</a>
 					</div>
 					<div class="status">
 						<div class="working-status">勤務状況:<select th:name="status" class="form-control">
