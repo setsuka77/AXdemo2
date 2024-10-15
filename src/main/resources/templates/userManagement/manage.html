@@ -28,9 +28,12 @@
 
 				<div class="input-group input-with-button">
 					<label for="name">ユーザ名</label>
-					<input type="text" class="input-wide" id="name" name="name" th:field="*{name}">
+					<input type="text" class="input-wide" id="name" name="name" th:field="*{name}"
+						th:attr="disabled=${loginUser.role != '2'}">
 					<div class="button-group input-with-button">
-						<button type="submit" name="search">検索</button>
+						<button type="submit" name="search" id="search-button"
+						th:disabled="${checkSearch == false}"
+						th:classappend="${checkSearch == false ? 'disabled-form' : ''}">検索</button>
 					</div>
 				</div>
 				<div class="error-message manageError" id="username-error">ユーザ名を入力してください。</div>
@@ -47,11 +50,13 @@
 				<input type="hidden" id="hidden-name" name="name">
 				<div class="input-group">
 					<label for="nameKana">よみがな</label>
-					<input type="text" id="nameKana" name="nameKana" th:field="*{nameKana}">
+					<input type="text" id="nameKana" name="nameKana" th:field="*{nameKana}"
+						th:attr="disabled=${loginUser.role != '2'}">
 				</div>
 				<div class="input-group">
 					<label for="id">ユーザID</label>
-					<input type="text" id="id" name="id" autocomplete="new-userId" th:field="*{id}">
+					<input type="text" id="id" name="id" autocomplete="new-userId" th:field="*{id}"
+						th:attr="disabled=${loginUser.role != '2'}">
 				</div>
 				<div class="input-group">
 					<label for="password">パスワード</label>
@@ -67,7 +72,7 @@
 				</div>
 				<div class="input-group">
 					<label for="role">権限</label>
-					<select id="role" name="role">
+					<select id="role" name="role" th:attr="disabled=${loginUser.role != '2'}">
 						<option value="" disabled selected>選択してください</option>
 						<option value="1" th:selected="${userForm.role == '1'}">管理者</option>
 						<option value="2" th:selected="${userForm.role == '2'}">マネージャ</option>
@@ -77,7 +82,8 @@
 				</div>
 				<div class="input-group">
 					<label for="departmentId">所属部署</label>
-					<select id="departmentId" name="departmentId" th:field="*{departmentId}">
+					<select id="departmentId" name="departmentId" th:field="*{departmentId}"
+						th:attr="disabled=${loginUser.role != '2'}">
 						<option value="">選択してください</option>
 						<option th:each="department : ${departments}" th:value="${department.departmentId}"
 							th:text="${department.name}"
@@ -92,7 +98,7 @@
 				<div class="input-group">
 					<label for="start-date">利用開始日</label>
 					<input type="date" id="start-date" name="startDate" th:field="*{startDate}" th:value="${startDate}"
-						placeholder="YYYY/MM/DD">
+						placeholder="YYYY/MM/DD" th:attr="disabled=${loginUser.role != '2'}">
 				</div>
 				<!-- エラーメッセージ表示 -->
 				<div th:if="${registerError}" class="alert alert-danger" role="alert">
@@ -101,7 +107,9 @@
 
 				<div class="button-group">
 					<button type="button" id="back-button" onclick="history.back()" style="display: none;">戻る</button>
-					<button type="submit" class="button" id="delete-button" name="delete">利用停止</button>
+					<button type="submit" class="button" id="delete-button" name="delete"
+					th:disabled="${test == false}"
+						th:classappend="${checkStop == false ? 'disabled-form' : ''}">利用停止</button>
 					<button type="submit" class="button" id="register-button" name="register">登録</button>
 				</div>
 
@@ -191,6 +199,11 @@
 
 			// 登録フォームのhiddenフィールドに値を設定
 			document.getElementById('hidden-name').value = searchName;
+
+			// 全ての入力フィールドのdisabled属性を削除
+			document.querySelectorAll('#register-form input, #register-form select').forEach(input => {
+				input.disabled = false; // disabled属性を削除
+			});
 
 			if (!validateRegister()) {
 				event.preventDefault(); // フォームの送信をキャンセル

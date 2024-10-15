@@ -52,6 +52,64 @@
 				<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
 			</div>
 
+			<form th:action="@{/menu/index}" method="post">
+				<div class="menu-attendanceContainer">
+					<span th:if="${message}" th:text="${message}"></span>
+
+					<div class="current-time" id="current-time">
+						<!-- 現在日時が入る -->
+					</div>
+					<div class="location">勤務地:<input type="text" id="workPlace" name="workPlace"
+							th:field="*{loginUser.workPlace}" disabled> <a href="/login/userManagement/manage">編集</a>
+					</div>
+					<div class="status">
+						<div class="working-status">勤務状況:<select th:name="status" class="form-control">
+							<option value="" hidden> </option>
+									<option value="0" th:selected="${status == 0}">
+										通常出勤
+									</option>
+									<option value="1" th:selected="${status == 1}">
+										休日
+									</option>
+									<option value="2" th:selected="${status == 2}">
+										祝日
+									</option>
+									<option value="3" th:selected="${status == 3}">
+										遅刻
+									</option>
+									<option value="4" th:selected="${status == 4}">
+										有給
+									</option>
+									<option value="5" th:selected="${status == 5}">
+										欠勤
+									</option>
+									<option value="6" th:selected="${status == 6}">
+										早退
+									</option>
+									<option value="7" th:selected="${status == 7}">
+										時間外勤務
+									</option>
+									<option value="8" th:selected="${status == 8}">
+										振替出勤
+									</option>
+									<option value="9" th:selected="${status == 9}">
+										振替休日
+									</option>
+									<option value="10" th:selected="${status == 10}">
+										代替出勤
+									</option>
+									<option value="11" th:selected="${status == 11}">
+										代替休日
+									</option>
+						</select></div>
+						<div class="status-buttons">
+							<button type="submit" class="button" id="start" name="start">出勤</button>
+							<button type="submit" class="button" id="finish" name="end">退勤</button>
+						</div>
+					</div>
+				</div>
+			</form>
+
 			<!-- 管理者用のメニュー -->
 			<div th:if="${role} == 'admin'">
 				<ul>
@@ -338,6 +396,32 @@
 			}
 		});
 	});
+
+	function updateCurrentTime() {
+		const now = new Date();
+
+		// 年、月、日、曜日、時、分、秒を取得
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, '0'); // 0始まりなので+1
+		const day = String(now.getDate()).padStart(2, '0');
+		const weekday = ['日', '月', '火', '水', '木', '金', '土'][now.getDay()]; // 曜日を取得
+		const hours = String(now.getHours()).padStart(2, '0');
+		const minutes = String(now.getMinutes()).padStart(2, '0');
+		const seconds = String(now.getSeconds()).padStart(2, '0');
+
+		// 表示するフォーマットを設定
+		const formattedDate = `${year}年${month}月${day}日(${weekday})`;
+		const formattedTime = `${hours}:${minutes} ${seconds}`;
+
+		// HTMLに表示
+		document.getElementById('current-time').innerText = `${formattedDate} ${formattedTime}`;
+	}
+
+	// ページが読み込まれたときに現在時刻を更新
+	document.addEventListener('DOMContentLoaded', updateCurrentTime);
+
+	// 1秒ごとに時刻を更新
+	setInterval(updateCurrentTime, 1000);
 
 
 

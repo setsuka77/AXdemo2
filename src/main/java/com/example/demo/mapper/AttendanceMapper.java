@@ -53,4 +53,18 @@ public interface AttendanceMapper {
 	 */
 	Attendance findByDateAndUserId(@Param("date") java.util.Date date,@Param("userId") Integer UserId);
 	
+	/**
+	 * 出勤ボタン押下時　登録
+	 * 
+	 * @param Attendance
+	 */
+	void registStart(Attendance attendance);
+	
+	/**
+	 * 退勤ボタン押下時　更新
+	 * 
+	 * @param Attendance
+	 */
+	void registEnd(Attendance attendance);
+	
 }

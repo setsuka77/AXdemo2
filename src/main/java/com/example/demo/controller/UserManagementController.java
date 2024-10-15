@@ -40,14 +40,10 @@ public class UserManagementController {
 	 * @return ユーザ管理画面
 	 */
 	@GetMapping("/userManagement/manage")
-	public String userManage(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
-
-		// アクセス権限確認(管理者、マネージャのみ)
-		Users user = (Users) session.getAttribute("user");
-		if (user == null || !"1".equals(user.getRole()) && !"2".equals(user.getRole())) {
-			redirectAttributes.addFlashAttribute("error", "アクセス権限がありません。");
-			return "redirect:/";
-		}
+	public String userManage(HttpSession session, Model model) {
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		model.addAttribute("loginUser", loginUser);
 
 		// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
@@ -64,23 +60,30 @@ public class UserManagementController {
 		return "userManagement/manage";
 	}
 
+
 	/**
 	 * ユーザー管理画面　部署管理画面から遷移したときの初期表示
 	 */
 	@GetMapping("/userManagement/manage/{name}")
-	public String userManageChange(@PathVariable String name, Model model) {
-		System.out.println(name);
-		// 全ての部署情報を取得(プルダウン用)
+	public String userManageChange(HttpSession session, @PathVariable String name, Model model) {// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
 		model.addAttribute("departments", departments);
-		
+
 		// 入力ユーザ名でユーザ情報を検索
 		UserManagementDto userDto = userManagementService.searchUserByName(name);
-		System.out.println(userDto);
+
 		// 既存ユーザの情報をフォームに設定
 		UserManagementForm userForm = new UserManagementForm();
 		userForm = userManagementService.setUserFormFromDto(userDto, userForm);
 		model.addAttribute("userForm", userForm);
+
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		model.addAttribute("loginUser", loginUser);
+		if(!"2".equals(loginUser.getRole())) {
+			model.addAttribute("test", false);
+			model.addAttribute("checkSearch", false);
+		}
 
 		return "userManagement/manage";
 	}
@@ -121,8 +124,11 @@ public class UserManagementController {
 		// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
 		model.addAttribute("departments", departments);
-		System.out.println("検索ボタン"+userForm);
 		model.addAttribute("userForm", userForm);
+
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		model.addAttribute("loginUser", loginUser);
 		return "userManagement/manage";
 	}
 
@@ -139,11 +145,10 @@ public class UserManagementController {
 	@PostMapping(path = "/userManagement/manage", params = "register")
 	public String registerOrUpdateUser(@Valid @ModelAttribute UserManagementForm userForm, BindingResult bindingResult,
 			HttpSession session, Model model, RedirectAttributes redirectAttributes) throws ParseException {
-		System.out.println("登録ボタン"+userForm);
 		// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
 		model.addAttribute("departments", departments);
-	
+		System.out.println(userForm);
 		// ユーザ名が既に登録されているかチェック（IDが存在しない場合）
 		String userNameError = userManagementService.checkUserNameConflict(userForm.getName(), userForm.getId());
 		if (userNameError != null) {
@@ -167,6 +172,9 @@ public class UserManagementController {
 		session.setAttribute("checkRegister", true);
 
 		redirectAttributes.addFlashAttribute("userForm", new UserManagementForm());
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		model.addAttribute("loginUser", loginUser);
 		return "redirect:/userManagement/manage";
 	}
 
@@ -186,6 +194,10 @@ public class UserManagementController {
 		//ユーザー情報更新処理
 		userManagementService.deleteUser(userForm);
 		redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "は利用停止中です。");
+
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		model.addAttribute("loginUser", loginUser);
 
 		return "redirect:/userManagement/manage";
 	}

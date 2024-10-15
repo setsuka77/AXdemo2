@@ -14,9 +14,11 @@
 		resultType="com.example.demo.dto.AttendanceDto">
 		SELECT a.*
 		FROM attendance a
-		INNER JOIN users u ON a.user_id = u.id
+		INNER JOIN users u ON a.user_id
+		= u.id
 		WHERE u.id = #{userId}
-		AND a.date BETWEEN #{startDate} AND #{endDate}
+		AND a.date BETWEEN #{startDate} AND
+		#{endDate}
 	</select>
 
 	<!-- 勤怠ID取得用 -->
@@ -25,37 +27,41 @@
 		SELECT *
 		FROM attendance
 		WHERE user_id = #{userId}
-		AND date = #{date}
+		AND date =
+		#{date}
 	</select>
-	
-		<!-- 提出してないユーザーの情報を取得 -->
+
+	<!-- 提出してないユーザーの情報を取得 -->
 	<select id="findUsersWithoutReport"
 		resultType="com.example.demo.dto.UsersDto">
 		SELECT u.*
 		FROM users u
 		WHERE u.role IN (3, 4)
-			AND now() >= u.start_date 
-			AND u.id NOT IN (
-			SELECT a.user_id
-			FROM attendance a
-			WHERE a.date = #{date} 
+		AND now() >= u.start_date
+		AND u.id NOT IN (
+		SELECT a.user_id
+		FROM attendance a
+		WHERE a.date = #{date}
 		)
 	</select>
 
 
 	<!-- 勤怠登録情報登録 -->
-<insert id="upsert" parameterType="java.util.List">
-    INSERT INTO attendance (id, user_id, date, status, start_time, end_time, remarks)
-    VALUES
-    <foreach collection="list" item="attendance" separator=",">
-        (#{attendance.id}, #{attendance.userId}, #{attendance.date}, #{attendance.status}, #{attendance.startTime}, #{attendance.endTime}, #{attendance.remarks})
-    </foreach>
-    ON DUPLICATE KEY UPDATE
-        status = VALUES(status),
-        start_time = VALUES(start_time),
-        end_time = VALUES(end_time),
-        remarks = VALUES(remarks)
-</insert>
+	<insert id="upsert" parameterType="java.util.List">
+		INSERT INTO attendance (id, user_id, date, status, start_time,
+		end_time, remarks)
+		VALUES
+		<foreach collection="list" item="attendance" separator=",">
+			(#{attendance.id}, #{attendance.userId}, #{attendance.date},
+			#{attendance.status}, #{attendance.startTime}, #{attendance.endTime},
+			#{attendance.remarks})
+		</foreach>
+		ON DUPLICATE KEY UPDATE
+		status = VALUES(status),
+		start_time = VALUES(start_time),
+		end_time = VALUES(end_time),
+		remarks = VALUES(remarks)
+	</insert>
 
 
 	<!-- Select SQL by User ID and Date Range -->
@@ -64,7 +70,25 @@
 		SELECT id, user_id, date, status, hours
 		FROM attendance
 		WHERE user_id = #{userId}
-		AND date BETWEEN #{startDate} AND #{endDate}
+		AND date BETWEEN #{startDate}
+		AND #{endDate}
 	</select>
+
+	<!-- 出勤ボタン押下時の登録 -->
+	<insert id="registStart"
+		parameterType="com.example.demo.entity.Attendance">
+		INSERT INTO attendance(user_id, status, date, start_time, end_time)
+		VALUES(#{userId}, #{status}, #{date}, #{startTime}, NULL) <!-- end_timeをNULLに設定 -->
+	</insert>
+
+	<!-- 退勤ボタン押下時の更新 -->
+	<update id="registEnd"
+		parameterType="com.example.demo.entity.Attendance">
+		UPDATE attendance SET
+		end_time = #{endTime}
+		WHERE
+		user_id = #{userId} AND date = #{date} <!-- user_idを追加して特定 -->
+	</update>
+
 
 </mapper>
