@@ -118,6 +118,46 @@
 		</div>
 	</div>
 
+	<!-- 検索結果モーダル -->
+	<dialog class="dialog" id="userModal" th:if="${showModal}" style="display:block;">
+		<div class="dialog-content">
+			<h3>ユーザー選択</h3>
+			<table class="searchTable">
+				<thead>
+					<tr>
+						<th>名前</th>
+						<th>ID</th>
+						<th>部署名</th>
+						<th>選択</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${userList}">
+						<td th:text="${user.name}"></td>
+						<td th:text="${user.id}"></td>
+						<td th:text="${user.departmentName}"></td>
+						<td>
+							<button type="button" id="selectUser"
+								th:data-name="${user.name}"
+								th:data-nameKana="${user.nameKana}"
+								th:data-id="${user.id}"
+								th:data-email="${user.email}"
+								th:data-role="${user.role}"
+								th:data-departmentId="${user.departmentId}"
+								th:data-workPlace="${user.workPlace}"
+								th:data-startDate="${user.startDate}">
+								選択
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="button" id="cancel">キャンセル</button>
+		</div>
+	</dialog>
+
+
+
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
 			// URLパラメータの取得
@@ -215,6 +255,46 @@
 				event.preventDefault(); // フォームの送信をキャンセル
 			}
 		};
+
+		// ユーザーを選択したときの処理
+		document.querySelectorAll('#selectUser').forEach(button => {
+			button.addEventListener('click', function () {
+
+				// 選択したユーザーのデータを取得
+				const userId = this.getAttribute('data-id');
+				const userName = this.getAttribute('data-name');
+				const userNameKana = this.getAttribute('data-nameKana');
+				const userEmail = this.getAttribute('data-email');
+				const userRole = this.getAttribute('data-role');
+				const userDepartmentId = this.getAttribute('data-departmentId'); // 所属部署ID
+				const userWorkPlace = this.getAttribute('data-workPlace');
+				const userStartDate = this.getAttribute('data-startDate');
+
+				// フォームに値を設定
+				document.getElementById('id').value = userId; // ユーザID
+				document.getElementById('name').value = userName; // ユーザ名
+				document.getElementById('nameKana').value = userNameKana; // よみがな
+				document.getElementById('email').value = userEmail; // メールアドレス
+				document.getElementById('role').value = userRole; // 権限
+				document.getElementById('departmentId').value = userDepartmentId;// 所属部署の設定
+				
+				// 勤務地と利用開始日を設定
+				document.getElementById('workPlace').value = userWorkPlace; // 勤務地
+				document.getElementById('start-date').value = userStartDate; // 利用開始日
+
+				// モーダルを非表示にする
+				document.getElementById('userModal').style.display = 'none';
+			});
+		});
+
+		// キャンセルボタン押下時にモーダルを閉じる処理
+		document.getElementById('cancel').addEventListener('click', function () {
+			document.getElementById('userModal').style.display = 'none'; // Hide the modal
+		});
+
+
+
+
 	</script>
 
 </body>

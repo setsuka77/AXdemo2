@@ -17,6 +17,8 @@ public class UserManagementDto {
 	private String role;
 	/** 所属部署ID */
 	private Integer departmentId;
+	/** 所属部署名 */
+	private String departmentName;
 	/** 有効開始日 */
 	private LocalDate startDate;
 	/** メールアドレス */
@@ -25,6 +27,4 @@ public class UserManagementDto {
 	private String nameKana;
 	/** 勤務地 */
 	private String workPlace;
-	/** 部署名 */
-	private String departmentName;
 }

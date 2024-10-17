@@ -184,7 +184,8 @@ function fetchWorkers(selectedDepartment) {
                     <td>${user.name}</td>
                     <td>${user.role}</td>
                     <td>${user.workPlace}</td>
-                   	<td><a href="/login/userManagement/manage/${user.name}?from=employeeList">変更</a></td>
+                   	<td><a href="/login/userManagement/manage/${user.id}/${user.name}?from=employeeList">変更</a></td>
+
                 `;
 					tableBody.appendChild(row); // テーブルに行を追加
 

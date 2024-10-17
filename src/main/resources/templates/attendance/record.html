@@ -225,7 +225,7 @@
 
 	<!-- 却下理由用モーダル -->
 	<dialog id="rejectModal" class="dialog">
-		<div class="dialog-content" id="dialogInputArea">
+		<div class="dialog-content">
 			<div>却下理由を入力してください</div>
 			<form id="rejectModalForm" th:action="@{/attendance/record}" method="post">
 				<textarea id="rejectComment" rows="4" placeholder="却下理由" class="dialog-comment"
@@ -240,7 +240,7 @@
 
 	<!-- 訂正理由用モーダル -->
 	<dialog id="correctModal" class="dialog">
-		<div class="dialog-content" id="dialogInputAreaC">
+		<div class="dialog-content">
 			<div>訂正理由を入力してください</div>
 			<form id="correctModalForm" th:action="@{/attendance/record}" method="post">
 				<textarea id="correctComment" rows="4" placeholder="訂正理由" class="dialog-comment"

@@ -65,15 +65,22 @@ public class UserManagementController {
 	}
 
 	/**
-	 * ユーザー管理画面　部署管理画面から遷移したときの初期表示
+	 * 処理メニュー画面　部署管理画面から遷移したときの初期表示
+	 * 
+	 * @param session
+	 * @param ユーザーname
+	 * @param model
+	 * @return ユーザ管理画面
 	 */
-	@GetMapping("/userManagement/manage/{name}")
-	public String userManageChange(HttpSession session, @PathVariable String name, Model model) {// 全ての部署情報を取得(プルダウン用)
+	@GetMapping("/userManagement/manage/{id}/{name}")
+	public String userManageChange(HttpSession session, @PathVariable String name, @PathVariable Integer id,
+			Model model) {
+		// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
 		model.addAttribute("departments", departments);
 
 		// 入力ユーザ名でユーザ情報を検索
-		UserManagementDto userDto = userManagementService.searchUserByName(name);
+		UserManagementDto userDto = userManagementService.searchUsers(name, id);
 
 		// 既存ユーザの情報をフォームに設定
 		UserManagementForm userForm = new UserManagementForm();
@@ -103,35 +110,39 @@ public class UserManagementController {
 	@PostMapping(path = "/userManagement/manage", params = "search")
 	public String searchUser(@ModelAttribute UserManagementForm userForm, HttpSession session, Model model,
 			RedirectAttributes redirectAttributes) {
+		// 全ての部署情報を取得(プルダウン用)
+		List<DepartmentDto> departments = departmentService.findAllDepartments();
+		model.addAttribute("departments", departments);
+
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		model.addAttribute("loginUser", loginUser);
+
 		// 入力ユーザ名でユーザ情報を検索
-		UserManagementDto userDto = userManagementService.searchUserByName(userForm.getName());
+		List<UserManagementDto> userList = userManagementService.searchUserByName(userForm.getName());
 
-		// 新規か既存かを判断
-		if (userDto != null) {
-			// 既存ユーザの情報をフォームに設定
-			userForm = userManagementService.setUserFormFromDto(userDto, userForm);
-
-			// 検索成功時は登録ボタンを活性に
-			session.setAttribute("checkRegister", false);
-		} else {
+		// 検索結果がない場合
+		if (userList == null || userList.isEmpty()) {
 			// 新規ユーザのID生成とエラー表示
 			userForm.setId(userManagementService.generateNewUserId());
 			redirectAttributes.addFlashAttribute("searchError", "存在しないユーザです。");
 			redirectAttributes.addFlashAttribute("userForm", userForm);
 
-			// 検索エラー時は登録ボタンを活性に
-			session.setAttribute("checkRegister", false);
 			return "redirect:/userManagement/manage";
 		}
-
-		// 全ての部署情報を取得(プルダウン用)
-		List<DepartmentDto> departments = departmentService.findAllDepartments();
-		model.addAttribute("departments", departments);
-		model.addAttribute("userForm", userForm);
-
-		// ユーザー情報の取得
-		Users loginUser = (Users) session.getAttribute("user");
-		model.addAttribute("loginUser", loginUser);
+		
+		// 検索結果がある場合
+		//1件の時
+		if (userList.size() == 1) {
+			// 既存ユーザの情報をフォームに設定
+			userForm = userManagementService.setUserFormFromDto(userList.get(0), userForm);
+			model.addAttribute("userForm", userForm);
+		} else {
+		// 検索結果が複数件ある場合はモーダル表示用のリストを設定
+			model.addAttribute("userForm", userForm);
+			model.addAttribute("userList", userList);
+			model.addAttribute("showModal", true); // モーダルを表示するフラグ
+		}
 		return "userManagement/manage";
 	}
 
@@ -151,10 +162,10 @@ public class UserManagementController {
 		// 全ての部署情報を取得(プルダウン用)
 		List<DepartmentDto> departments = departmentService.findAllDepartments();
 		model.addAttribute("departments", departments);
-		// ユーザ名が既に登録されているかチェック（IDが存在しない場合）
-		String userNameError = userManagementService.checkUserNameConflict(userForm.getName(), userForm.getId());
-		if (userNameError != null) {
-			bindingResult.rejectValue("name", "error.userForm", userNameError);
+		// ユーザIDが重複していないかチェック
+		Boolean Duplication = userManagementService.checkUserNameConflict(userForm.getId(), userForm.getName());
+		if (Duplication) {
+			bindingResult.rejectValue("id", "error.userForm", "ユーザID : このユーザIDは既に登録されています。別のユーザIDを入力してください");
 		}
 
 		// エラーメッセージがあれば表示
@@ -167,15 +178,15 @@ public class UserManagementController {
 		}
 
 		// 登録/更新を行う
-		userManagementService.registerOrUpdateUser(userForm);
+		Users user = userManagementService.registerOrUpdateUser(userForm);
 		redirectAttributes.addFlashAttribute("successMessage", userForm.getName() + "を登録/更新しました。");
-
-		// 登録、更新が成功した場合は登録ボタンを活性に
-		session.setAttribute("checkRegister", true);
 
 		redirectAttributes.addFlashAttribute("userForm", new UserManagementForm());
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		if (user.getId() == loginUser.getId()) {
+			session.setAttribute("user", user);
+		}
 		model.addAttribute("loginUser", loginUser);
 
 		return "redirect:/userManagement/manage";

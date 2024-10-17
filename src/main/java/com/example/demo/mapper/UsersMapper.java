@@ -45,10 +45,26 @@ public interface UsersMapper {
 	 * @param name ユーザ名
 	 * @return ユーザ情報
 	 */
-
 	@Results({
-			@Result(property = "startDate", column = "start_date", javaType = LocalDate.class, jdbcType = JdbcType.DATE, typeHandler = LocalDateTypeHandler.class) })
-	UserManagementDto findByName(@Param("name") String name);
+		@Result(property = "startDate", column = "start_date", javaType = LocalDate.class, jdbcType = JdbcType.DATE, typeHandler = LocalDateTypeHandler.class) })
+	List<UserManagementDto> findByName(@Param("name") String name);
+	
+	/**
+	 * ユーザ管理画面 ユーザ情報取得
+	 * 
+	 * @param name ユーザー名
+	 * @param id ユーザID
+	 * @return ユーザ情報
+	 */
+	UserManagementDto findByIdAndName(@Param("name") String name,@Param("id") Integer id);
+
+	/**
+	 * ユーザ管理画面 ユーザ情報取得(重複チェック,登録更新判別用)
+	 * 
+	 * @param id ユーザID
+	 * @return ユーザ情報
+	 */
+	Users findById(@Param("id") Integer id);
 
 	/**
 	 * ユーザ管理画面 新規ユーザID生成用
@@ -58,26 +74,18 @@ public interface UsersMapper {
 	Integer findMaxId();
 
 	/**
-	 * ユーザ管理画面 登録更新判別用
-	 * 
-	 * @param id ユーザID
-	 * @return ユーザ情報
-	 */
-	UserManagementDto identifyUserId(@Param("id") Integer id);
-
-	/**
 	 * ユーザ管理画面 新規ユーザ情報登録
 	 * 
 	 * @param user ユーザ情報
 	 */
-	void insertUser(UserManagementDto user);
+	void insertUser(Users user);
 
 	/**
 	 * ユーザ管理画面 既存ユーザ情報更新
 	 * 
 	 * @param user 更新するユーザ情報
 	 */
-	void updateUser(UserManagementDto user);
+	void updateUser(Users user);
 	
 	/**
 	 * バッチ処理 メール送信先情報取得

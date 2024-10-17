@@ -28,10 +28,27 @@
 	<!-- ユーザ管理画面で使用 -->
 	<select id="findByName"
 		resultType="com.example.demo.dto.UserManagementDto">
+		SELECT u.*, d.name AS departmentName
+		FROM users u
+		JOIN department d ON u.department_id = d.department_id
+		WHERE u.name = #{name}
+	</select>
+
+	<!-- ユーザ管理画面で使用 -->
+	<select id="findByIdAndName"
+		resultType="com.example.demo.dto.UserManagementDto">
 		SELECT * FROM users
 		WHERE name = #{name}
+		AND id = #{id}
 	</select>
-	
+
+	<!-- ユーザ管理画面で使用 -->
+	<select id="findById" resultType="com.example.demo.entity.Users">
+		SELECT * FROM users
+		WHERE id =
+		#{id}
+	</select>
+
 	<!-- 部署登録画面で使用 -->
 	<select id="findWorker"
 		resultType="com.example.demo.dto.UserManagementDto">
@@ -43,26 +60,23 @@
 		SELECT MAX(id) FROM users
 	</select>
 
-	<select id="identifyUserId"
-		resultType="com.example.demo.dto.UserManagementDto">
-		SELECT * FROM users
-		WHERE id = #{id}
-	</select>
-
 	<insert id="insertUser"
-		parameterType="com.example.demo.dto.UserManagementDto">
+		parameterType="com.example.demo.entity.Users">
 		INSERT INTO users (id, name, password, role,
 		department_id, start_date, email, name_kana, work_place)
-		VALUES (#{id}, #{name}, #{password},
-		#{role}, #{departmentId}, #{startDate},#{email},#{nameKana},#{workPlace])
+		VALUES (#{id},
+		#{name}, #{password},
+		#{role}, #{departmentId},
+		#{startDate},#{email},#{nameKana},#{workPlace})
 	</insert>
 
 	<update id="updateUser"
-		parameterType="com.example.demo.dto.UserManagementDto">
+		parameterType="com.example.demo.entity.Users">
 		UPDATE users SET password = #{password}, role = #{role},
 		department_id = #{departmentId},
 		start_date = #{startDate},
-		email = #{email},
+		email =
+		#{email},
 		name_kana = #{nameKana},
 		work_place = #{workPlace}
 		WHERE id =
@@ -76,7 +90,7 @@
 		SELECT * FROM users
 		WHERE role = #{role}
 	</select>
-	
+
 	<select id="findManagers"
 		resultType="com.example.demo.dto.UsersDto">
 		SELECT * FROM users WHERE role = 2

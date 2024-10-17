@@ -60,48 +60,51 @@
 						<!-- 現在日時が入る -->
 					</div>
 					<div class="location">勤務地:<input type="text" id="workPlace" name="workPlace"
-							th:field="*{loginUser.workPlace}" disabled> <a th:href="@{/userManagement/manage/{name}(name=${loginUser.name})}">編集</a>
+							th:field="*{loginUser.workPlace}" disabled><a
+							th:href="@{/userManagement/manage/{id}/{name}(id=${loginUser.id}, name=${loginUser.name})}">編集</a>
+
+
 					</div>
 					<div class="status">
 						<div class="working-status">勤務状況:<select th:name="status" class="form-control">
-							<option value="" hidden> </option>
-									<option value="0" th:selected="${status == 0}">
-										通常出勤
-									</option>
-									<option value="1" th:selected="${status == 1}">
-										休日
-									</option>
-									<option value="2" th:selected="${status == 2}">
-										祝日
-									</option>
-									<option value="3" th:selected="${status == 3}">
-										遅刻
-									</option>
-									<option value="4" th:selected="${status == 4}">
-										有給
-									</option>
-									<option value="5" th:selected="${status == 5}">
-										欠勤
-									</option>
-									<option value="6" th:selected="${status == 6}">
-										早退
-									</option>
-									<option value="7" th:selected="${status == 7}">
-										時間外勤務
-									</option>
-									<option value="8" th:selected="${status == 8}">
-										振替出勤
-									</option>
-									<option value="9" th:selected="${status == 9}">
-										振替休日
-									</option>
-									<option value="10" th:selected="${status == 10}">
-										代替出勤
-									</option>
-									<option value="11" th:selected="${status == 11}">
-										代替休日
-									</option>
-						</select></div>
+								<option value="" hidden> </option>
+								<option value="0" th:selected="${status == 0}">
+									通常出勤
+								</option>
+								<option value="1" th:selected="${status == 1}">
+									休日
+								</option>
+								<option value="2" th:selected="${status == 2}">
+									祝日
+								</option>
+								<option value="3" th:selected="${status == 3}">
+									遅刻
+								</option>
+								<option value="4" th:selected="${status == 4}">
+									有給
+								</option>
+								<option value="5" th:selected="${status == 5}">
+									欠勤
+								</option>
+								<option value="6" th:selected="${status == 6}">
+									早退
+								</option>
+								<option value="7" th:selected="${status == 7}">
+									時間外勤務
+								</option>
+								<option value="8" th:selected="${status == 8}">
+									振替出勤
+								</option>
+								<option value="9" th:selected="${status == 9}">
+									振替休日
+								</option>
+								<option value="10" th:selected="${status == 10}">
+									代替出勤
+								</option>
+								<option value="11" th:selected="${status == 11}">
+									代替休日
+								</option>
+							</select></div>
 						<div class="status-buttons">
 							<button type="submit" class="button" id="start" name="start">出勤</button>
 							<button type="submit" class="button" id="finish" name="end">退勤</button>

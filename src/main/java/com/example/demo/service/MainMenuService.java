@@ -80,6 +80,7 @@ public class MainMenuService {
 		Attendance searchAttendance = attendanceMapper.findByDateAndUserId(attendance.getDate(),
 				attendance.getUserId());
 		if (searchAttendance == null) {
+			//登録処理
 			attendanceMapper.registStart(attendance);
 			return "出勤しました";
 		} else {
@@ -105,8 +106,15 @@ public class MainMenuService {
 		attendance.setDate(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		attendance.setEndTime(Time.valueOf(currentTime));
 
-		attendanceMapper.registEnd(attendance);
-		return "退勤しました";
+		Attendance searchAttendance = attendanceMapper.findByDateAndUserId(attendance.getDate(),
+				attendance.getUserId());
+		if (searchAttendance != null) {
+			//更新処理
+			attendanceMapper.registEnd(attendance);
+			return "退勤しました";
+		} else {
+			return "出勤前のため、退勤登録ができません。";
+		}
 	}
 
 }

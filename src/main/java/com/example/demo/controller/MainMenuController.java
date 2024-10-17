@@ -92,13 +92,13 @@ public class MainMenuController {
 	}
 
 	/**
-     * 「出勤」ボタン押下時の処理
-     *
-     * @param session セッション情報
-     * @param status 出勤状態
-     * @param model モデル
-     * @return 処理メニュー画面
-     */
+	 * 「出勤」ボタン押下時の処理
+	 *
+	 * @param session セッション情報
+	 * @param status 出勤状態
+	 * @param model モデル
+	 * @return 処理メニュー画面
+	 */
 	@PostMapping(path = "/menu/index", params = "start")
 	public String attendanceStart(HttpSession session, Integer status, Model model) {
 		// ユーザー情報の取得
@@ -109,11 +109,6 @@ public class MainMenuController {
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("role", role);
 
-		//出勤登録
-		String message = mainMenuService.registStartAttendance(loginUser, status);
-		model.addAttribute("message",message);
-		model.addAttribute("status", status);
-
 		// ユーザーIDに基づいてお知らせを取得
 		Integer userId = loginUser.getId();
 		List<NotificationsDto> notifications = notificationsService.getUserNotifications(userId);
@@ -121,17 +116,29 @@ public class MainMenuController {
 		// モデルに通知を追加
 		model.addAttribute("notifications", notifications);
 		model.addAttribute("publicVapidKey", publicVapidKey); // VAPID公開キーをモデルに追加
+
+		//ステータスのnullチェック
+		if (status == null) {
+			String message = "勤務状況を選択してください";
+			model.addAttribute("message", message);
+			return "menu/index";
+		}
+
+		//出勤登録
+		String message = mainMenuService.registStartAttendance(loginUser, status);
+		model.addAttribute("message", message);
+		model.addAttribute("status", status);
 		return "menu/index";
 	}
 
 	/**
-     * 「退勤」ボタン押下時の処理
-     *
-     * @param session セッション情報
-     * @param model モデル
-     * @param status 出勤状態
-     * @return 処理メニュー画面
-     */
+	 * 「退勤」ボタン押下時の処理
+	 *
+	 * @param session セッション情報
+	 * @param model モデル
+	 * @param status 出勤状態
+	 * @return 処理メニュー画面
+	 */
 	@PostMapping(path = "/menu/index", params = "end")
 	public String attendanceEnd(HttpSession session, Model model, Integer status) {
 		// ユーザー情報の取得
@@ -142,17 +149,17 @@ public class MainMenuController {
 		model.addAttribute("loginUser", loginUser);
 		model.addAttribute("role", role);
 
-		//退勤登録
-		String message = mainMenuService.registEndAttendance(loginUser);
-		model.addAttribute("message",message);
-		model.addAttribute("status", status);
-		
 		// ユーザーIDに基づいてお知らせを取得
 		Integer userId = loginUser.getId();
 		List<NotificationsDto> notifications = notificationsService.getUserNotifications(userId);
 		// モデルに通知を追加
 		model.addAttribute("notifications", notifications);
 		model.addAttribute("publicVapidKey", publicVapidKey); // VAPID公開キーをモデルに追加
+
+		//退勤登録
+		String message = mainMenuService.registEndAttendance(loginUser);
+		model.addAttribute("message", message);
+		model.addAttribute("status", status);
 		return "menu/index";
 	}
 

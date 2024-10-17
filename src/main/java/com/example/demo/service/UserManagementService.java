@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,14 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 import com.example.demo.dto.UserManagementDto;
+import com.example.demo.entity.Users;
 import com.example.demo.form.UserManagementForm;
 import com.example.demo.mapper.UsersMapper;
+import com.example.demo.util.DateUtil;
 
 @Service
 public class UserManagementService {
 
 	@Autowired
 	private UsersMapper usersMapper;
+	@Autowired
+	private DateUtil dateUtil;
 
 	/**
 	 * ユーザ管理画面 ユーザ名検索、取得
@@ -31,24 +36,28 @@ public class UserManagementService {
 	 * @return ユーザ管理DTO
 	 */
 	@Transactional(readOnly = true)
-	public UserManagementDto searchUserByName(String name) {
-		UserManagementDto user = usersMapper.findByName(name);
+	public List<UserManagementDto> searchUserByName(String name) {
+	    List<UserManagementDto> users = usersMapper.findByName(name);
 
-		if (user == null) {
-			return null;
-		}
-		UserManagementDto dto = new UserManagementDto();
-		dto.setId(user.getId());
-		dto.setName(user.getName());
-		dto.setPassword(user.getPassword());
-		dto.setRole(user.getRole());
-		dto.setDepartmentId(user.getDepartmentId());
-		dto.setStartDate(user.getStartDate());
-		dto.setEmail(user.getEmail());
-		dto.setNameKana(user.getNameKana());
-		dto.setWorkPlace(user.getWorkPlace());
-		return dto;
+	    // 検索結果がなければ空のリストを返す
+	    if (users == null || users.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+
+	    return users;
 	}
+	
+	/**
+	 * ユーザー情報取得
+	 * 
+	 * @param name
+	 * @param id
+	 * @return ユーザ情報
+	 */
+	public UserManagementDto searchUsers(String name,Integer id) {
+		return usersMapper.findByIdAndName(name,id);
+	}
+	
 
 	/**
 	 * ユーザ管理画面 新規ユーザのユーザID生成
@@ -94,21 +103,30 @@ public class UserManagementService {
 	}
 
 	/**
-	 * ユーザ管理画面 登録ボタン押下時 ユーザ名が既に登録されているかチェック
+	 * ユーザ管理画面 登録ボタン押下時 ユーザIDが既に登録されているかチェック
 	 * 
 	 * @param name
 	 * @param id
 	 * @return
 	 */
-
 	@Transactional(readOnly = true)
-	public String checkUserNameConflict(String name, Integer id) {
-		UserManagementDto user = usersMapper.findByName(name);
-		if (user != null && !user.getId().equals(id)) {
-			return "ユーザ名 : このユーザ名は既に登録されています。別のユーザ名を入力してください。";
-		}
-		return null;
+	public Boolean checkUserNameConflict(Integer id, String name) {
+	    // IDでユーザー情報を取得
+	    Users existingUser = usersMapper.findById(id);
+	    
+	    // ユーザーが存在しない場合（重複なし）
+	    if (existingUser == null) {
+	        return false;
+	    } else {
+	        // 名前が同じ場合（更新処理）
+	        if (existingUser.getName().equals(name)) {
+	            return false;
+	        }
+	        // 名前が違う場合（IDが重複するのでNG）
+	        return true; 
+	    }
 	}
+
 
 	/**
 	 * ユーザ管理画面 新規ユーザ情報登録 既存ユーザ情報更新 
@@ -116,9 +134,9 @@ public class UserManagementService {
 	 * @param userForm ユーザ管理フォーム
 	 * @param id       ユーザID
 	 */
-	public void registerOrUpdateUser(UserManagementForm userForm) {
+	public Users registerOrUpdateUser(UserManagementForm userForm) {
 		// 入力内容取得
-		UserManagementDto user = new UserManagementDto();
+		Users user = new Users();
 		user.setName(userForm.getName());
 		user.setPassword(userForm.getPassword());
 		user.setRole(userForm.getRole());
@@ -127,10 +145,11 @@ public class UserManagementService {
 		user.setNameKana(userForm.getNameKana());
 		user.setWorkPlace(userForm.getWorkPlace());
 
-		// startDateをStringからLocalDateに変換
+		// startDateをStringからLocalDateに変換し、DateUtilを使用してDateに変換
 		if (userForm.getStartDate() != null && !userForm.getStartDate().isEmpty()) {
-			LocalDate date = LocalDate.parse(userForm.getStartDate());
-		    user.setStartDate(date);
+			LocalDate localDate = LocalDate.parse(userForm.getStartDate());
+			// DateUtilを使用してLocalDateをDateに変換
+			user.setStartDate(dateUtil.localDateToDate(localDate));
 		} else {
 			// startDateがnullまたは空の場合はnullに設定
 			user.setStartDate(null);
@@ -138,10 +157,10 @@ public class UserManagementService {
 
 		// フォームのIDが存在するか確認
 		Integer userId = userForm.getId();
-		UserManagementDto existingUser = null;
+		Users existingUser = null;
 
 		if (userId != null) {
-			existingUser = usersMapper.identifyUserId(userId);
+			existingUser = usersMapper.findById(userId);
 		}
 
 		if (existingUser == null) {
@@ -151,14 +170,15 @@ public class UserManagementService {
 			System.out.println("登録");
 		} else {
 			//パスワード設定
-			if(userForm.getPassword() == null || userForm.getPassword().isEmpty()) {
+			if (userForm.getPassword() == null || userForm.getPassword().isEmpty()) {
 				user.setPassword(existingUser.getPassword());
-			};
+			}
 			// 既存更新実行
 			user.setId(userId);
 			usersMapper.updateUser(user);
 			System.out.println("更新");
 		}
+		return user;
 	}
 
 	/**
@@ -169,7 +189,7 @@ public class UserManagementService {
 	 */
 	public void deleteUser(UserManagementForm userForm) {
 		// 入力内容取得
-		UserManagementDto user = new UserManagementDto();
+		Users user = new Users();
 		user.setName(userForm.getName());
 		user.setPassword(userForm.getPassword());
 		user.setRole(userForm.getRole());
@@ -181,7 +201,7 @@ public class UserManagementService {
 
 		// 特殊な未来日として設定
 		LocalDate futureDate = LocalDate.of(9999, 12, 31);
-		user.setStartDate(futureDate);
+		user.setStartDate(dateUtil.localDateToDate(futureDate));
 
 		usersMapper.updateUser(user);
 	}

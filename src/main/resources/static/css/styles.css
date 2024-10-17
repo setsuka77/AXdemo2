@@ -213,7 +213,7 @@ main {
 	/* 角を丸くする */
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 	/* ボックスシャドウを設定 */
-	margin: 0 auto 20px auto;
+	margin: 0 auto;
 	/* 横方向の中央寄せと下部マージンを追加 */
 }
 
@@ -514,14 +514,6 @@ textarea {
 	color: rgb(228, 67, 54);
 	/* 赤色 */
 }
-
-/*.noti-approval {
-    color: rgb(121, 208, 106);  明るい緑 
-}
-
-.noti-rejection {
-    color: rgb(75, 155, 243);  明るい青 
-}*/
 
 
 /* ボタンスタイル */
@@ -980,6 +972,14 @@ input.note {
 }
 
 /* 打刻ボタン*/
+
+/* 検索結果用モーダル*/
+.dialog-content{
+	text-align: center;
+}
+.searchTable td{
+    text-align: center; /* 最後の列（選択ボタンの列）を中央に揃える */
+}
 
 
 
