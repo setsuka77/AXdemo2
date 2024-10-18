@@ -199,7 +199,7 @@ main {
 }
 
 /* 打刻ボタン*/
-.menu-attendanceContainer{
+.menu-attendanceContainer {
 	text-align: center;
 	width: 80%;
 	/* 幅を100%に設定 */
@@ -216,6 +216,12 @@ main {
 	margin: 0 auto;
 	/* 横方向の中央寄せと下部マージンを追加 */
 }
+
+.clock-time {
+	font-weight: bold;
+	font-size: large;
+}
+
 
 /* ===========================================
  * アコーディオンスタイル
@@ -592,7 +598,7 @@ button:hover {
 	margin-left: auto;
 }
 
-#back-button{
+#back-button {
 	margin-right: 60%;
 }
 
@@ -933,55 +939,77 @@ input.note {
 /*部署管理画面　所属社員一覧*/
 /* 該当する職員がいませんをセンター表示 */
 #noWorker {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 20px;
+	text-align: center;
+	font-weight: bold;
+	margin-top: 20px;
 }
 
 /* th（ID, 名前など）を左寄せ */
 #worker th {
-    text-align: left;
-    padding: 10px;
+	text-align: left;
+	padding: 10px;
 }
 
 /* テーブル全体のスタイルを整える場合（例：ボーダーや余白） */
 #worker {
-    width: 100%;
-    border-collapse: collapse;
+	width: 100%;
+	border-collapse: collapse;
 }
 
-#worker th, #worker td {
-    border: 1px solid #ddd;
-    padding: 8px;
+#worker th,
+#worker td {
+	border: 1px solid #ddd;
+	padding: 8px;
 }
 
 /* テーブル行のスタイルを追加（例：偶数行の背景色変更） */
 #worker tr:nth-child(even) {
-    background-color: #f2f2f2;
+	background-color: #f2f2f2;
 }
 
 /* 昇順ボタン*/
-.downButton{
-    width: auto; /* 自動幅 */
-    padding: 0px 3px; 
-    margin-left: 5px; /*テキストとの幅*/
-    font-size: 14px; /* フォントサイズ */
-    border: none; /* ボーダーなし */
-    color: white; /* 文字色 */
-    border-radius: 4px; /* 角を丸く */
+.downButton {
+	width: auto;
+	/* 自動幅 */
+	padding: 0px 3px;
+	margin-left: 5px;
+	/*テキストとの幅*/
+	font-size: 14px;
+	/* フォントサイズ */
+	border: none;
+	/* ボーダーなし */
+	color: white;
+	/* 文字色 */
+	border-radius: 4px;
+	/* 角を丸く */
 }
 
 /* 打刻ボタン*/
 
 /* 検索結果用モーダル*/
-.dialog-content{
+.dialog-content {
 	text-align: center;
 }
-.searchTable td{
-    text-align: center; /* 最後の列（選択ボタンの列）を中央に揃える */
+
+.searchTable td {
+	text-align: center;
+	/* 最後の列（選択ボタンの列）を中央に揃える */
 }
 
-
+.attendanceTime {
+   position: relative;
+    padding: 3px;
+    border-radius: 10px;
+    border: 3px solid #fed813;
+    box-shadow: 2px 2px 0 #e9e9e9;
+    color: #333;
+    width: 20%;
+    margin-bottom: 5px;
+}
+.attendanceTime p {
+    line-height: 1.5;
+    margin-left: 5%;
+}
 
 /* ===========================================
  * レスポンシブ対応・メディアクエリ設定

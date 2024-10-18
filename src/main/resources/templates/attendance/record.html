@@ -52,6 +52,11 @@
 				</form>
 			</div>
 
+			<!-- 合計勤務時間表示 -->
+			<div class="attendanceTime" id="attendanceTime" th:if="${time}" style="margin-left: auto;">
+				<p>出勤時間:<span th:text="${time}">時間</span></p>
+			</div>
+
 			<form id="register-form" th:action="@{/attendance/record}" method="post">
 				<div class="button-group">
 					<button type="submit" th:if="${loginUser.role == '2'}" data-dialog="#rejectModal"

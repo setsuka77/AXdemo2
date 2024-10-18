@@ -158,6 +158,10 @@ public class AttendanceController {
 		String notificationType = "訂正申請結果";
 		notificationsService.checkNotifications(userId, targetYearMonth, notificationType);
 
+		//勤務時間の合計
+		String totalAttendance = attendanceService.totalAttendance(attendanceForm);
+		model.addAttribute("time", totalAttendance);
+
 		//本日の日付を渡す
 		LocalDate nowDate = LocalDate.now();
 		model.addAttribute("today", nowDate);
@@ -287,6 +291,10 @@ public class AttendanceController {
 		LocalDate nowDate = LocalDate.now();
 		model.addAttribute("today", nowDate);
 
+		//勤務時間の合計
+		String totalAttendance = attendanceService.totalAttendance(attendanceForm);
+		model.addAttribute("time", totalAttendance);
+
 		// 再度リストを設定する
 		setYearMonthList(model);
 		return "attendance/record";
@@ -310,7 +318,7 @@ public class AttendanceController {
 		// 月次勤怠申請の登録処理
 		String message = attendanceService.registerOrUpdateMonthlyAttendanceReq(year, month, loginUser);
 		redirectAttributes.addFlashAttribute("message", message);
-		
+
 		return "redirect:/attendance/record";
 	}
 
@@ -332,7 +340,7 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 
 		// 月次勤怠申請の登録処理
-		String message = attendanceService.correctMonthlyAttendanceReq(year, month, loginUser,comment);
+		String message = attendanceService.correctMonthlyAttendanceReq(year, month, loginUser, comment);
 		redirectAttributes.addFlashAttribute("message", message);
 
 		return "redirect:/attendance/record";
@@ -360,7 +368,7 @@ public class AttendanceController {
 		}
 		//訂正理由がある場合はそれを表示
 		String comment = monthlyAttendanceReq.getComment();
-		if(comment != null) {
+		if (comment != null) {
 			String approverName = monthlyAttendanceReq.getApproverName();
 			model.addAttribute("comment", comment);
 			model.addAttribute("approverName", approverName);
@@ -390,6 +398,10 @@ public class AttendanceController {
 		LocalDate nowDate = LocalDate.now();
 		model.addAttribute("today", nowDate);
 
+		//勤務時間の合計
+		String totalAttendance = attendanceService.totalAttendance(dailyAttendanceForm);
+		model.addAttribute("time", totalAttendance);
+
 		return "attendance/record";
 	}
 
@@ -411,7 +423,7 @@ public class AttendanceController {
 		Users loginUser = (Users) session.getAttribute("user");
 		String name = loginUser.getName();
 		// ステータスを変更
-		String message = attendanceService.approvalAttendance(id,name); // 承認済みのステータス
+		String message = attendanceService.approvalAttendance(id, name); // 承認済みのステータス
 		redirectAttributes.addFlashAttribute("message", message);
 
 		return "redirect:/attendance/record";

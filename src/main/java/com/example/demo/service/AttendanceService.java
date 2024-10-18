@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -50,16 +51,16 @@ public class AttendanceService {
 	 * @return ステータスが1の月次勤怠申請のリスト
 	 */
 	public List<MonthlyAttendanceReqDto> findAllAttendance() {
-	 List<MonthlyAttendanceReqDto> attendanceList = monthlyAttendanceReqMapper.findAllWithStatus();
-	 // ステータスによってapplicationTypeを設定
-	 for (MonthlyAttendanceReqDto dto : attendanceList) {
-		 if (dto.getApproverName() != null && !dto.getApproverName().isEmpty()) {
-		     dto.setApplicationType("勤怠訂正");
-		 } else if (dto.getStatus() == 1) {
-			 dto.setApplicationType("勤怠申請");
-		 }
-	 }
-	 return attendanceList;
+		List<MonthlyAttendanceReqDto> attendanceList = monthlyAttendanceReqMapper.findAllWithStatus();
+		// ステータスによってapplicationTypeを設定
+		for (MonthlyAttendanceReqDto dto : attendanceList) {
+			if (dto.getApproverName() != null && !dto.getApproverName().isEmpty()) {
+				dto.setApplicationType("勤怠訂正");
+			} else if (dto.getStatus() == 1) {
+				dto.setApplicationType("勤怠申請");
+			}
+		}
+		return attendanceList;
 	}
 
 	/**
@@ -138,6 +139,38 @@ public class AttendanceService {
 		}
 
 		return attendanceForm;
+	}
+
+	/**
+	 * 勤務合計時間の計算
+	 * 
+	 */
+	public String totalAttendance(AttendanceForm attendanceForm) {
+		long totalMinutes = 0;
+
+		for (DailyAttendanceForm dailyAttendanceForm : attendanceForm.getDailyAttendanceList()) {
+			String start = dailyAttendanceForm.getStartTime();
+			String end = dailyAttendanceForm.getEndTime();
+
+			// 空白またはnullの場合はスキップ
+			if (start == null || start.isEmpty() || end == null || end.isEmpty()) {
+				continue; // 処理をスキップして次のループへ
+			}
+
+			// 時刻をパース
+			LocalTime startTime = LocalTime.parse(start);
+			LocalTime endTime = LocalTime.parse(end);
+
+			// 開始時刻と終了時刻の間の分を計算
+			Duration duration = Duration.between(startTime, endTime);
+			totalMinutes += duration.toMinutes(); // 総分数を加算
+		}
+		// 時間と分を計算
+		long hours = totalMinutes / 60; // 総時間数
+		long minutes = totalMinutes % 60; // 残りの分数
+
+		// フォーマットして返す
+		return String.format("%d時間%d分", hours, minutes);
 	}
 
 	/**
@@ -308,12 +341,19 @@ public class AttendanceService {
 				}
 			}
 
+			boolean isStartTimeValid = timePattern.matcher(startTime).matches();
+			System.out.println("Start time: " + startTime + " is valid:" + isStartTimeValid);
+
 			// 出勤時間チェック
 			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
 				errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
 				hasErrors = true;
 				dailyForm.setErrorFlag(true);
 			}
+			System.out.println(hasErrors);
+
+			boolean isEndTimeValid = timePattern.matcher(endTime).matches();
+			System.out.println("End time: " + endTime + " is valid: " + isEndTimeValid);
 
 			// 退勤時間チェック
 			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
@@ -323,7 +363,8 @@ public class AttendanceService {
 			}
 
 			//出勤時間<退勤時間チェック
-			if (startTime != null && !startTime.isEmpty() && endTime != null && !endTime.isEmpty()) {
+			if (startTime != null && !startTime.isEmpty() && timePattern.matcher(startTime).matches() 
+					&& endTime != null && !endTime.isEmpty() && timePattern.matcher(endTime).matches()) {
 				LocalTime startTimeDate = dateUtil.stringToLocalTime(startTime);
 				LocalTime endTimeDate = dateUtil.stringToLocalTime(endTime);
 
@@ -337,7 +378,8 @@ public class AttendanceService {
 
 			// 備考欄文字種、文字数チェック
 			if (remarks != null && !remarks.isEmpty()) {
-				if (remarks.matches(".*[\\x00-\\x7F].*") || remarks.length() > 20) {
+				if (//remarks.matches(".*[\\x00-\\x7F].*") ||
+				remarks.length() > 20) {
 					errorMessage.append(dailyForm.getFormattedDate()).append(" の備考 : 20文字以内の全角文字のみで入力してください。<br>");
 					hasErrors = true;
 					dailyForm.setErrorFlag(true);
@@ -376,9 +418,9 @@ public class AttendanceService {
 
 		// 既存の UserNotifications を userId と targetDate,notificationType で検索
 		String notificationType;
-		if(existingReq != null) {
+		if (existingReq != null) {
 			notificationType = "訂正申請結果";
-		}else {
+		} else {
 			notificationType = "勤怠申請未提出";
 		}
 		notificationsService.checkNotifications(user.getId(), java.sql.Date.valueOf(startDate.withDayOfMonth(1)),
@@ -457,15 +499,15 @@ public class AttendanceService {
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 		String message;
-		if(req.getApproverName() != null && req.getStatus() == 5) {
+		if (req.getApproverName() != null && req.getStatus() == 5) {
 			message = userName + "の" + formattedDate + "における訂正申請が承認されました。";
-		}else {
+		} else {
 			message = userName + "の" + formattedDate + "における承認申請が承認されました。";
 		}
 		System.out.println(req);
-		
+
 		//訂正申請時、通知作成
-		if(req.getApproverName() != null && req.getStatus() == 5) {
+		if (req.getApproverName() != null && req.getStatus() == 5) {
 			String notificationType = "訂正申請結果";
 			java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
 			Integer userId = req.getUserId();
@@ -484,7 +526,7 @@ public class AttendanceService {
 	 * @param status 却下ステータス
 	 * @return 却下結果メッセージ
 	 */
-	public String rejectAttendance(Integer id,String comment, String name) {
+	public String rejectAttendance(Integer id, String comment, String name) {
 		// 申請IDで申請内容を取得
 		MonthlyAttendanceReq req = monthlyAttendanceReqMapper.findById(id);
 		req.setDate(java.sql.Date.valueOf(LocalDate.now()));
@@ -504,21 +546,21 @@ public class AttendanceService {
 		LocalDate localDate = targetDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy/MM"));
 		String message;
-		if(req.getApproverName() != null && req.getStatus() == 2) {
+		if (req.getApproverName() != null && req.getStatus() == 2) {
 			message = userName + "の" + formattedDate + "における訂正申請が却下されました。";
-		}else {
+		} else {
 			message = userName + "の" + formattedDate + "における承認申請が却下されました。";
 		}
-		
+
 		//通知作成
 		java.sql.Date targetsqlDate = new java.sql.Date(targetDate.getTime());
 		Integer userId = req.getUserId();
 		String notificationType;
 		String content;
-		if(req.getApproverName() != null) {
+		if (req.getApproverName() != null) {
 			notificationType = "訂正申請結果";
 			content = formattedDate + "における勤怠訂正申請が却下されました。";
-		}else {
+		} else {
 			notificationType = "勤怠申請結果";
 			content = formattedDate + "における勤怠申請が却下されました。";
 		}

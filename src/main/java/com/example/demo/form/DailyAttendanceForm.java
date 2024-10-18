@@ -18,7 +18,7 @@ public class DailyAttendanceForm {
 	private String formattedDate;  // フォーマットされた日付を保持
 	/** 勤務開始時刻 */
 	private String startTime;
-	/** 勤務開始時刻 */
+	/** 勤務終了時刻 */
 	private String endTime;
 	/** 備考 */
 	private String remarks;
