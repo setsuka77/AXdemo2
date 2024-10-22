@@ -6,20 +6,47 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>共通ヘッダー</title>
 	<link rel="stylesheet" href="/login/css/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
 	<header th:fragment="header">
 		<div class="header-button">
 			<a th:href="@{/index}">
-				<button type="button" class="button">メニュー</button>
+				<button type="button" class="button" id="menuButton">メニュー</button> <!-- id を追加 -->
 			</a>
-			
+
+
+
 			<h2>AX社内管理システム</h2>
 
-			<a th:href="@{/logout}" onClick="return confirm('本当にログオフしますか？')"><button>ログオフ</button></a>
+			<div class="dropdown">
+				<button class="dropbtn">
+					<i class="fas fa-cog"></i> <!-- 設定アイコン -->
+				</button>
+				<ul class="dropdown-content">
+					<li th:text="${loginUser.name}"></li>
+					<li>
+						<a
+							th:href="@{/userManagement/manage/{id}/{name}(id=${loginUser.id}, name=${loginUser.name})}">編集</a>
+					</li>
+					<li><a href="#">パスワード変更</a></li>
+					<li>
+						<label for="switch" class="switch_label">
+							<span class="title">DARK MODE</span>
+							<div class="switch">
+								<input type="checkbox" id="switch" />
+								<div class="circle"></div>
+								<div class="base"></div>
+							</div>
+						</label>
+					</li>
+					<li><a th:href="@{/logout}" onClick="return confirm('本当にログオフしますか？')">ログアウト</a></li>
+				</ul>
+			</div>
 		</div>
 	</header>
+
 </body>
 
 </html>
