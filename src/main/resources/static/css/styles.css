@@ -1121,6 +1121,16 @@ input.note {
 	/* ドロップダウンメニューの背景色を白に設定 */
 }
 
+.dropdown-content li {
+    display: flex; /* フレックスボックスを使用して並べる */
+    align-items: center; /* 垂直方向にセンタリング */
+}
+
+.dropdown-content .edit-link {
+    margin-left: 15px; /* 名前と編集の間にスペースを追加 */
+}
+
+
 /* ========================= */
 /*     スイッチの設定         */
 /* ========================= */

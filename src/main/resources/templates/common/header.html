@@ -13,7 +13,7 @@
 	<header th:fragment="header">
 		<div class="header-button">
 			<a th:href="@{/index}">
-				<button type="button" class="button" id="menuButton">メニュー</button> <!-- id を追加 -->
+				<button type="button" class="button">メニュー</button>
 			</a>
 
 
@@ -25,12 +25,12 @@
 					<i class="fas fa-cog"></i> <!-- 設定アイコン -->
 				</button>
 				<ul class="dropdown-content">
-					<li th:text="${loginUser.name}"></li>
 					<li>
-						<a
-							th:href="@{/userManagement/manage/{id}/{name}(id=${loginUser.id}, name=${loginUser.name})}">編集</a>
+						<span th:text="${loginUser.name}"></span>
+						<a th:href="@{/userManagement/manage/{id}/{name}(id=${loginUser.id}, name=${loginUser.name})}"
+							class="edit-link">編集</a>
 					</li>
-					<li><a href="#">パスワード変更</a></li>
+					<li><a href="#">通知設定変更</a></li>
 					<li>
 						<label for="switch" class="switch_label">
 							<span class="title">DARK MODE</span>
