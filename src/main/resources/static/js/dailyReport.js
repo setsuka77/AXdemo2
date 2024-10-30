@@ -61,8 +61,8 @@ function updateStatusText(statusText) {
 function toggleSubmitButton(statusText) {
 	const submitButton = document.getElementById('submit');
 	const isApproved = statusText === '承認済み';
-	
-	if(isApproved == true){
+
+	if (isApproved == true) {
 		disableButton(submitButton);
 	}
 	// ボタンを非活性化する関数
@@ -70,7 +70,7 @@ function toggleSubmitButton(statusText) {
 		button.disabled = true;
 		button.classList.add('disabled-form');
 	}
-	
+
 }
 
 // フォームに取得したデータを埋め込む
@@ -82,6 +82,7 @@ function populateForm(data) {
 	data.forEach((detail, index) => {
 		const timeInput = document.querySelector(`input[name="dailyReportDetailFormList[${index}].time"]`);
 		const contentTextarea = document.querySelector(`textarea[name="dailyReportDetailFormList[${index}].content"]`);
+		const workTypeSelect = document.querySelector(`select[name="dailyReportDetailFormList[${index}].workTypeId"]`);
 		const idInput = document.querySelector(`input[name="dailyReportDetailFormList[${index}].id"]`);
 
 		if (timeInput) timeInput.value = detail.time;
@@ -89,6 +90,9 @@ function populateForm(data) {
 			contentTextarea.value = detail.content;
 			updateCharCounter(contentTextarea, detail.content.length);
 			adjustHeight(contentTextarea);
+		}
+		if (workTypeSelect) {
+			workTypeSelect.value = detail.workTypeId || '';
 		}
 		if (idInput) {
 			idInput.value = detail.id ? detail.id : null;
@@ -99,31 +103,36 @@ function populateForm(data) {
 
 // フォームをクリアする
 function clearForm() {
-	const tbody = document.getElementById('reportBody');
-	const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
-	const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+    const tbody = document.getElementById('reportBody');
+    const timeInputs = document.querySelectorAll('input[name^="dailyReportDetailFormList"]');
+    const contentTextareas = document.querySelectorAll('textarea[name^="dailyReportDetailFormList"]');
+    const workTypeSelects = document.querySelectorAll('select[name^="dailyReportDetailFormList"]'); 
 
-	timeInputs.forEach(input => input.value = '');
-	contentTextareas.forEach(textarea => {
-		textarea.value = '';
-		updateCharCounter(textarea, 0);
-		adjustHeight(textarea);
-	});
+    timeInputs.forEach(input => input.value = '');
+    contentTextareas.forEach(textarea => {
+        textarea.value = '';
+        updateCharCounter(textarea, 0);
+        adjustHeight(textarea);
+    });
 
-	// 行を初期状態にリセット
-	while (tbody.rows.length > 3) {
-		tbody.deleteRow(3);
-	}
+    // select要素を初期状態にリセット
+    workTypeSelects.forEach(select => select.selectedIndex = 0);
+
+    // 行を初期状態にリセット
+    while (tbody.rows.length > 3) {
+        tbody.deleteRow(3);
+    }
 }
+
 
 // テキストエリアの文字数カウンターを更新する
 function updateCharCounter(textarea, length) {
-    const charCounter = textarea.nextElementSibling;
-    if (charCounter) {
-        // 改行コード(\n)を2文字分としてカウント
-        const adjustedLength = textarea.value.replace(/\n/g, "\r\n").length;
-        charCounter.textContent = `${adjustedLength} / 50`;
-    }
+	const charCounter = textarea.nextElementSibling;
+	if (charCounter) {
+		// 改行コード(\n)を2文字分としてカウント
+		const adjustedLength = textarea.value.replace(/\n/g, "\r\n").length;
+		charCounter.textContent = `${adjustedLength} / 50`;
+	}
 }
 
 
@@ -137,6 +146,14 @@ function addRow() {
         <td>
             <input type="number" class="working-time" name="dailyReportDetailFormList[${rowCount}].time" min="0" step="1"> h
         </td>
+     	<td>
+            <div class="input-group">
+                <select name="dailyReportDetailFormList[${rowCount}].workTypeId">
+                    <option value="">選択してください</option>
+                    
+                </select>
+            </div>
+        </td>
         <td class="textarea-wrapper">
             <textarea name="dailyReportDetailFormList[${rowCount}].content" class="textarea note" rows="2" cols="60"></textarea>
             <div class="char-counter">0 / 50</div>
@@ -144,14 +161,23 @@ function addRow() {
         <input type="hidden" name="dailyReportDetailFormList[${rowCount}].id" value="0">
     `;
 
+	//新しいプルダウンに初期選択肢を追加
+	const selectElement = newRow.querySelector(`select[name="dailyReportDetailFormList[${rowCount}].workTypeId"]`);
+	initialTaskTypes.forEach(taskType => {
+		const option = document.createElement('option');
+		option.value = taskType.workTypeId; // オプションの値を設定
+		option.textContent = taskType.workTypeName; // オプションのテキストを設定
+		selectElement.appendChild(option); // プルダウンにオプションを追加
+	});
+
 	tbody.appendChild(newRow);
 
 	const textArea = newRow.querySelector('textarea');
 	textArea.addEventListener('input', () => {
-    const currentLength = textArea.value.length;
-    updateCharCounter(textArea, currentLength);
-    adjustHeight(textArea);
-});
+		const currentLength = textArea.value.length;
+		updateCharCounter(textArea, currentLength);
+		adjustHeight(textArea);
+	});
 
 }
 

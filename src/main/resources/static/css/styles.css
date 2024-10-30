@@ -299,6 +299,14 @@ textarea {
 	/* 横方向の中央寄せと下部マージンを追加 */
 }
 
+.report-userContainer{
+	display: flex;                /* 横並びにする */
+    justify-content: center;      /* 中央に配置 */
+    align-items: center;          /* 縦方向の中央に配置 */
+    gap: 10px;                   /* アイテム間のスペース */
+    margin-left: 20%;
+}
+
 /* ===========================================
  * アコーディオンスタイル
  * ======================================== */
@@ -493,6 +501,12 @@ button:hover {
 	margin-right: 60%;
 }
 
+.editButton{
+    padding: 5px 10px; /* 上下左右の余白 */
+    font-size: 12px;   /* フォントサイズ */
+    height: auto;      /* 自動高さ */
+    width: auto;       /* 自動幅 */
+}
 
 
 /* ===========================================
@@ -548,6 +562,30 @@ button:hover {
 	color: #6c757d;
 	font-size: 14px;
 }
+
+.reportAdminTitle {
+    display: flex; /* フレックスボックスを使用 */
+}
+
+.reportAdminTitle h2{
+	width: 80%;
+}
+.reportCalendar {
+    display: flex;
+    gap:10px;
+    margin-top: 20px;
+}
+.selectDay {
+    height: 20px;
+    padding: 1px 2px;
+    font-size: 14px;
+}
+.betweenDay{
+	display: block;
+    margin-bottom: 5px;
+    min-width: 0px;
+}
+
 
 /* 部署管理画面
  * ======================================== */

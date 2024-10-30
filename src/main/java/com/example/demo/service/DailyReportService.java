@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.DailyReportDto;
 import com.example.demo.dto.NotificationsDto;
+import com.example.demo.dto.TasktypeDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
@@ -22,6 +23,7 @@ import com.example.demo.form.DailyReportDetailForm;
 import com.example.demo.form.DailyReportForm;
 import com.example.demo.mapper.DailyReportDetailMapper;
 import com.example.demo.mapper.DailyReportMapper;
+import com.example.demo.mapper.TaskTypeMapper;
 
 @Service
 public class DailyReportService {
@@ -32,6 +34,8 @@ public class DailyReportService {
 	private DailyReportMapper dailyReportMapper;
 	@Autowired
 	private NotificationsService notificationsService;
+	@Autowired
+	private TaskTypeMapper taskTypeMapper;
 
 	/**
 	 * ステータスが1の申請一覧を取得する
@@ -56,6 +60,14 @@ public class DailyReportService {
 		List<DailyReportDetail> searchReport = dailyReportDetailMapper.findByUserIdAndDate(userId, submitDate);
 
 		return searchReport;
+	}
+	
+	/**
+	 * 作業種別用プルダウン情報取得
+	 * @return 作業種別用のリスト
+	 */
+	public List<TasktypeDto> findAll() {
+		return taskTypeMapper.findAll();
 	}
 
 	/**
@@ -151,6 +163,9 @@ public class DailyReportService {
 				dailyReportDetail.setDate(submitDate);
 				dailyReportDetail.setTime(dailyForm.getTime());
 				dailyReportDetail.setContent(dailyForm.getContent());
+				dailyReportDetail.setWorkTypeId(dailyForm.getWorkTypeId());
+				
+				System.out.println(dailyReportDetail);
 
 				//idが存在しない場合は新規登録
 				if (dailyReportDetail.getId() == null) {
@@ -236,6 +251,7 @@ public class DailyReportService {
 			detailForm.setDate(detail.getDate());
 			detailForm.setTime(detail.getTime());
 			detailForm.setContent(detail.getContent());
+			detailForm.setWorkTypeId(detail.getWorkTypeId());
 			detailFormList.add(detailForm);
 		}
 

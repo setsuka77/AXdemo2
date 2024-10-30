@@ -9,15 +9,23 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 	<script th:src="@{/js/dailyReport.js}"></script>
 	<script src="/login/js/header.js"></script>
+	<script>
+        const initialTaskTypes = "${taskType.workTypeId}";
+        console.log(initialTaskTypes);
+    </script>
 </head>
 
 <body>
 	<header th:replace="~{common/header :: header}"></header>
 	<div class="container">
 		<div class="data-list-container">
-
-			<h2>日報管理</h2>
-
+			<div class="reportAdminTitle">
+			<a th:href="@{/menu/report}">
+				<button type="button" class="button">戻る</button>
+			</a>
+			<h2>日報登録</h2>
+			</div>
+			
 			<tr>
 				<td>
 					<div class="info-container">
@@ -31,7 +39,7 @@
 			</tr>
 
 			<!-- 対象日付を指定して表示 メンバー/UM -->
-			<form id="report-form" th:action="@{/report/dailyReport}" method="post">
+			<form id="report-form" th:action="@{/report/dailyReport}" method="post" th:object="${dailyReportForm}">
 				<div class="form-group" th:if="${loginUser.role != '2'}">
 					対象日付:
 					<input type="date" name="selectDate" th:value="${selectDate}" onchange="fetchReport()"
@@ -65,7 +73,7 @@
 								<td><a th:href="@{/report/dailyReport/detail(id=${report.id})}"
 										th:text="${report.userName}">申請者</a></td>
 								<td th:text="${#dates.format(report.date, 'yyyy年M月dd日')}">申請対象日</td>
-							<td th:text="${#dates.format(report.updateDate, 'yyyy年M月dd日')}">申請日</td>
+								<td th:text="${#dates.format(report.updateDate, 'yyyy年M月dd日')}">申請日</td>
 							</tr>
 						</tbody>
 					</table>
@@ -80,7 +88,7 @@
 				<div th:if="${message}" class="alert alert-success register-message" role="alert">
 					<p th:utext="${message}"></p>
 				</div>
-				
+
 
 				<table class="table table-hover" border="1" cellspacing="0" id="report">
 					<!-- 申請一覧に戻るボタンを表示する条件 -->
@@ -91,6 +99,7 @@
 					<thead>
 						<tr>
 							<th>作業時間(h)</th>
+							<th>作業種別<a th:href="@{XX}" class="typelink">編集</a></th>
 							<th>作業内容</th>
 						</tr>
 					</thead>
@@ -101,6 +110,16 @@
 								<input type="number" class="working-time"
 									th:name="'dailyReportDetailFormList[' + ${iterStat.index} + '].time'"
 									th:value="${detail.time}" id="time" min="1" step="1"> h
+							</td>
+							<td>
+								<div class="input-group">
+									<select id="workTypeId" 
+										th:field="*{dailyReportDetailFormList[__${iterStat.index}__].workTypeId}">
+										<option value="">選択してください</option>
+										<option th:each="taskType : ${taskType}" th:value="${taskType.workTypeId}"
+											th:text="${taskType.workTypeName}">選択肢</option>
+									</select>
+								</div>
 							</td>
 							<td class="textarea-wrapper">
 								<textarea id="content"

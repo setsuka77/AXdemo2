@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>処理メニュー |日報管理| Analix社内管理システム</title>
+	<link rel="stylesheet" href="/login/css/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<script src="/login/js/header.js"></script>
+</head>
+
+<body>
+	<header th:replace="~{common/header :: header}"></header>
+	<div class="container">
+		<div class="menu-container">
+			<h2>日報管理</h2>
+			<ul>
+				<li>
+					<a th:href="@{/report/dailyReport}" class="card">
+						<i class="fa-solid fa-pen-to-square"></i>
+						<span>日報登録</span>
+					</a>
+				</li>
+				<li>
+					<a th:href="@{/report/dailyReportList}" class="card">
+						<i class="fa-solid fa-file"></i>
+						<span>日報一覧</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -18,4 +18,8 @@ public class DailyReportDetailForm {
 	
 	/** エラーFlag */
 	private Boolean errorFlag = false;
+	/** 作業種別 */
+	private Integer workTypeId;
+	/**　作業種別名 */
+	private String workTypeName;
 }

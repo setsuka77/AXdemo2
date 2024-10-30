@@ -15,4 +15,8 @@ public class DailyReportDetailDto {
 	private Integer time;
 	/** 備考 */
 	private String content;
+	/** 作業種別 */
+	private Integer workTypeId;
+	/**　作業種別名 */
+	private String workTypeName;
 }

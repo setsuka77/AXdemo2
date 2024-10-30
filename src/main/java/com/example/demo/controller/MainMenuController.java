@@ -92,6 +92,21 @@ public class MainMenuController {
 	}
 
 	/**
+	 * 日報管理ボタンを押下時の処理
+	 */
+	@GetMapping("/menu/report")
+	public String chooseReport(HttpSession session, Model model) {
+		// ユーザー情報の取得
+		Users loginUser = (Users) session.getAttribute("user");
+		//権限の判定
+		String role = mainMenuService.checkRole(loginUser);
+
+		model.addAttribute("loginUser", loginUser);
+		model.addAttribute("role", role);
+		return "menu/report";
+	}
+
+	/**
 	 * 「出勤」ボタン押下時の処理
 	 *
 	 * @param session セッション情報

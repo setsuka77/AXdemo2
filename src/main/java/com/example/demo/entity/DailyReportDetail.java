@@ -20,4 +20,8 @@ public class DailyReportDetail {
 	private Integer time;
 	/** 備考 */
 	private String content;
+	/** 作業種別ID */
+	private Integer workTypeId;
+	/** 作業種別名 */
+	private String workTypeName;
 }
