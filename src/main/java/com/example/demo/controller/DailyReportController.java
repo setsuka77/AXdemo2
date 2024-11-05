@@ -296,14 +296,13 @@ public class DailyReportController {
 		LocalDate start = end.minusWeeks(1);
 		model.addAttribute("startDate", start.toString());
 		model.addAttribute("endDate", end.toString());
-		System.out.println(end);
 
 		// 日報のリストを取得
 		List<DailyReportDetail> reportDetailList = dailyReportListService.searchReport(loginUser, start, end);
 		// 日付とIDでソート
 		Collections.sort(reportDetailList, Comparator.comparing(DailyReportDetail::getDate)
 				.thenComparing(DailyReportDetail::getWorkTypeId));
-		System.out.println(reportDetailList);
+
 		//その日にいくつ日報があるかカウント
 		Map<Date, Long> countByDate = reportDetailList.stream()
 				.collect(Collectors.groupingBy(DailyReportDetail::getDate, Collectors.counting()));
@@ -312,7 +311,6 @@ public class DailyReportController {
 				.collect(Collectors.groupingBy(DailyReportDetail::getDate,
 						Collectors.groupingBy(DailyReportDetail::getWorkTypeId, Collectors.counting())));
 
-		System.out.println("countByDateAndWorkId" + countByDateAndWorkId);
 		model.addAttribute("reportDetailList", reportDetailList);
 		model.addAttribute("countByDate", countByDate);
 		model.addAttribute("countByDateAndWorkId", countByDateAndWorkId);
@@ -381,14 +379,13 @@ public class DailyReportController {
 	        start = selectMonth.withDayOfMonth(1); // 月の初日
 	        end = selectMonth.with(TemporalAdjusters.lastDayOfMonth()); // 月の最終日
 	    }
-	    System.out.println("start="+start+","+"end="+end);
 
 		// 日報のリストを取得
 		List<DailyReportDetail> reportDetailList = dailyReportListService.searchReport(loginUser, start, end);
 		// 日付とIDでソート
 		Collections.sort(reportDetailList, Comparator.comparing(DailyReportDetail::getDate)
 				.thenComparing(DailyReportDetail::getWorkTypeId));
-		System.out.println(reportDetailList);
+		
 		//その日にいくつ日報があるかカウント
 		Map<Date, Long> countByDate = reportDetailList.stream()
 				.collect(Collectors.groupingBy(DailyReportDetail::getDate, Collectors.counting()));

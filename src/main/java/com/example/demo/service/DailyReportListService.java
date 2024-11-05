@@ -43,9 +43,4 @@ public class DailyReportListService {
 	    }
 	}
 
-	public Map<LocalDate, Map<Integer, List<DailyReportDetail>>> getGroupedReport() {
-	    return groupedReport;
-	}
-
-
 }

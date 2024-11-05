@@ -7,6 +7,7 @@
 	<title>日報一覧 | Analix社内管理システム</title>
 	<link rel="stylesheet" href="/login/css/styles.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<script th:src="@{/js/dailyReportList.js}"></script>
 	<script src="/login/js/header.js"></script>
 	<!-- CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -40,7 +41,7 @@
 				<div class="reportCalendar">
 					<!-- プルダウンで表示範囲を選択 -->
 					<label for="period" class="betweenDay">表示範囲:</label>
-					<select id="period" name="period" onchange="toggleDateInput(); fetchReport();" class="selectDay">
+					<select id="period" name="period" onchange="toggleDateInput();" class="selectDay">
 						<option value="week" th:selected="${period == 'week'}">週</option>
 						<option value="month" th:selected="${period == 'month'}">月</option>
 					</select>
@@ -49,12 +50,12 @@
 					<!-- 週用の期間入力（年/月/日～年/月/日） -->
 					<div id="weekInput" style="display: block;" class="weekInput" th:data-startDate="${startDate}"
 						th:data-endDate="${endDate}">
-						<input type="text" id="dateRange" name="dateRange" onchange="fetchReport()">
+						<input type="text" id="dateRange" name="dateRange" onchange="fetchWeekReport()">
 					</div>
 
 					<!-- 月用の期間入力（年/月～年/月） -->
 					<div id="monthInput" style="display: none;">
-						<input type="month" id="month" name="month" onchange="fetchReport()">
+						<input type="month" id="month" name="month" onchange="fetchMonthReport()">
 					</div>
 
 				</div>
@@ -76,6 +77,7 @@
 						<td th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}"
 							th:text="${#dates.format(report.date, 'yyyy年M月dd日')}"
 							th:rowspan="${countByDate[report.date]}">日付</td>
+
 						<!-- 作業種別の表示 -->
 						<td th:if="${iterStat.index == 0 or (
     						report.workTypeId != reportDetailList[iterStat.index - 1].workTypeId or 
@@ -83,137 +85,29 @@
 							th:rowspan="${countByDateAndWorkId[report.date][report.workTypeId]}">
 							<span th:text="${report.workTypeName}"></span>
 						</td>
+
 						<!-- 作業内容の表示 -->
 						<td th:text="${report.content}"></td>
+
 						<!-- 作業時間の表示 -->
 						<td th:text="${report.time}"></td>
-						<td th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}">
-							<form th:action="@{/report/dailyReport(edit=true)}" method="post">
-								<input type="hidden" name="selectDate"
-									th:value="${#dates.format(report.date, 'yyyy-MM-dd')}" />
-								<button type="submit" class="editButton">編集</button>
-							</form>
+						
+						<!-- 編集ボタンの表示 -->
+						<td>
+							<div
+								th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}">
+								<form th:action="@{/report/dailyReport(edit=true)}" method="post">
+									<input type="hidden" name="selectDate"
+										th:value="${#dates.format(report.date, 'yyyy-MM-dd')}" />
+									<button type="submit" class="editButton">編集</button>
+								</form>
+							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
-		<script>
-			function fetchReport() {
-				const period = document.getElementById('period').value;
-
-				if (period === 'week') {
-					fetchWeekReport(); // 週のレポートを取得する関数を呼び出す
-				} else if (period === 'month') {
-					fetchMonthReport(); // 月のレポートを取得する関数を呼び出す
-				}
-			}
-
-			function fetchWeekReport() {
-				console.log("うごいてる");
-				const dateRange = document.getElementById('dateRange').value;
-				const startDate = dateRange.split("から")[0].trim();
-
-				function formatDateToYYYYMMDD(dateString) {
-					const [year, month, day] = dateString.split(".").map(num => num.padStart(2, '0')); // "YYYY.MM.DD"形式から分割
-					return `${year}-${month}-${day}`; // "YYYY-MM-DD"形式に変換
-				}
-				const selectDate = formatDateToYYYYMMDD(startDate);
-				console.log(selectDate);
-
-				// サーバーに選択された日付を送信し、対応するレポートデータを取得する
-				fetch('/login/report/dailyReportList', {
-					method: 'POST',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify({selectDate})
-				})
-					.then(response => response.json())
-					.then(data => handleReportData(data))
-					.catch(error => console.error('Error fetching data:', error));
-			}
-
-			function fetchMonthReport() {
-				console.log("月のレポートを取得中...");
-				const initialDate = document.getElementById('month').value;
-				const selectMonth = `${initialDate}-01`;
-				console.log(selectMonth);
-
-				// サーバーに選択された月を送信し、対応するレポートデータを取得する
-				fetch('/login/report/dailyReportList', {
-					method: 'POST',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify({selectMonth})
-				})
-					.then(response => response.json())
-					.then(data => handleReportData(data))
-					.catch(error => console.error('Error fetching data:', error));
-			}
-
-			// 取得したデータを処理する[月も週も共有]
-			function handleReportData(data) {
-				
-			}
-
-
-			document.addEventListener("DOMContentLoaded", function () {
-				// HTML要素からstartDateとendDateを取得
-				const weekInput = document.querySelector('#weekInput');
-				// HTML要素からstartDateとendDateを取得
-				const startDate = weekInput.getAttribute('data-startDate');
-				console.log(startDate);
-				const endDate = weekInput.getAttribute('data-endDate');
-				console.log(endDate);
-
-				flatpickr('#dateRange', {
-					mode: "range",
-					locale: 'ja',
-					dateFormat: 'Y.m.d',
-					defaultDate: [startDate, endDate],
-					onChange: function (selectedDates) {
-						if (selectedDates.length === 1) {
-							// 選択した日付を取得
-							const start = selectedDates[0];
-							const end = new Date(start);
-							end.setDate(end.getDate() + 6); // 7日後の日付を計算
-
-							// 日付範囲を設定
-							this.setDate([start, end]);
-						}
-					}
-				});
-
-				const editButtons = document.querySelectorAll('.editButton');
-				editButtons.forEach(button => {
-					button.addEventListener('click', function (event) {
-						event.preventDefault(); // デフォルトのフォーム送信を防ぐ
-
-						// 親フォームを取得
-						const form = button.closest('form');
-						const dateInput = form.querySelector('input[name="selectDate"]');
-
-						// フォームを送信
-						form.submit();
-					});
-				});
-			});
-
-			function toggleDateInput() {
-				const period = document.getElementById('period').value;
-				const weekInput = document.getElementById('weekInput');
-				const monthInput = document.getElementById('monthInput');
-
-				if (period === 'week') {
-					weekInput.style.display = 'block'; // 週の入力を表示
-					monthInput.style.display = 'none';  // 月の入力を非表示
-				} else if (period === 'month') {
-					weekInput.style.display = 'none';   // 週の入力を非表示
-					monthInput.style.display = 'block'; // 月の入力を表示
-				}
-			}
-
-
-		</script>
 </body>
 
 </html>
