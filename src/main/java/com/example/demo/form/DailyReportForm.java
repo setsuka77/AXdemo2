@@ -3,6 +3,7 @@ package com.example.demo.form;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.Data;
 @Data
 public class DailyReportForm {
@@ -18,5 +19,8 @@ public class DailyReportForm {
 	
 	/**日次日報フォームlist作成*/
 	private List<DailyReportDetailForm> dailyReportDetailFormList;
+	/** 作業タイプlist作成*/
+	@Valid
+	private List<TaskTypeForm> taskTypeFormList;
 
 }

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>作業タイプ編集画面 | Analix社内管理システム</title>
+	<link rel="stylesheet" href="/login/css/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+	<script src="/login/js/header.js"></script>
+	<style>
+		/* テーブル列幅の設定 */
+		.listNumber {
+			width: 30%;
+		}
+
+		.taskTypeName {
+			width: 70%;
+		}
+	</style>
+
+</head>
+
+<body>
+	<header th:replace="~{common/header :: header}"></header>
+	<div class="container">
+		<div class="data-list-container">
+			<div class="typeEditTitle">
+				<a th:href="@{/menu/report}">
+					<button type="button" class="button">日報管理</button>
+				</a>
+				<h2>作業タイプ　編集</h2>
+			</div>
+
+			<tr>
+				<td>
+					<div class="report-userContainer">
+						<div class="info-item">ユーザー名: <span th:text="${loginUser.name}"></span></div>
+						<div class="info-item">ユーザーID: <span th:text="${loginUser.id}"></span></div>
+					</div>
+				</td>
+			</tr>
+
+			<!-- 登録時入力エラーメッセージ表示 -->
+			<div th:if="${registerError}" class="alert alert-danger-edit register-message" role="alert">
+				<p th:utext="${registerError}"></p>
+			</div>
+			<!-- 登録完了メッセージ表示 -->
+			<div th:if="${message}" class="alert alert-success-edit register-message" role="alert">
+				<p th:utext="${message}"></p>
+			</div>
+			
+			<!-- 日報一覧に戻るリンクを表示 -->
+            <span id="backLink" style="display: none;">
+                <p><a th:href="@{/report/dailyReport}">⇐日報登録に戻る</a></p>
+            </span>
+
+			<form id="rejectForm" method="post" th:action="@{/report/typeEdit}" th:object="${dailyReportForm}">
+				<div class="taskTypeTable">
+					<table style="width: 100%; table-layout: fixed;">
+						<thead>
+							<tr>
+								<th class="listNumber">表示順番</th>
+								<th class="taskTypeName">作業タイプ名</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="taskTypeForm, iterStat : ${dailyReportForm.taskTypeFormList}">
+
+								<input type="hidden" th:field="*{taskTypeFormList[__${iterStat.index}__].workTypeId}" />
+
+								<!-- 表示順番をプルダウンに変更 -->
+								<td class="listNumber">
+									<select th:field="*{taskTypeFormList[__${iterStat.index}__].listNumber}">
+										<option th:each="i : ${#numbers.sequence(1, maxListNumber)}" th:value="${i}"
+											th:text="${i}" th:selected="${i == taskTypeForm.listNumber}">
+										</option>
+									</select>
+								</td>
+
+								<!-- 作業タイプ名の入力フィールド -->
+								<td class="taskTypeName">
+									<input type="text"
+										th:field="*{taskTypeFormList[__${iterStat.index}__].workTypeName}"
+										th:value="${taskTypeForm.workTypeName}" />
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div id="rejectButton">
+					<input type="hidden" id="maxListNumber" th:value="${maxListNumber}">
+					<button id="add" type="button">＋</button>
+					<button type="submit" id="submitEdit" name="submitEdit">保存</button>
+				</div>
+
+			</form>
+
+		</div>
+	</div>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// 追加ボタンのクリックイベントリスナー
+			const addButton = document.getElementById('add');
+			const taskTypeTableBody = document.querySelector('.taskTypeTable tbody');
+			let maxListNumber = parseInt(document.getElementById('maxListNumber').value);
+
+			addButton.addEventListener('click', function () {
+				// 新しい行を追加
+				const newRow = document.createElement('tr');
+
+				// 新しい行の内容を設定
+				newRow.innerHTML = `
+            <input type="hidden" name="taskTypeFormList[${maxListNumber}].workTypeId" />
+            <td class="listNumber">
+                <select name="taskTypeFormList[${maxListNumber}].listNumber">
+                    ${generateOptions(maxListNumber + 1)}
+                </select>
+            </td>
+            <td class="taskTypeName">
+                <input type="text" name="taskTypeFormList[${maxListNumber}].workTypeName" />
+            </td>
+        `;
+				// 新しい行に 'data-new-row' 属性を追加
+				newRow.dataset.newRow = 'true';
+
+				// 新しい行をテーブルに追加
+				taskTypeTableBody.appendChild(newRow);
+
+				// maxListNumberをインクリメント
+				maxListNumber++;
+
+				// 追加された行の表示順番を更新
+				document.getElementById('maxListNumber').value = maxListNumber;
+
+				// すべてのプルダウンを更新
+				updateSelectOptions();
+			});
+
+			// プルダウンのオプションを生成する関数
+			function generateOptions(selectedValue) {
+				let optionsHtml = '';
+				// maxListNumber + 1まで選択肢を生成
+				for (let i = 1; i <= maxListNumber; i++) {
+					optionsHtml += `<option value="${i}" ${i === maxListNumber ? 'selected' : ''}>${i}</option>`;
+				}
+				return optionsHtml;
+			}
+
+
+			// すべてのプルダウンを更新する関数
+			function updateSelectOptions() {
+				const selectElements = document.querySelectorAll('.taskTypeTable select');
+
+				// すべてのプルダウンに対してオプションを再生成
+				selectElements.forEach(function (select) {
+					// 現在選択されている値を取得
+					let currentValue = select.value;
+
+					// 親の行を取得
+					const row = select.closest('tr');
+
+					// オプションを更新
+					select.innerHTML = generateOptions(maxListNumber);
+
+					// `data-new-row` がある場合は特別処理
+					if (row.dataset.newRow === 'true') {
+						select.value = maxListNumber; // 新規行には最新の順番を適用
+						delete row.dataset.newRow; // データ属性を削除
+					} else {
+						select.value = currentValue;  // 既存の選択肢を復元
+					}
+				});
+			}
+			
+			// sessionStorageからフラグを確認
+            const fromDailyReport = sessionStorage.getItem('fromDailyReport');
+            
+            // フラグがある場合は「日報一覧に戻る」リンクを表示
+            if (fromDailyReport === 'true') {
+                document.getElementById('backLink').style.display = 'block';
+                // フラグをクリア
+                sessionStorage.removeItem('fromDailyReport');
+            }
+		});
+
+	</script>
+
+</body>
+
+</html>

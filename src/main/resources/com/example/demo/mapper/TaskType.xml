@@ -3,9 +3,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mapper.TaskTypeMapper">
 
-		<!-- 部署情報を取得 -->
-	<select id="findAll" resultType="com.example.demo.dto.TasktypeDto">
-		SELECT * FROM task_types
+	<!-- 部署情報を取得 -->
+	<select id="findAll"
+		resultType="com.example.demo.dto.TaskTypeDto">
+		SELECT * FROM task_types where user_id = #{userId}
 	</select>
-	
+
+	<!-- TaskTypeのリストをupsertする処理 -->
+	<insert id="upsert" parameterType="java.util.List">
+		INSERT INTO task_types (work_type_id, user_id, list_number, work_type_name)
+		VALUES
+		<foreach collection="list" item="taskType" separator=",">
+		(#{taskType.workTypeId},#{taskType.userId}, #{taskType.listNumber},
+					#{taskType.workTypeName})
+		</foreach>
+			ON DUPLICATE KEY UPDATE
+			list_number = VALUES(list_number),
+			work_type_name = VALUES(work_type_name),
+			work_type_id = VALUES(work_type_id)
+	</insert>
+
 </mapper>

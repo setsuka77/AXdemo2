@@ -299,12 +299,20 @@ textarea {
 	/* 横方向の中央寄せと下部マージンを追加 */
 }
 
-.report-userContainer{
-	display: flex;                /* 横並びにする */
-    justify-content: center;      /* 中央に配置 */
-    align-items: center;          /* 縦方向の中央に配置 */
-    gap: 10px;                   /* アイテム間のスペース */
-    margin-left: 20%;
+.report-userContainer {
+	display: flex;
+	/* 横並びにする */
+	justify-content: center;
+	/* 中央に配置 */
+	align-items: center;
+	/* 縦方向の中央に配置 */
+	gap: 10px;
+	/* アイテム間のスペース */
+	margin-left: 20%;
+}
+
+.data-list-container{
+width: 65%;	
 }
 
 /* ===========================================
@@ -501,11 +509,22 @@ button:hover {
 	margin-right: 60%;
 }
 
-.editButton{
-    padding: 5px 10px; /* 上下左右の余白 */
-    font-size: 12px;   /* フォントサイズ */
-    height: auto;      /* 自動高さ */
-    width: auto;       /* 自動幅 */
+.editButton {
+	padding: 5px 10px;
+	/* 上下左右の余白 */
+	font-size: 12px;
+	/* フォントサイズ */
+	height: auto;
+	/* 自動高さ */
+	width: auto;
+	/* 自動幅 */
+}
+
+#rejectButton{
+	display: flex;            /* フレックスボックスを使用 */
+	justify-content: space-between; 
+	margin-right: 10%;
+	margin-left: 10%;
 }
 
 
@@ -564,27 +583,60 @@ button:hover {
 }
 
 .reportAdminTitle {
-    display: flex; /* フレックスボックスを使用 */
+	display: flex;
+	/* フレックスボックスを使用 */
 }
 
-.reportAdminTitle h2{
+.reportAdminTitle h2 {
 	width: 80%;
 }
+
 .reportCalendar {
-    display: flex;
-    gap:10px;
-    margin-top: 20px;
+	display: flex;
+	gap: 10px;
+	margin-top: 20px;
 }
+
 .selectDay {
-    height: 20px;
-    padding: 1px 2px;
-    font-size: 14px;
+	height: 20px;
+	padding: 1px 2px;
+	font-size: 14px;
 }
-.betweenDay{
+
+.betweenDay {
 	display: block;
-    margin-bottom: 5px;
-    min-width: 0px;
+	margin-bottom: 5px;
+	min-width: 0px;
 }
+
+.typeEditTitle{
+	display: flex;
+}
+
+.typeEditTitle h2 {
+	width: 70%;
+}
+
+.taskTypeTable td {
+	text-align: center;
+	padding-top: 10px;
+	width: 15%;
+}
+
+.listNumber select {
+	width: 30%;
+}
+
+.taskTypeName {
+	width: 40%;
+}
+
+.taskTypeTable {
+	width: 80%;
+	text-align: center;
+	margin-left: 10%;
+}
+
 
 
 
@@ -975,6 +1027,32 @@ ul {
 	/* マージンをゼロに設定 */
 }
 
+/* エラーアラートスタイル　-作業タイプ編集画面- */
+.alert.alert-danger-edit.register-message {
+	margin-left: 15%;
+	margin-top: 20px;
+	width: 70%;
+	background-color: #f2dede;
+	/* 背景色を設定 */
+	border-color: #ebccd1;
+	/* ボーダー色を設定 */
+	color: #a94442;
+	/* テキスト色を設定 */
+}
+
+/* 成功アラートスタイル -作業タイプ編集画面-*/
+.alert.alert-success-edit.register-message{
+	margin-left: 15%;
+	margin-top: 20px;
+	width: 70%;
+	background-color: #d4edda;
+	/* 背景色を設定 */
+	border-color: #c3e6cb;
+	/* ボーダー色を設定 */
+	color: #155724;
+	/* テキスト色を設定 */
+}
+
 
 /* ===========================================
  *テーブル、Formスタイル 
@@ -1161,12 +1239,15 @@ input.note {
 }
 
 .dropdown-content li {
-    display: flex; /* フレックスボックスを使用して並べる */
-    align-items: center; /* 垂直方向にセンタリング */
+	display: flex;
+	/* フレックスボックスを使用して並べる */
+	align-items: center;
+	/* 垂直方向にセンタリング */
 }
 
 .dropdown-content .edit-link {
-    margin-left: 15px; /* 名前と編集の間にスペースを追加 */
+	margin-left: 15px;
+	/* 名前と編集の間にスペースを追加 */
 }
 
 
@@ -1724,5 +1805,6 @@ input:checked~.circle {
 		margin-top: auto;
 		/* 上部マージンを設定 */
 	}
+	
 
 }

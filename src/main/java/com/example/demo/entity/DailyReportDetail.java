@@ -24,4 +24,6 @@ public class DailyReportDetail {
 	private Integer workTypeId;
 	/** 作業種別名 */
 	private String workTypeName;
+	/** 表示順番 */
+	private Integer listNumber;
 }

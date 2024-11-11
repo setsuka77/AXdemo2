@@ -5,25 +5,35 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 import com.example.demo.dto.DailyReportDto;
 import com.example.demo.dto.NotificationsDto;
-import com.example.demo.dto.TasktypeDto;
+import com.example.demo.dto.TaskTypeDto;
 import com.example.demo.dto.UsersDto;
 import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
+import com.example.demo.entity.TaskType;
 import com.example.demo.entity.Users;
 import com.example.demo.form.DailyReportDetailForm;
 import com.example.demo.form.DailyReportForm;
+import com.example.demo.form.TaskTypeForm;
 import com.example.demo.mapper.DailyReportDetailMapper;
 import com.example.demo.mapper.DailyReportMapper;
 import com.example.demo.mapper.TaskTypeMapper;
+
+import jakarta.validation.Valid;
 
 @Service
 public class DailyReportService {
@@ -61,13 +71,31 @@ public class DailyReportService {
 
 		return searchReport;
 	}
-	
+
+	/**
+	 * 現在日から過去一週間の日報情報を取得
+	 * 
+	 * @param loginUser
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public List<DailyReportDetail> searchReport(Users loginUser, LocalDate start, LocalDate end) {
+		return dailyReportDetailMapper.findByUserIdAndRange(loginUser.getId(), start, end);
+	}
+
 	/**
 	 * 作業種別用プルダウン情報取得
 	 * @return 作業種別用のリスト
 	 */
-	public List<TasktypeDto> findAll() {
-		return taskTypeMapper.findAll();
+	public List<TaskTypeDto> findAll(Integer userId) {
+		// データベースから全てのレコードを取得
+	    List<TaskTypeDto> taskTypeList = taskTypeMapper.findAll(userId);
+	    
+	    // listNumberを基準に昇順でソート
+	    return taskTypeList.stream()
+	                       .sorted(Comparator.comparingInt(TaskTypeDto::getListNumber))
+	                       .collect(Collectors.toList());
 	}
 
 	/**
@@ -164,11 +192,10 @@ public class DailyReportService {
 				dailyReportDetail.setTime(dailyForm.getTime());
 				dailyReportDetail.setContent(dailyForm.getContent());
 				dailyReportDetail.setWorkTypeId(dailyForm.getWorkTypeId());
-				
-				System.out.println(dailyReportDetail);
+				System.out.println("確認用"+ dailyReportDetail);
 
 				//idが存在しない場合は新規登録
-				if (dailyReportDetail.getId() == null) {
+				if (dailyReportDetail.getId() == null || dailyReportDetail.getId() == 0) {
 					//日報情報を登録
 					dailyReportDetailMapper.insert(dailyReportDetail);
 					System.out.println("インサートできてる");
@@ -291,40 +318,127 @@ public class DailyReportService {
 	 * @return お知らせ情報
 	 */
 	public List<NotificationsDto> checkManagerDailyReport() {
-	    // 前日の日付を取得
-	    LocalDate previousDay = LocalDate.now().minusDays(1);
-	    Date date = Date.valueOf(previousDay);
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日");
-	    String formattedDate = previousDay.format(formatter);
+		// 前日の日付を取得
+		LocalDate previousDay = LocalDate.now().minusDays(1);
+		Date date = Date.valueOf(previousDay);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年M月d日");
+		String formattedDate = previousDay.format(formatter);
 
-	    // 土日かどうかチェック
-	    Boolean weekEnd = notificationsService.notWeekend(previousDay);
+		// 土日かどうかチェック
+		Boolean weekEnd = notificationsService.notWeekend(previousDay);
 
-	    List<NotificationsDto> notifications = new ArrayList<>();
-	    if (weekEnd) {
-	        // 前日の日報を提出していないユーザーを検索
-	        List<UsersDto> usersWithoutReport = dailyReportMapper.findUsersWithoutReport(date);
+		List<NotificationsDto> notifications = new ArrayList<>();
+		if (weekEnd) {
+			// 前日の日報を提出していないユーザーを検索
+			List<UsersDto> usersWithoutReport = dailyReportMapper.findUsersWithoutReport(date);
 
-	        // マネージャーに未提出ユーザー数のお知らせを作成
-	        int missingReportCount = usersWithoutReport.size();
-	        if (missingReportCount > 0) {
-	            String managerContent = formattedDate + "の日報が" + missingReportCount + "人未提出です ("
-	                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) +"時点"+ ")";
+			// マネージャーに未提出ユーザー数のお知らせを作成
+			int missingReportCount = usersWithoutReport.size();
+			if (missingReportCount > 0) {
+				String managerContent = formattedDate + "の日報が" + missingReportCount + "人未提出です ("
+						+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")) + "時点" + ")";
 
-	            // マネージャーの日報未提出通知を作成
-	            NotificationsDto notificationsDto = new NotificationsDto();
-	            notificationsDto.setContent(managerContent);
-	            notificationsDto.setNotificationType("日報未提出");
-	            notificationsDto.setCreatedAt(LocalDateTime.now());
-	            
-	            // 未提出ユーザーのリストを設定
-	            notificationsDto.setUsers(usersWithoutReport);
+				// マネージャーの日報未提出通知を作成
+				NotificationsDto notificationsDto = new NotificationsDto();
+				notificationsDto.setContent(managerContent);
+				notificationsDto.setNotificationType("日報未提出");
+				notificationsDto.setCreatedAt(LocalDateTime.now());
 
-	            notifications.add(notificationsDto);
-	        }
-	    }
-	    
-	    return notifications;
+				// 未提出ユーザーのリストを設定
+				notificationsDto.setUsers(usersWithoutReport);
+
+				notifications.add(notificationsDto);
+			}
+		}
+
+		return notifications;
+	}
+
+	/**
+	 * DtoをFormにセットする
+	 * 
+	 * @param taskTypes
+	 * @return TaskTypeFormのリスト
+	 */
+	public List<TaskTypeForm> getTaskTypeForms(List<TaskTypeDto> taskTypes) {
+		// taskTypeDtoをtaskTypeFormに変換し、listNumberでソート
+	    return taskTypes.stream()
+	        .map(taskType -> {
+	            TaskTypeForm taskTypeForm = new TaskTypeForm();
+	            taskTypeForm.setWorkTypeId(taskType.getWorkTypeId());
+	            taskTypeForm.setListNumber(taskType.getListNumber());
+	            taskTypeForm.setWorkTypeName(taskType.getWorkTypeName());
+	            return taskTypeForm;
+	        })
+	        .sorted(Comparator.comparing(TaskTypeForm::getListNumber))  // listNumber順に並べ替え
+	        .collect(Collectors.toList());
+	}
+
+	/**
+	 * 登録前入力チェック
+	 * 
+	 * @param dailyReportForm
+	 * @param bindingResult
+	 * @return エラーメッセージ
+	 */
+	public String validTaskType(DailyReportForm dailyReportForm, BindingResult bindingResult) {
+		Set<String> errorMessages = new LinkedHashSet<>();
+		List<TaskTypeForm> taskTypeFormList = dailyReportForm.getTaskTypeFormList();
+
+		// listNumberとworkTypeNameの重複を確認
+		Set<Integer> listNumberSet = new HashSet<>();
+		Set<String> workTypeNameSet = new HashSet<>();
+
+		for (TaskTypeForm taskTypeForm : taskTypeFormList) {
+			// listNumberの重複チェック
+			if (!listNumberSet.add(taskTypeForm.getListNumber())) {
+				errorMessages.add("表示順番が重複しています");
+			}
+
+			// workTypeNameの重複チェック
+			if (!workTypeNameSet.add(taskTypeForm.getWorkTypeName())) {
+				errorMessages.add("作業種名が重複しています");
+			}
+
+			//新規nullチェック
+			if(taskTypeForm.getListNumber()== null && taskTypeForm.getWorkTypeName().isEmpty()) {
+				errorMessages.add("リスト番号と作業タイプ名の両方を入力してください。");
+			}
+		}
+		// BindingResultのエラーメッセージを取得
+		for (ObjectError error : bindingResult.getAllErrors()) {
+			// FieldErrorのエラーメッセージを追加
+			if (error instanceof FieldError) {
+				errorMessages.add(error.getDefaultMessage());
+			}
+		}
+		return String.join("<br>", errorMessages);
+	}
+
+	/**
+	 * 作業タイプ　登録処理
+	 * 
+	 * @param userId
+	 * @param dailyReportForm
+	 * @return　完了メッセージ
+	 */
+	public String registEditType(Integer userId, @Valid DailyReportForm dailyReportForm) {
+		List<TaskTypeForm> taskTypeFormList = dailyReportForm.getTaskTypeFormList();
+		
+        List<TaskType> taskTypes = taskTypeFormList.stream()
+            .map(form -> {
+                TaskType taskType = new TaskType();
+                taskType.setWorkTypeId(form.getWorkTypeId() != null ? form.getWorkTypeId() : null);  // IDが存在すれば更新、なければnullで
+                taskType.setUserId(userId);
+                taskType.setListNumber(form.getListNumber());
+                taskType.setWorkTypeName(form.getWorkTypeName());
+                
+                return taskType;
+            })
+            .collect(Collectors.toList());
+        //upsert 処理を行う
+        taskTypeMapper.upsert(taskTypes);
+		return "編集内容を保存しました。";
 	}
 
 }

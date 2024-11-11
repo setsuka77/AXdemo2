@@ -23,7 +23,7 @@
 		<div class="data-list-container">
 			<div class="reportAdminTitle">
 				<a th:href="@{/menu/report}">
-					<button type="button" class="button">戻る</button>
+					<button type="button" class="button">日報管理</button>
 				</a>
 				<h2>日報一覧</h2>
 			</div>
@@ -65,7 +65,7 @@
 				<thead>
 					<tr>
 						<th>日付</th>
-						<th>作業種別</th>
+						<th>作業タイプ</th>
 						<th>作業内容</th>
 						<th>作業時間(h)</th>
 						<th>編集</th>
@@ -75,7 +75,7 @@
 					<tr th:each="report, iterStat : ${reportDetailList}">
 						<!-- 日付の変化をチェックして、rowspanを設定 -->
 						<td th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}"
-							th:text="${#dates.format(report.date, 'yyyy年M月dd日')}"
+							th:text="${#dates.format(report.date, 'yyyy年M月dd日 (E)')} "
 							th:rowspan="${countByDate[report.date]}">日付</td>
 
 						<!-- 作業種別の表示 -->
@@ -94,8 +94,7 @@
 						
 						<!-- 編集ボタンの表示 -->
 						<td>
-							<div
-								th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}">
+							<div th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}">
 								<form th:action="@{/report/dailyReport(edit=true)}" method="post">
 									<input type="hidden" name="selectDate"
 										th:value="${#dates.format(report.date, 'yyyy-MM-dd')}" />

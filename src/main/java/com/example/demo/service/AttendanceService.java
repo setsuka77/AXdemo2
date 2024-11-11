@@ -341,19 +341,12 @@ public class AttendanceService {
 				}
 			}
 
-			boolean isStartTimeValid = timePattern.matcher(startTime).matches();
-			System.out.println("Start time: " + startTime + " is valid:" + isStartTimeValid);
-
 			// 出勤時間チェック
 			if (startTime != null && !startTime.isEmpty() && !timePattern.matcher(startTime).matches()) {
 				errorMessage.append(dailyForm.getFormattedDate()).append(" の出勤時間 : hh:mm のフォーマットで入力してください。<br>");
 				hasErrors = true;
 				dailyForm.setErrorFlag(true);
 			}
-			System.out.println(hasErrors);
-
-			boolean isEndTimeValid = timePattern.matcher(endTime).matches();
-			System.out.println("End time: " + endTime + " is valid: " + isEndTimeValid);
 
 			// 退勤時間チェック
 			if (endTime != null && !endTime.isEmpty() && !timePattern.matcher(endTime).matches()) {
@@ -504,7 +497,6 @@ public class AttendanceService {
 		} else {
 			message = userName + "の" + formattedDate + "における承認申請が承認されました。";
 		}
-		System.out.println(req);
 
 		//訂正申請時、通知作成
 		if (req.getApproverName() != null && req.getStatus() == 5) {

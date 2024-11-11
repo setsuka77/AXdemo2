@@ -1,17 +1,16 @@
-package com.example.demo.dto;
+package com.example.demo.entity;
 
 import lombok.Data;
 
 @Data
-public class TasktypeDto {
-	
+public class TaskType {
 	/** 作業種ID */
 	private Integer workTypeId;
 	/** リストナンバー */
 	private Integer listNumber;
 	/** 作業種名 */
 	private String workTypeName;
-	/** 活性フラグ(1が活性) */
-	private Integer isActive;
+	/** ユーザーID */
+	private Integer userId;
 
 }

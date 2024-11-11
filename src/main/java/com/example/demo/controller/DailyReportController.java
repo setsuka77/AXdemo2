@@ -23,18 +23,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.demo.dto.TasktypeDto;
+import com.example.demo.dto.TaskTypeDto;
 import com.example.demo.entity.DailyReport;
 import com.example.demo.entity.DailyReportDetail;
 import com.example.demo.entity.Users;
 import com.example.demo.form.DailyReportDetailForm;
 import com.example.demo.form.DailyReportForm;
+import com.example.demo.form.TaskTypeForm;
 import com.example.demo.mapper.DailyReportMapper;
-import com.example.demo.service.DailyReportListService;
 import com.example.demo.service.DailyReportService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class DailyReportController {
@@ -43,8 +45,6 @@ public class DailyReportController {
 	private DailyReportService dailyReportService;
 	@Autowired
 	private DailyReportMapper dailyReportMapper;
-	@Autowired
-	private DailyReportListService dailyReportListService;
 
 	/**
 	 * 日報登録画面 初期表示
@@ -57,6 +57,7 @@ public class DailyReportController {
 	public String showDailyReport(Model model, HttpSession session) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		Integer userId = loginUser.getId();
 		String role = loginUser.getRole();
 
 		// 初期表示用に3行の空のフォームを準備する
@@ -73,8 +74,8 @@ public class DailyReportController {
 			model.addAttribute("checkApproval", false);
 		}
 
-		//全ての作業種別情報を取得(プルダウン用)
-		List<TasktypeDto> taskType = dailyReportService.findAll();
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
 		model.addAttribute("taskType", taskType);
 
 		// DailyReportForm を初期化してモデルに追加
@@ -99,14 +100,15 @@ public class DailyReportController {
 			@RequestBody Map<String, String> requestBody) {
 		// セッションからユーザー情報を取得
 		Users loginUser = (Users) session.getAttribute("user");
+		Integer userId = loginUser.getId();
 		// リクエストボディから日付を取得
 		String selectDate = requestBody.get("selectDate");
 
 		// 日報情報を取得
 		List<DailyReportDetail> reportDetail = dailyReportService.searchReport(loginUser, selectDate);
 
-		//全ての作業種別情報を取得(プルダウン用)
-		List<TasktypeDto> taskType = dailyReportService.findAll();
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
 
 		// ステータスを取得
 		Integer status = dailyReportService.searchReportStatus(loginUser, selectDate);
@@ -153,6 +155,7 @@ public class DailyReportController {
 		String formattedDate = formatDate(selectDate);
 		// セッションからユーザー情報を取得
 		Users loginUser = (Users) session.getAttribute("user");
+		Integer userId = loginUser.getId();
 
 		// 初期表示用に3行の空のフォームを準備する
 		List<DailyReportDetailForm> dailyReportDetailFormList = new ArrayList<>();
@@ -167,8 +170,8 @@ public class DailyReportController {
 		Integer status = dailyReportService.searchReportStatus(loginUser, formattedDate);
 		String statusText = getStatusText(status);
 
-		//全ての作業種別情報を取得(プルダウン用)
-		List<TasktypeDto> taskType = dailyReportService.findAll();
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
 		model.addAttribute("taskType", taskType);
 
 		model.addAttribute("loginUser", loginUser);
@@ -209,6 +212,7 @@ public class DailyReportController {
 			Model model, String selectDate) {
 		// ユーザー情報の取得
 		Users loginUser = (Users) session.getAttribute("user");
+		Integer userId = loginUser.getId();
 
 		// 入力チェック
 		String validationErrors = dailyReportService.validateDailyReport(dailyReportForm, selectDate);
@@ -236,8 +240,8 @@ public class DailyReportController {
 		// status変更
 		dailyReportService.changeStatus(loginUser, selectDate, 1);
 
-		//全ての作業種別情報を取得(プルダウン用)
-		List<TasktypeDto> taskType = dailyReportService.findAll();
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
 		model.addAttribute("taskType", taskType);
 
 		return "report/dailyReport";
@@ -271,8 +275,8 @@ public class DailyReportController {
 		model.addAttribute("dailyReportForm", dailyReportForm);
 		model.addAttribute("loginUser", loginUser);
 
-		//全ての作業種別情報を取得(プルダウン用)
-		List<TasktypeDto> taskType = dailyReportService.findAll();
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
 		model.addAttribute("taskType", taskType);
 
 		return "report/dailyReport";
@@ -298,11 +302,11 @@ public class DailyReportController {
 		model.addAttribute("endDate", end.toString());
 
 		// 日報のリストを取得
-		List<DailyReportDetail> reportDetailList = dailyReportListService.searchReport(loginUser, start, end);
+		List<DailyReportDetail> reportDetailList = dailyReportService.searchReport(loginUser, start, end);
 		// 日付とIDでソート
 		Collections.sort(reportDetailList, Comparator.comparing(DailyReportDetail::getDate)
-				.thenComparing(DailyReportDetail::getWorkTypeId));
-
+				.thenComparing(DailyReportDetail::getListNumber));
+		System.out.println("一覧確認用"+ reportDetailList);
 		//その日にいくつ日報があるかカウント
 		Map<Date, Long> countByDate = reportDetailList.stream()
 				.collect(Collectors.groupingBy(DailyReportDetail::getDate, Collectors.counting()));
@@ -333,14 +337,14 @@ public class DailyReportController {
 
 		// 日報情報を取得
 		DailyReportForm dailyReportForm = dailyReportService.setForm(userId, selectDate);
-		
+
 		// ステータスを取得
 		String dateString = selectDate.toString();
 		Integer status = dailyReportService.searchReportStatus(loginUser, dateString);
 		String statusText = getStatusText(status);
 
-		//全ての作業種別情報を取得(プルダウン用)
-		List<TasktypeDto> taskType = dailyReportService.findAll();
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
 		model.addAttribute("taskType", taskType);
 
 		model.addAttribute("loginUser", loginUser);
@@ -350,7 +354,7 @@ public class DailyReportController {
 
 		return "report/dailyReport";
 	}
-	
+
 	/**
 	 * 日付が選択されたときに日報情報を取得して返す
 	 *
@@ -367,25 +371,25 @@ public class DailyReportController {
 		// リクエストボディから日付を取得
 		LocalDate selectDate = requestBody.get("selectDate");
 		LocalDate selectMonth = requestBody.get("selectMonth");
-		
-		 LocalDate start = null;
-		 LocalDate end = null;
-		
+
+		LocalDate start = null;
+		LocalDate end = null;
+
 		// 選択日から過去の日報を取得
-	    if (selectDate != null) {
-	        start = selectDate; // 初日
-	        end = selectDate.plusDays(6); // 一週間後の日付
-	    } else if (selectMonth != null) {
-	        start = selectMonth.withDayOfMonth(1); // 月の初日
-	        end = selectMonth.with(TemporalAdjusters.lastDayOfMonth()); // 月の最終日
-	    }
+		if (selectDate != null) {
+			start = selectDate; // 初日
+			end = selectDate.plusDays(6); // 一週間後の日付
+		} else if (selectMonth != null) {
+			start = selectMonth.withDayOfMonth(1); // 月の初日
+			end = selectMonth.with(TemporalAdjusters.lastDayOfMonth()); // 月の最終日
+		}
 
 		// 日報のリストを取得
-		List<DailyReportDetail> reportDetailList = dailyReportListService.searchReport(loginUser, start, end);
+		List<DailyReportDetail> reportDetailList = dailyReportService.searchReport(loginUser, start, end);
 		// 日付とIDでソート
 		Collections.sort(reportDetailList, Comparator.comparing(DailyReportDetail::getDate)
 				.thenComparing(DailyReportDetail::getWorkTypeId));
-		
+
 		//その日にいくつ日報があるかカウント
 		Map<Date, Long> countByDate = reportDetailList.stream()
 				.collect(Collectors.groupingBy(DailyReportDetail::getDate, Collectors.counting()));
@@ -400,6 +404,75 @@ public class DailyReportController {
 		response.put("countByDateAndWorkId", countByDateAndWorkId);
 
 		return ResponseEntity.ok(response);
+	}
+
+	/**
+	 * 作業タイプ 編集初期画面
+	 * 
+	 * @param session
+	 * @param model
+	 * @return　作業タイプ 編集画面
+	 */
+	@GetMapping(path = "/report/typeEdit")
+	public String editTaskType(HttpSession session, Model model) {
+		// セッションからユーザー情報を取得
+		Users loginUser = (Users) session.getAttribute("user");
+		Integer userId = loginUser.getId();
+		model.addAttribute("loginUser", loginUser);
+
+		//全ての作業タイプ情報を取得(プルダウン用)
+		List<TaskTypeDto> taskType = dailyReportService.findAll(userId);
+		List<TaskTypeForm> taskTypeFormList = dailyReportService.getTaskTypeForms(taskType);
+
+		// DailyReportFormを作成してtaskTypeFormListを設定
+		DailyReportForm dailyReportForm = new DailyReportForm();
+		dailyReportForm.setTaskTypeFormList(taskTypeFormList);
+		model.addAttribute("dailyReportForm", dailyReportForm);
+		System.out.println("初期表示①" + dailyReportForm);
+
+		// listNumber の最大値を取得
+		Integer maxListNumber = taskType.size();
+		model.addAttribute("maxListNumber", maxListNumber);
+
+		return "/report/typeEdit";
+	}
+	
+	/**
+	 * 作業タイプ編集画面　「保存」ボタン押下
+	 * 
+	 * @param session
+	 * @param model
+	 * @param dailyReportForm
+	 * @param bindingResult
+	 * @return　作業タイプ編集画面
+	 */
+	@PostMapping(path = "/report/typeEdit", params = "submitEdit")
+	public String EditTaskType(HttpSession session, Model model, @Valid DailyReportForm dailyReportForm,
+			BindingResult bindingResult,RedirectAttributes redirectAttributes) {
+		// セッションからユーザー情報を取得
+		Users loginUser = (Users) session.getAttribute("user");
+		Integer userId = loginUser.getId();
+		
+		// 重複チェックとバリデーションを実行
+	    String validationErrors = dailyReportService.validTaskType(dailyReportForm, bindingResult);
+
+	    // バリデーションエラーがあれば処理
+	    if (!validationErrors.isEmpty()) {
+	    	List<TaskTypeForm> taskTypes = dailyReportForm.getTaskTypeFormList();
+	    	Integer maxNumber = taskTypes.stream().mapToInt(TaskTypeForm::getListNumber).max().orElse(0);;
+	    	//listNumberの最大値の更新
+	    	model.addAttribute("maxListNumber", maxNumber);
+	        // エラーメッセージをModelにセット
+	        model.addAttribute("registerError", validationErrors);
+	        model.addAttribute("dailyReportForm", dailyReportForm);
+	        return "/report/typeEdit";
+	    }
+	    	System.out.println("登録処理①" + dailyReportForm.getTaskTypeFormList());
+	    // 更新・登録処理
+	    String message = dailyReportService.registEditType(userId, dailyReportForm);
+	    redirectAttributes.addFlashAttribute("message", message);  // リダイレクト時にメッセージを渡す
+
+	    return "redirect:/report/typeEdit";
 	}
 
 }

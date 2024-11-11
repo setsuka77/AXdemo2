@@ -46,7 +46,7 @@
 	<!-- 日報申請情報をユーザーと範囲で取得(複数) -->
 	<select id="findByUserIdAndRange"
 		resultType="com.example.demo.entity.DailyReportDetail">
-		SELECT d.*, t.work_type_name
+		SELECT d.*, t.*
 		FROM daily_report_detail d
 		LEFT JOIN task_types t ON d.work_type_id = t.work_type_id
 		WHERE d.user_id = #{userId}
