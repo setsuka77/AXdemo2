@@ -15,6 +15,8 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<!-- 日本語化する場合は下記を追記 -->
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
+	<!-- chart.jsのやつ -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
 </head>
 
 <body>
@@ -61,6 +63,8 @@
 				</div>
 			</form>
 
+			<canvas id="myPieChart"></canvas>
+
 			<table>
 				<thead>
 					<tr>
@@ -91,10 +95,11 @@
 
 						<!-- 作業時間の表示 -->
 						<td th:text="${report.time}"></td>
-						
+
 						<!-- 編集ボタンの表示 -->
 						<td>
-							<div th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}">
+							<div
+								th:if="${iterStat.index == 0 or report.date != reportDetailList[iterStat.index - 1].date}">
 								<form th:action="@{/report/dailyReport(edit=true)}" method="post">
 									<input type="hidden" name="selectDate"
 										th:value="${#dates.format(report.date, 'yyyy-MM-dd')}" />
@@ -106,7 +111,10 @@
 				</tbody>
 			</table>
 		</div>
-
+		<script th:inline="javascript">
+			/*[[${reportDetailList}]]*/
+			const reportDetailList = [[${reportDetailList}]];
+		</script>
 </body>
 
 </html>

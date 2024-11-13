@@ -1,5 +1,69 @@
+let myPieChart; // グローバルで宣言
+
+//labelのデータ更新
+function generateChartData(reportDetailList) {
+	const labels = [];
+	const chartData = [];
+
+	reportDetailList.forEach(report => {
+		const workType = report.workTypeName;
+		const time = parseFloat(report.time); // 数値に変換
+
+		const existingIndex = labels.indexOf(workType); // 見つかったらそのインデックス番号が、なければ-1が入る
+		if (existingIndex >= 0) {
+			chartData[existingIndex] += time; // 既存の作業タイプの時間を合計
+		} else {
+			labels.push(workType); // 新しい作業タイプを追加
+			chartData.push(time);   // 初回の時間をセット
+		}
+	});
+
+	return { labels, chartData };
+}
+
+//グラフの背景色の生成
+function generateRandomColors(labels) {
+	return labels.map(() => getRandomColor());
+}
+//グラフ作成・更新
+function updateChart(labels, chartData) {
+	const backgroundColors = generateRandomColors(labels);
+
+	if (myPieChart) {
+		myPieChart.destroy();
+	}
+
+	const ctx = document.getElementById("myPieChart");
+	myPieChart = new Chart(ctx, {
+		type: 'doughnut',
+		data: {
+			labels: labels,
+			datasets: [{
+				backgroundColor: backgroundColors,
+				data: chartData
+			}]
+		},
+		options: {
+			title: {
+				display: true,
+				text: 'タイプ別 作業時間'
+			},
+			tooltips: {
+				callbacks: {
+					label: function(tooltipItem, data) {
+						const index = tooltipItem.index; // 選択されたデータポイントのインデックス
+						const workType = data.labels[index]; // workType（作業タイプ）のラベル
+						const time = data.datasets[tooltipItem.datasetIndex].data[index]; // 対応する時間
+						return workType + ': ' + time + '時間'; // 作業タイプと時間を表示
+					}
+				}
+			}
+		}
+	});
+}
+
+//fetchで週間の日報情報を取得
 function fetchWeekReport() {
-	console.log("週の情報を取得");
 	const dateRange = document.getElementById('dateRange').value;
 	console.log(dateRange);
 	const startDate = dateRange.split("から")[0].trim();
@@ -22,8 +86,8 @@ function fetchWeekReport() {
 		.catch(error => console.error('Error fetching data:', error));
 }
 
+//fetchで月間の日報情報を取得
 function fetchMonthReport() {
-	console.log("月のレポートを取得中...");
 	const initialDate = document.getElementById('month').value;
 	const selectMonth = `${initialDate}-01`;
 	console.log(selectMonth);
@@ -44,6 +108,10 @@ function handleReportData(data) {
 	const reportDetailList = data.reportDetailList;
 	const countByDate = data.countByDate;
 	const countByDateAndWorkId = data.countByDateAndWorkId;
+	const { labels, chartData } = generateChartData(reportDetailList);
+
+	// チャートを更新
+	updateChart(labels, chartData);
 
 	const tbody = document.querySelector('tbody');
 	//tbodyの内容削除
@@ -110,7 +178,7 @@ function handleReportData(data) {
 			editForm.appendChild(editButton);
 			editCell.appendChild(editForm);
 			row.appendChild(editCell);
-		}else {
+		} else {
 			// 編集ボタンが必要ない場合は空のセルを追加
 			const emptyEditCell = document.createElement('td');
 			row.appendChild(emptyEditCell);
@@ -121,9 +189,37 @@ function handleReportData(data) {
 	});
 }
 
+let previousHue = null; // 前回の色相を保持する変数
+
+function getRandomColor() {
+	// 彩度を70〜100%の範囲に設定
+	const saturation = Math.floor(Math.random() * 31) + 70;
+	// 明度（lightness）は明るすぎず暗すぎずに調整
+	const lightness = Math.floor(Math.random() * 21) + 70; // 70%〜90%の範囲
+
+	let hue;
+	// 色相が20度以上離れるまでループ
+	do {
+		hue = Math.floor(Math.random() * 360);  // 新しい色相を生成
+	} while (previousHue !== null && Math.abs(hue - previousHue) < 15); // 前回の色相と20以上離れているか確認
+
+	previousHue = hue; // 現在の色相を記録
+
+	// HSLのカラーを生成して返す
+	return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
 
 
 document.addEventListener("DOMContentLoaded", function() {
+	// Thymeleaf から埋め込んだ reportDetailList を利用
+	if (typeof reportDetailList !== 'undefined') {
+		console.log(reportDetailList); // コンソールで確認
+		//グラフ用のデータを生成
+		const { labels, chartData } = generateChartData(reportDetailList);
+		// グラフを更新
+		updateChart(labels, chartData);
+	}
+
 	// HTML要素からstartDateとendDateを取得
 	const weekInput = document.querySelector('#weekInput');
 	// HTML要素からstartDateとendDateを取得
@@ -140,11 +236,12 @@ document.addEventListener("DOMContentLoaded", function() {
 				// 選択した日付を取得
 				const start = selectedDates[0];
 				const end = new Date(start);
-				end.setDate(end.getDate() + 6); // 7日後の日付を計算
+				end.setDate(end.getDate() + 7); // 7日後の日付を計算
 
 				// 日付範囲を設定
 				this.setDate([start, end]);
 			}
+			close();
 		}
 	});
 

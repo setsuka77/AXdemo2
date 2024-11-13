@@ -378,7 +378,7 @@ public class DailyReportController {
 		// 選択日から過去の日報を取得
 		if (selectDate != null) {
 			start = selectDate; // 初日
-			end = selectDate.plusDays(6); // 一週間後の日付
+			end = selectDate.plusDays(7); // 一週間後の日付
 		} else if (selectMonth != null) {
 			start = selectMonth.withDayOfMonth(1); // 月の初日
 			end = selectMonth.with(TemporalAdjusters.lastDayOfMonth()); // 月の最終日

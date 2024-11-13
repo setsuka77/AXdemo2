@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -422,6 +423,7 @@ public class DailyReportService {
 	 * @param dailyReportForm
 	 * @return　完了メッセージ
 	 */
+	@Transactional
 	public String registEditType(Integer userId, @Valid DailyReportForm dailyReportForm) {
 		List<TaskTypeForm> taskTypeFormList = dailyReportForm.getTaskTypeFormList();
 		
