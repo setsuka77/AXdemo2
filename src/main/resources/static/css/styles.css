@@ -299,6 +299,7 @@ textarea {
 	/* 横方向の中央寄せと下部マージンを追加 */
 }
 
+/*ユーザー名、ID表示コンテナ*/
 .report-userContainer {
 	display: flex;
 	/* 横並びにする */
@@ -311,8 +312,10 @@ textarea {
 	margin-left: 20%;
 }
 
-.data-list-container{
-width: 65%;	
+/*日報一覧コンテナ*/
+.data-list-container {
+	width: 100%;
+	overflow-x: auto;
 }
 
 /* ===========================================
@@ -520,9 +523,10 @@ button:hover {
 	/* 自動幅 */
 }
 
-#rejectButton{
-	display: flex;            /* フレックスボックスを使用 */
-	justify-content: space-between; 
+#rejectButton {
+	display: flex;
+	/* フレックスボックスを使用 */
+	justify-content: space-between;
 	margin-right: 10%;
 	margin-left: 10%;
 }
@@ -609,7 +613,7 @@ button:hover {
 	min-width: 0px;
 }
 
-.typeEditTitle{
+.typeEditTitle {
 	display: flex;
 }
 
@@ -635,6 +639,11 @@ button:hover {
 	width: 80%;
 	text-align: center;
 	margin-left: 10%;
+}
+
+.reportTable{
+	 width: 100%;
+    table-layout: auto;
 }
 
 
@@ -1041,7 +1050,7 @@ ul {
 }
 
 /* 成功アラートスタイル -作業タイプ編集画面-*/
-.alert.alert-success-edit.register-message{
+.alert.alert-success-edit.register-message {
 	margin-left: 15%;
 	margin-top: 20px;
 	width: 70%;
@@ -1802,9 +1811,9 @@ input:checked~.circle {
 	}
 
 	.error-message.attendanceError {
-		margin-top: auto;
-		/* 上部マージンを設定 */
+		margin-top: aut
+			/* 上部マージンを設定 */
 	}
-	
+
 
 }

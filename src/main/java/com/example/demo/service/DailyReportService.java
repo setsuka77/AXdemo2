@@ -400,11 +400,6 @@ public class DailyReportService {
 			if (!workTypeNameSet.add(taskTypeForm.getWorkTypeName())) {
 				errorMessages.add("作業種名が重複しています");
 			}
-
-			//新規nullチェック
-			if(taskTypeForm.getListNumber()== null && taskTypeForm.getWorkTypeName().isEmpty()) {
-				errorMessages.add("リスト番号と作業タイプ名の両方を入力してください。");
-			}
 		}
 		// BindingResultのエラーメッセージを取得
 		for (ObjectError error : bindingResult.getAllErrors()) {

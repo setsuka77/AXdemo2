@@ -306,7 +306,6 @@ public class DailyReportController {
 		// 日付とIDでソート
 		Collections.sort(reportDetailList, Comparator.comparing(DailyReportDetail::getDate)
 				.thenComparing(DailyReportDetail::getListNumber));
-		System.out.println("一覧確認用"+ reportDetailList);
 		//その日にいくつ日報があるかカウント
 		Map<Date, Long> countByDate = reportDetailList.stream()
 				.collect(Collectors.groupingBy(DailyReportDetail::getDate, Collectors.counting()));
@@ -428,7 +427,6 @@ public class DailyReportController {
 		DailyReportForm dailyReportForm = new DailyReportForm();
 		dailyReportForm.setTaskTypeFormList(taskTypeFormList);
 		model.addAttribute("dailyReportForm", dailyReportForm);
-		System.out.println("初期表示①" + dailyReportForm);
 
 		// listNumber の最大値を取得
 		Integer maxListNumber = taskType.size();
